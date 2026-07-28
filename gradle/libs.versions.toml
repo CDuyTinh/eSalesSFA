@@ -31,6 +31,9 @@ swiperefresh = "1.1.0"
 # ── Backend / Media / Map ───────────────────────────────────
 supabase = "3.7.0"
 ktor = "3.4.0"
+retrofit = "3.0.0"
+okhttp = "5.4.0"
+kotlinxSerialization = "1.11.0"
 coil = "3.5.0"
 camerax = "1.6.1"
 playServicesLocation = "21.3.0"
@@ -84,13 +87,18 @@ coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
-# Supabase (BOM)
+# Supabase — CHỈ dùng Auth (đăng nhập/JWT) và Storage (upload ảnh).
+# Dữ liệu nghiệp vụ KHÔNG đi qua Postgrest mà qua Edge Functions, xem :core:network/README.
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
-supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt" }
 supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt" }
-supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+
+# REST client gọi Edge Functions
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 # Media / Map
 coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }

@@ -42,12 +42,19 @@ android {
 dependencies {
     implementation(project(":core:common"))
 
+    // Supabase: CHỈ Auth (đăng nhập, quản lý JWT) và Storage (upload ảnh trực tiếp).
+    // Cố ý KHÔNG khai báo postgrest-kt — dữ liệu nghiệp vụ phải đi qua Edge Functions,
+    // thiếu dependency này thì lỡ tay gọi thẳng bảng cũng không compile được.
     api(platform(libs.supabase.bom))
-    api(libs.supabase.postgrest)
     api(libs.supabase.auth)
     api(libs.supabase.storage)
-    api(libs.supabase.realtime)
     implementation(libs.ktor.client.okhttp)
+
+    // REST client gọi Edge Functions
+    api(libs.retrofit)
+    implementation(libs.retrofit.serialization)
+    implementation(libs.okhttp.logging)
+    api(libs.kotlinx.serialization.json)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
