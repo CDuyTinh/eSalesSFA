@@ -15,20 +15,9 @@ local.properties
 *.keystore
 secrets.properties
 
-# IDE
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/deploymentTargetSelector.xml
-/.idea/deploymentTargetDropDown.xml
-/.idea/appInsightsSettings.xml
-/.idea/androidTestResultsUserPreferences.xml
-/.idea/migrations.xml
-/.idea/other.xml
-/.idea/shelf/
+# IDE — toàn bộ .idea/ là cấu hình máy cá nhân (đường dẫn SDK, JDK, workspace),
+# commit vào chỉ gây conflict vô nghĩa giữa các máy.
+.idea/
 
 # Room schema: KHÔNG ignore — schema JSON phải được commit để review migration trong PR
 !**/schemas/*.json

@@ -22,9 +22,11 @@ android {
             "String", "SUPABASE_URL",
             "\"${props.getProperty("SUPABASE_URL") ?: System.getenv("SUPABASE_URL") ?: ""}\""
         )
+        // Publishable key (sb_publishable_...), KHÔNG phải legacy anon key.
+        // Key này an toàn khi nằm trong APK — bảo mật thật sự đến từ RLS policy trên Postgres.
         buildConfigField(
-            "String", "SUPABASE_ANON_KEY",
-            "\"${props.getProperty("SUPABASE_ANON_KEY") ?: System.getenv("SUPABASE_ANON_KEY") ?: ""}\""
+            "String", "SUPABASE_PUBLISHABLE_KEY",
+            "\"${props.getProperty("SUPABASE_PUBLISHABLE_KEY") ?: System.getenv("SUPABASE_PUBLISHABLE_KEY") ?: ""}\""
         )
     }
     buildFeatures {
