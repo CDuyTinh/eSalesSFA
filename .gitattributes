@@ -1,0 +1,12 @@
+# Chuẩn hoá line ending: repo luôn lưu LF, working copy trên Windows dùng CRLF
+* text=auto eol=lf
+
+*.bat  text eol=crlf
+gradlew text eol=lf
+
+*.jar    binary
+*.webp   binary
+*.png    binary
+*.jpg    binary
+*.keystore binary
+*.jks    binary

@@ -1,0 +1,34 @@
+*.iml
+.gradle
+.kotlin/
+.DS_Store
+.externalNativeBuild
+.cxx
+/captures
+
+# Build output — multi-module nên phải match ở mọi cấp, không chỉ /build
+build/
+
+# ⚠️ SECRETS — chứa SUPABASE_URL, SUPABASE_ANON_KEY, MAPS_API_KEY
+local.properties
+*.jks
+*.keystore
+secrets.properties
+
+# IDE
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/appInsightsSettings.xml
+/.idea/androidTestResultsUserPreferences.xml
+/.idea/migrations.xml
+/.idea/other.xml
+/.idea/shelf/
+
+# Room schema: KHÔNG ignore — schema JSON phải được commit để review migration trong PR
+!**/schemas/*.json
