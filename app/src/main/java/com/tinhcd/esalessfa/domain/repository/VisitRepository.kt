@@ -13,6 +13,32 @@ data class OpenVisit(
     val checkInAt: Long,
 )
 
+/** Lượt ghé đang mở, kèm tên cửa hàng để hiển thị lý do bị chặn. */
+data class ActiveVisit(
+    val visitId: String,
+    val customerId: String,
+    val customerName: String,
+    val checkInAt: Long,
+)
+
+/**
+ * Trạng thái cổng nghiệp vụ tại một cửa hàng.
+ *
+ * Gom ba khả năng vào một kiểu thay vì rải cờ boolean: mọi màn hình đọc cùng
+ * một nguồn và trình biên dịch bắt buộc xử lý đủ ba nhánh.
+ */
+sealed interface VisitGate {
+
+    /** Chưa ghé đâu cả — được phép check-in, chưa được thao tác nghiệp vụ. */
+    data object CanCheckIn : VisitGate
+
+    /** Đang ghé chính cửa hàng này — mở toàn bộ thao tác. */
+    data class CheckedInHere(val visit: ActiveVisit) : VisitGate
+
+    /** Đang ghé cửa hàng KHÁC — chặn tất cả, kể cả check-in. */
+    data class BlockedByOther(val visit: ActiveVisit) : VisitGate
+}
+
 interface VisitRepository {
 
     /** Ngưỡng lấy từ app_configs trên server, không hardcode trong app. */
@@ -34,8 +60,8 @@ interface VisitRepository {
      */
     suspend fun hasOpenVisit(): Boolean
 
-    /** Tên cửa hàng đang mở lượt ghé, dùng cho thông báo trên màn chính. */
-    fun observeBlockingCustomerName(): Flow<String?>
+    /** Lượt ghé đang mở trên toàn app, null nếu không có. */
+    fun observeActiveVisit(): Flow<ActiveVisit?>
 
     suspend fun checkIn(
         customerId: String,

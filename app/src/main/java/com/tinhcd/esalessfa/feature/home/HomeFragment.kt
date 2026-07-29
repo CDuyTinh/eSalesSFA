@@ -96,7 +96,8 @@ class HomeViewModel @Inject constructor(
      *
      * Hiện lý do thay vì để nút bấm không phản hồi — nhân viên sẽ tưởng app hỏng.
      */
-    val blockingCustomer: StateFlow<String?> = visitRepository.observeBlockingCustomerName()
+    val blockingCustomer: StateFlow<String?> = visitRepository.observeActiveVisit()
+        .map { it?.customerName }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val routeCount: StateFlow<Int> = customerRepository

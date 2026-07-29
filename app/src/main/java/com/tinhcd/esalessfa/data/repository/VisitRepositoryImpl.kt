@@ -6,6 +6,7 @@ import com.tinhcd.esalessfa.core.database.dao.ReasonCodeDao
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
+import com.tinhcd.esalessfa.domain.repository.ActiveVisit
 import com.tinhcd.esalessfa.domain.repository.OpenVisit
 import com.tinhcd.esalessfa.domain.repository.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
@@ -62,8 +63,10 @@ class VisitRepositoryImpl @Inject constructor(
 
     override suspend fun hasOpenVisit(): Boolean = visitDao.countOpenVisits() > 0
 
-    override fun observeBlockingCustomerName(): Flow<String?> =
-        visitDao.observeOpenVisitCustomerName()
+    override fun observeActiveVisit(): Flow<ActiveVisit?> =
+        visitDao.observeActiveVisit().map { row ->
+            row?.let { ActiveVisit(it.visitId, it.customerId, it.customerName, it.checkInAt) }
+        }
 
     override suspend fun checkIn(
         customerId: String,

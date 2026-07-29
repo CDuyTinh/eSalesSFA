@@ -58,6 +58,7 @@
     <string name="action_take_order">Đặt hàng</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển</string>
     <string name="step_need_checkin">Cần check-in tại cửa hàng trước khi kiểm kê, khảo sát hoặc đặt hàng.</string>
+    <string name="step_blocked_by_other">Đang check-in tại %1$s. Hãy check-out ở đó trước khi làm việc với khách hàng này.</string>
     <string name="value_empty">—</string>
 
     <!-- Take order -->
@@ -100,6 +101,7 @@
     <string name="checkin_permission_title">Cần quyền vị trí</string>
     <string name="checkin_permission_message">Ứng dụng cần quyền vị trí để xác thực bạn có mặt tại cửa hàng. Hãy cấp quyền trong Cài đặt.</string>
     <string name="checkin_open_settings">Mở Cài đặt</string>
+    <string name="checkin_blocked_by_other">Đang check-in tại %1$s. Hãy check-out ở đó trước.</string>
 
     <!-- Stock count -->
     <string name="stock_empty">Khách hàng này chưa có lịch sử mua nên chưa có mặt hàng để kiểm kê.</string>

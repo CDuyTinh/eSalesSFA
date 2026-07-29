@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,6 +51,7 @@ sealed interface CheckInEvent {
     data object CheckedOut : CheckInEvent
     data class Error(val message: String) : CheckInEvent
     data class TooEarly(val minutesLeft: Int) : CheckInEvent
+    data class BlockedByOther(val customerName: String) : CheckInEvent
 }
 
 @HiltViewModel
@@ -118,6 +120,16 @@ class CheckInViewModel @Inject constructor(
         if (state.needsReason && reasonCode.isNullOrBlank()) return
 
         viewModelScope.launch {
+            // Chặn phòng thủ: màn chi tiết đã khoá nút, nhưng nếu người dùng mở
+            // hai màn check-in liên tiếp trước khi trạng thái kịp cập nhật thì
+            // vẫn có thể lọt. Hai lượt ghé chồng nhau sẽ khiến không lượt nào có
+            // giờ ra đúng.
+            val active = visitRepository.observeActiveVisit().first()
+            if (active != null && active.customerId != customerId) {
+                _events.send(CheckInEvent.BlockedByOther(active.customerName))
+                return@launch
+            }
+
             _uiState.update { it.copy(isSaving = true) }
             runCatching {
                 visitRepository.checkIn(

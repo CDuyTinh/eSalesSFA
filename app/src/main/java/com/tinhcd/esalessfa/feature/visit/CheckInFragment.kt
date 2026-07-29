@@ -136,6 +136,15 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                                 Snackbar.LENGTH_LONG,
                             ).show()
 
+                            is CheckInEvent.BlockedByOther -> {
+                                Snackbar.make(
+                                    view,
+                                    getString(R.string.checkin_blocked_by_other, event.customerName),
+                                    Snackbar.LENGTH_LONG,
+                                ).show()
+                                findNavController().navigateUp()
+                            }
+
                             is CheckInEvent.Error ->
                                 Snackbar.make(view, event.message, Snackbar.LENGTH_LONG).show()
                         }

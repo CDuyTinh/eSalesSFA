@@ -13,6 +13,14 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntit
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
 import kotlinx.coroutines.flow.Flow
 
+/** Lượt ghé đang mở, kèm tên cửa hàng để hiển thị lý do bị chặn. */
+data class ActiveVisitRow(
+    val visitId: String,
+    val customerId: String,
+    val customerName: String,
+    val checkInAt: Long,
+)
+
 /** Đơn hàng kèm chi tiết và khuyến mãi — đọc cả cụm trong một lần truy vấn. */
 data class OrderWithDetails(
     @Embedded val order: OrderEntity,
@@ -68,16 +76,24 @@ interface VisitDao {
     @Query("SELECT COUNT(*) FROM visits WHERE checkOutAt IS NULL")
     suspend fun countOpenVisits(): Int
 
-    /** Tên cửa hàng đang mở lượt ghé, để báo cho user biết vướng ở đâu. */
+    /**
+     * Lượt ghé đang mở duy nhất trên toàn app, kèm tên cửa hàng.
+     *
+     * Trả về một bản ghi vì quy tắc nghiệp vụ chỉ cho phép ghé một cửa hàng tại
+     * một thời điểm; nếu có nhiều dòng thì dữ liệu đã sai và lấy dòng sớm nhất
+     * là lựa chọn an toàn.
+     */
     @Query(
         """
-        SELECT c.name FROM visits v
+        SELECT v.id AS visitId, v.customerId AS customerId,
+               c.name AS customerName, v.checkInAt AS checkInAt
+        FROM visits v
         INNER JOIN customers c ON c.id = v.customerId
         WHERE v.checkOutAt IS NULL
         ORDER BY v.checkInAt LIMIT 1
         """
     )
-    fun observeOpenVisitCustomerName(): Flow<String?>
+    fun observeActiveVisit(): Flow<ActiveVisitRow?>
 
     // ── outbox ──
     // Outbox là một QUERY chứ không phải bảng riêng. Ghi trạng thái ngay trên bản

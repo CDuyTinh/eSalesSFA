@@ -20,6 +20,7 @@ import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
 import com.tinhcd.esalessfa.domain.repository.SurveyTypeInfo
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
+import com.tinhcd.esalessfa.domain.repository.VisitGate
 import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
 import com.tinhcd.esalessfa.feature.order.ProductPickerFragment
 import com.tinhcd.esalessfa.feature.survey.SurveyFormViewModel
@@ -58,15 +59,22 @@ class CustomerDetailViewModel @Inject constructor(
     val surveyTypes: StateFlow<List<SurveyTypeInfo>> = _surveyTypes.asStateFlow()
 
     /**
-     * Đã check-in tại cửa hàng này chưa.
+     * Cổng nghiệp vụ tại cửa hàng này.
      *
-     * Quy tắc nghiệp vụ (Sales Step): kiểm kê, khảo sát và đặt hàng chỉ được
-     * thực hiện khi nhân viên đã có mặt tại điểm bán và bấm check-in. Không có
-     * ràng buộc này thì có thể ngồi nhà tạo đơn cho cả tuyến.
+     * Hai quy tắc Sales Step gộp lại: chỉ thao tác được khi đã check-in tại đúng
+     * cửa hàng này, và mỗi thời điểm chỉ ghé được MỘT cửa hàng. Đang dở ở nơi
+     * khác thì ngay cả nút check-in ở đây cũng phải khoá, nếu không nhân viên sẽ
+     * mở hai lượt ghé chồng nhau và không lượt nào có giờ ra đúng.
      */
-    val isCheckedIn: StateFlow<Boolean> = visitRepository.observeOpenVisit(customerId)
-        .map { it != null }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+    val gate: StateFlow<VisitGate> = visitRepository.observeActiveVisit()
+        .map { active ->
+            when {
+                active == null -> VisitGate.CanCheckIn
+                active.customerId == customerId -> VisitGate.CheckedInHere(active)
+                else -> VisitGate.BlockedByOther(active)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), VisitGate.CanCheckIn)
 
     init {
         viewModelScope.launch {
@@ -158,11 +166,35 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
         // để quay lại từ màn check-in là thấy đổi ngay.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isCheckedIn.collect { checkedIn ->
-                    binding.stockButton.isEnabled = checkedIn
-                    binding.surveyButton.isEnabled = checkedIn
-                    binding.orderButton.isEnabled = checkedIn
-                    binding.stepHint.visibility = if (checkedIn) View.GONE else View.VISIBLE
+                viewModel.gate.collect { gate ->
+                    val canAct = gate is VisitGate.CheckedInHere
+                    binding.stockButton.isEnabled = canAct
+                    binding.surveyButton.isEnabled = canAct
+                    binding.orderButton.isEnabled = canAct
+
+                    // Đang ghé nơi khác thì khoá luôn check-in. Nút này còn phụ
+                    // thuộc việc khách hàng có toạ độ hay không.
+                    val customer = viewModel.customer.value
+                    binding.checkInButton.isEnabled =
+                        gate !is VisitGate.BlockedByOther &&
+                            (customer?.canValidateCheckIn ?: false)
+
+                    when (gate) {
+                        is VisitGate.CheckedInHere -> binding.stepHint.visibility = View.GONE
+
+                        VisitGate.CanCheckIn -> {
+                            binding.stepHint.visibility = View.VISIBLE
+                            binding.stepHint.setText(R.string.step_need_checkin)
+                        }
+
+                        is VisitGate.BlockedByOther -> {
+                            binding.stepHint.visibility = View.VISIBLE
+                            binding.stepHint.text = getString(
+                                R.string.step_blocked_by_other,
+                                gate.visit.customerName,
+                            )
+                        }
+                    }
                 }
             }
         }
