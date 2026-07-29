@@ -1,0 +1,141 @@
+package com.tinhcd.esalessfa.core.database.dao
+
+import androidx.room.Dao
+import androidx.room.Embedded
+import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.Transaction
+import androidx.room.Upsert
+import com.tinhcd.esalessfa.core.database.SyncStatus
+import com.tinhcd.esalessfa.core.database.entity.transaction.OrderDetailEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
+import kotlinx.coroutines.flow.Flow
+
+/** Đơn hàng kèm chi tiết và khuyến mãi — đọc cả cụm trong một lần truy vấn. */
+data class OrderWithDetails(
+    @Embedded val order: OrderEntity,
+    @Relation(parentColumn = "id", entityColumn = "orderId")
+    val details: List<OrderDetailEntity>,
+    @Relation(parentColumn = "id", entityColumn = "orderId")
+    val promotions: List<OrderPromotionEntity>,
+)
+
+@Dao
+interface VisitDao {
+
+    @Upsert
+    suspend fun upsert(visit: VisitEntity)
+
+    @Query("SELECT * FROM visits WHERE id = :id")
+    suspend fun getById(id: String): VisitEntity?
+
+    /** Lượt ghé đang mở của khách hàng — dùng để biết đã check-in chưa. */
+    @Query(
+        """
+        SELECT * FROM visits
+        WHERE customerId = :customerId AND visitDate = :date AND checkOutAt IS NULL
+        LIMIT 1
+        """
+    )
+    suspend fun getOpenVisit(customerId: String, date: String): VisitEntity?
+
+    @Query("SELECT * FROM visits WHERE visitDate = :date ORDER BY checkInAt")
+    fun observeByDate(date: String): Flow<List<VisitEntity>>
+
+    // ── outbox ──
+    // Outbox là một QUERY chứ không phải bảng riêng. Ghi trạng thái ngay trên bản
+    // ghi nghiệp vụ giúp tránh dual-write (ghi hai nơi rồi lệch nhau).
+    @Query(
+        """
+        SELECT * FROM visits
+        WHERE syncStatus IN ('PENDING','FAILED') AND syncAttempts < :maxAttempts
+        ORDER BY clientCreatedAt LIMIT :limit
+        """
+    )
+    suspend fun getPending(limit: Int = 50, maxAttempts: Int = 5): List<VisitEntity>
+
+    @Query("UPDATE visits SET syncStatus = :status, sessionId = :sessionId WHERE id IN (:ids)")
+    suspend fun markStatus(ids: List<String>, status: SyncStatus, sessionId: String?)
+
+    @Query("UPDATE visits SET syncStatus = 'SYNCED', serverAckAt = :ackAt, lastError = NULL WHERE id IN (:ids)")
+    suspend fun markSynced(ids: List<String>, ackAt: Long)
+
+    @Query("UPDATE visits SET syncStatus = 'FAILED', syncAttempts = syncAttempts + 1, lastError = :error WHERE id = :id")
+    suspend fun markFailed(id: String, error: String)
+
+    @Query("SELECT COUNT(*) FROM visits WHERE syncStatus IN ('PENDING','FAILED')")
+    fun observePendingCount(): Flow<Int>
+}
+
+@Dao
+interface OrderDao {
+
+    @Transaction
+    @Query("SELECT * FROM orders WHERE id = :id")
+    suspend fun getWithDetails(id: String): OrderWithDetails?
+
+    @Transaction
+    @Query("SELECT * FROM orders WHERE orderDate = :date ORDER BY clientCreatedAt DESC")
+    fun observeByDate(date: String): Flow<List<OrderWithDetails>>
+
+    @Query("SELECT * FROM orders WHERE customerId = :customerId ORDER BY orderDate DESC LIMIT :limit")
+    fun observeHistory(customerId: String, limit: Int = 20): Flow<List<OrderEntity>>
+
+    /**
+     * Ghi cả cụm đơn hàng trong MỘT transaction.
+     *
+     * Nếu mất điện giữa chừng, hoặc lưu được toàn bộ, hoặc không gì cả — không có
+     * chuyện đơn tồn tại mà thiếu vài dòng chi tiết.
+     */
+    @Transaction
+    suspend fun saveOrder(
+        order: OrderEntity,
+        details: List<OrderDetailEntity>,
+        promotions: List<OrderPromotionEntity>,
+    ) {
+        deleteDetails(order.id)
+        deletePromotions(order.id)
+        upsertOrder(order)
+        upsertDetails(details)
+        upsertPromotions(promotions)
+    }
+
+    @Upsert suspend fun upsertOrder(order: OrderEntity)
+    @Upsert suspend fun upsertDetails(items: List<OrderDetailEntity>)
+    @Upsert suspend fun upsertPromotions(items: List<OrderPromotionEntity>)
+
+    @Query("DELETE FROM order_details WHERE orderId = :orderId")
+    suspend fun deleteDetails(orderId: String)
+
+    @Query("DELETE FROM order_promotions WHERE orderId = :orderId")
+    suspend fun deletePromotions(orderId: String)
+
+    // ── outbox ──
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM orders
+        WHERE syncStatus IN ('PENDING','FAILED') AND syncAttempts < :maxAttempts
+        ORDER BY clientCreatedAt LIMIT :limit
+        """
+    )
+    suspend fun getPending(limit: Int = 50, maxAttempts: Int = 5): List<OrderWithDetails>
+
+    @Query("UPDATE orders SET syncStatus = :status, sessionId = :sessionId WHERE id IN (:ids)")
+    suspend fun markStatus(ids: List<String>, status: SyncStatus, sessionId: String?)
+
+    @Query("UPDATE orders SET syncStatus = 'SYNCED', serverAckAt = :ackAt, lastError = NULL WHERE id IN (:ids)")
+    suspend fun markSynced(ids: List<String>, ackAt: Long)
+
+    @Query("UPDATE orders SET syncStatus = 'FAILED', syncAttempts = syncAttempts + 1, lastError = :error WHERE id = :id")
+    suspend fun markFailed(id: String, error: String)
+
+    @Query("SELECT COUNT(*) FROM orders WHERE syncStatus IN ('PENDING','FAILED')")
+    fun observePendingCount(): Flow<Int>
+
+    /** Số thứ tự đơn trong ngày, để sinh orderNo. */
+    @Query("SELECT COUNT(*) FROM orders WHERE salespersonId = :salespersonId AND orderDate = :date")
+    suspend fun countByDate(salespersonId: String, date: String): Int
+}
