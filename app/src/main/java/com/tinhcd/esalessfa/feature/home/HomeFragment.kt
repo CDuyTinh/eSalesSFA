@@ -2,6 +2,7 @@ package com.tinhcd.esalessfa.feature.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -9,20 +10,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.database.dao.CustomerDao
-import com.tinhcd.esalessfa.core.database.dao.ProductDao
-import com.tinhcd.esalessfa.core.database.dao.PromotionDao
-import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.sync.SyncManager
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
+import com.tinhcd.esalessfa.domain.repository.CatalogRepository
+import com.tinhcd.esalessfa.domain.repository.CustomerRepository
+import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
+import com.tinhcd.esalessfa.feature.customer.CustomerListMode
+import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -40,57 +46,52 @@ data class HomeUiState(
     val pendingCount: Int = 0,
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val customerDao: CustomerDao,
-    private val productDao: ProductDao,
-    private val promotionDao: PromotionDao,
-    private val salespersonDao: SalespersonDao,
-    private val syncRepository: SyncRepository,
+    customerRepository: CustomerRepository,
+    catalogRepository: CatalogRepository,
+    salespersonRepository: SalespersonRepository,
+    syncRepository: SyncRepository,
     private val syncManager: SyncManager,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    // combine chỉ có overload giữ nguyên kiểu tới 5 luồng; nhiều hơn sẽ rơi vào
+    // bản vararg trả về Array<Any?> và mất hết type safety. Gộp theo hai nhóm.
+    private val counts = combine(
+        customerRepository.observeCustomerCount(),
+        catalogRepository.observeProductCount(),
+        catalogRepository.observeActivePromotionCount(),
+    ) { customers, products, promotions -> Triple(customers, products, promotions) }
 
-    init {
-        refreshCounts()
+    private val syncInfo = combine(
+        syncRepository.observeLastSyncedAt(),
+        syncRepository.observePendingCount(),
+    ) { lastSync, pending -> lastSync to pending }
 
-        viewModelScope.launch {
-            syncRepository.observeLastSyncedAt().collect { at ->
-                _uiState.update { it.copy(lastSyncedAt = at) }
-            }
-        }
-        viewModelScope.launch {
-            syncRepository.observePendingCount().collect { count ->
-                _uiState.update { it.copy(pendingCount = count) }
-            }
-        }
-    }
+    /**
+     * Mỗi nguồn là Flow từ Room nên khi sync ghi dữ liệu mới, màn hình tự cập
+     * nhật — không cần gọi refresh thủ công sau khi đồng bộ xong.
+     */
+    val uiState: StateFlow<HomeUiState> = combine(
+        salespersonRepository.observeCurrent().map { it?.fullName.orEmpty() },
+        counts,
+        syncInfo,
+    ) { name, (customers, products, promotions), (lastSync, pending) ->
+        HomeUiState(
+            salespersonName = name,
+            customerCount = customers,
+            productCount = products,
+            promotionCount = promotions,
+            lastSyncedAt = lastSync,
+            pendingCount = pending,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
 
-    fun refreshCounts() {
-        viewModelScope.launch {
-            val salesperson = salespersonDao.getCurrent()
-            val dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-
-            _uiState.update {
-                it.copy(
-                    salespersonName = salesperson?.fullName.orEmpty(),
-                    customerCount = customerDao.count(),
-                    productCount = productDao.count(),
-                    promotionCount = promotionDao.count(),
-                )
-            }
-
-            // Tuyến hôm nay — bằng chứng rằng quan hệ route -> route_detail ->
-            // customer đã về đủ, không chỉ riêng lẻ từng bảng.
-            salesperson?.let { sp ->
-                customerDao.observeRouteCustomers(sp.id, dayOfWeek).collect { list ->
-                    _uiState.update { it.copy(routeCustomerCount = list.size) }
-                }
-            }
-        }
-    }
+    val routeCount: StateFlow<Int> = customerRepository
+        .routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query = "")
+        .map { it.size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     fun syncAgain() = syncManager.startDownload(force = true)
 }
@@ -106,22 +107,35 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val timeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
         binding.syncButton.setOnClickListener { viewModel.syncAgain() }
+        binding.routeButton.setOnClickListener { openCustomerList(CustomerListMode.ROUTE_TODAY) }
+        binding.allCustomersButton.setOnClickListener { openCustomerList(CustomerListMode.ALL) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.greetingText.text =
-                        getString(R.string.home_greeting, state.salespersonName)
-                    binding.customerCount.text = state.customerCount.toString()
-                    binding.productCount.text = state.productCount.toString()
-                    binding.promotionCount.text = state.promotionCount.toString()
-                    binding.routeCount.text = state.routeCustomerCount.toString()
-                    binding.pendingCount.text = state.pendingCount.toString()
-                    binding.lastSyncText.text = state.lastSyncedAt?.let {
-                        getString(R.string.home_last_sync, timeFormat.format(Date(it)))
-                    } ?: getString(R.string.home_never_synced)
+                launch {
+                    viewModel.uiState.collect { state ->
+                        binding.greetingText.text =
+                            getString(R.string.home_greeting, state.salespersonName)
+                        binding.customerCount.text = state.customerCount.toString()
+                        binding.productCount.text = state.productCount.toString()
+                        binding.promotionCount.text = state.promotionCount.toString()
+                        binding.pendingCount.text = state.pendingCount.toString()
+                        binding.lastSyncText.text = state.lastSyncedAt?.let {
+                            getString(R.string.home_last_sync, timeFormat.format(Date(it)))
+                        } ?: getString(R.string.home_never_synced)
+                    }
+                }
+                launch {
+                    viewModel.routeCount.collect { binding.routeCount.text = it.toString() }
                 }
             }
         }
+    }
+
+    private fun openCustomerList(mode: CustomerListMode) {
+        findNavController().navigate(
+            R.id.action_home_to_customerList,
+            bundleOf(CustomerListViewModel.ARG_MODE to mode.name),
+        )
     }
 }

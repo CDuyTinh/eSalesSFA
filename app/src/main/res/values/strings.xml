@@ -26,4 +26,35 @@
     <string name="home_route_today">Tuyến hôm nay</string>
     <string name="home_pending">Chờ đồng bộ lên</string>
     <string name="home_sync_again">Đồng bộ lại</string>
+    <string name="home_view_route">Xem tuyến hôm nay</string>
+    <string name="home_view_all_customers">Tất cả khách hàng</string>
+
+    <!-- Customer list -->
+    <string name="customer_all">Tất cả khách hàng</string>
+    <string name="customer_search_hint">Tìm theo tên hoặc mã</string>
+    <string name="customer_empty">Không tìm thấy khách hàng nào</string>
+    <string name="customer_count_format">%1$d khách hàng</string>
+    <string name="customer_count_loaded">Đã tải %1$d khách hàng</string>
+    <string name="visit_not_yet">Chưa ghé</string>
+    <string name="visit_in_progress">Đang ghé</string>
+    <string name="visit_done">Đã ghé</string>
+
+    <!-- Customer detail -->
+    <string name="customer_info">Thông tin</string>
+    <string name="customer_code">Mã khách hàng</string>
+    <string name="customer_address">Địa chỉ</string>
+    <string name="customer_phone">Điện thoại</string>
+    <string name="customer_location">Toạ độ</string>
+    <string name="customer_coords">%1$.5f, %2$.5f</string>
+    <string name="customer_no_coords">Chưa có toạ độ</string>
+    <string name="customer_credit">Công nợ</string>
+    <string name="customer_credit_limit">Hạn mức</string>
+    <string name="customer_debt">Dư nợ</string>
+    <string name="customer_available">Còn được mua</string>
+    <string name="customer_actions">Thao tác</string>
+    <string name="action_check_in">Check-in</string>
+    <string name="action_stock_count">Kiểm kê tồn kho</string>
+    <string name="action_take_order">Đặt hàng</string>
+    <string name="feature_coming_soon">Tính năng đang được phát triển</string>
+    <string name="value_empty">—</string>
 </resources>

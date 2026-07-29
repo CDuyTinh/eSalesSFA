@@ -56,5 +56,32 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.tinhcd.esalessfa.feature.home.HomeFragment"
-        android:label="Trang chủ" />
+        android:label="Trang chủ">
+        <!-- Không popUpTo: từ danh sách bấm Back phải quay về Home. -->
+        <action
+            android:id="@+id/action_home_to_customerList"
+            app:destination="@id/customerListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerListFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.CustomerListFragment"
+        android:label="Khách hàng">
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="ROUTE_TODAY" />
+        <action
+            android:id="@+id/action_customerList_to_customerDetail"
+            app:destination="@id/customerDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerDetailFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.CustomerDetailFragment"
+        android:label="Chi tiết khách hàng">
+        <argument
+            android:name="customerId"
+            app:argType="string" />
+    </fragment>
 </navigation>

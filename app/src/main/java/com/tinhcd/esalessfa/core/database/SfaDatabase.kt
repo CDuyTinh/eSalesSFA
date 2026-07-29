@@ -4,7 +4,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.tinhcd.esalessfa.core.database.dao.AppConfigDao
+import com.tinhcd.esalessfa.core.database.dao.CatalogQueryDao
 import com.tinhcd.esalessfa.core.database.dao.CustomerDao
+import com.tinhcd.esalessfa.core.database.dao.CustomerQueryDao
 import com.tinhcd.esalessfa.core.database.dao.MasterWriteDao
 import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
@@ -87,6 +89,8 @@ abstract class SfaDatabase : RoomDatabase() {
     abstract fun masterWriteDao(): MasterWriteDao
     abstract fun appConfigDao(): AppConfigDao
     abstract fun customerDao(): CustomerDao
+    abstract fun customerQueryDao(): CustomerQueryDao
+    abstract fun catalogQueryDao(): CatalogQueryDao
     abstract fun productDao(): ProductDao
     abstract fun promotionDao(): PromotionDao
     abstract fun salespersonDao(): SalespersonDao

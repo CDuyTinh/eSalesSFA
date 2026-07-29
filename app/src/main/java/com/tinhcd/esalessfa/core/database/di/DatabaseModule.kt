@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.tinhcd.esalessfa.core.database.SfaDatabase
 import com.tinhcd.esalessfa.core.database.dao.AppConfigDao
+import com.tinhcd.esalessfa.core.database.dao.CatalogQueryDao
 import com.tinhcd.esalessfa.core.database.dao.CustomerDao
+import com.tinhcd.esalessfa.core.database.dao.CustomerQueryDao
 import com.tinhcd.esalessfa.core.database.dao.MasterWriteDao
 import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
@@ -37,6 +39,8 @@ object DatabaseModule {
     @Provides fun provideMasterWriteDao(db: SfaDatabase): MasterWriteDao = db.masterWriteDao()
     @Provides fun provideAppConfigDao(db: SfaDatabase): AppConfigDao = db.appConfigDao()
     @Provides fun provideCustomerDao(db: SfaDatabase): CustomerDao = db.customerDao()
+    @Provides fun provideCustomerQueryDao(db: SfaDatabase): CustomerQueryDao = db.customerQueryDao()
+    @Provides fun provideCatalogQueryDao(db: SfaDatabase): CatalogQueryDao = db.catalogQueryDao()
     @Provides fun provideProductDao(db: SfaDatabase): ProductDao = db.productDao()
     @Provides fun providePromotionDao(db: SfaDatabase): PromotionDao = db.promotionDao()
     @Provides fun provideVisitDao(db: SfaDatabase): VisitDao = db.visitDao()
