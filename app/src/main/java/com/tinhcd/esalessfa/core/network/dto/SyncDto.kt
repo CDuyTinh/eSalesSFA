@@ -48,6 +48,15 @@ data class SyncUploadRequest(
     @SerialName("visits") val visits: List<JsonElement> = emptyList(),
     @SerialName("orders") val orders: List<OrderUploadDto> = emptyList(),
     @SerialName("stock_counts") val stockCounts: List<StockCountUploadDto> = emptyList(),
+    @SerialName("surveys") val surveys: List<SurveyUploadDto> = emptyList(),
+)
+
+/** Bài khảo sát gửi kèm câu trả lời và ảnh minh chứng đã upload xong. */
+@Serializable
+data class SurveyUploadDto(
+    @SerialName("header") val header: JsonElement,
+    @SerialName("answers") val answers: List<JsonElement>,
+    @SerialName("photos") val photos: List<JsonElement> = emptyList(),
 )
 
 /** Phiếu kiểm kê gửi kèm các dòng đã đếm. */

@@ -136,4 +136,30 @@
     <string name="report_export">Xuất CSV</string>
     <string name="report_share">Chia sẻ báo cáo</string>
     <string name="report_export_failed">Không xuất được file báo cáo</string>
+
+    <!-- Survey -->
+    <string name="survey_title">Khảo sát trưng bày</string>
+    <string name="action_survey">Khảo sát trưng bày</string>
+    <string name="survey_yes">Có</string>
+    <string name="survey_no">Không</string>
+    <string name="survey_take_photo">Chụp ảnh</string>
+    <string name="survey_photo_desc">Ảnh minh chứng</string>
+    <string name="survey_photo_pending">Chờ tải lên</string>
+    <string name="survey_photo_remove">✕</string>
+    <string name="survey_score">Điểm: %1$d/%2$d (%3$d%%)</string>
+    <string name="survey_passed">ĐẠT</string>
+    <string name="survey_submit">Hoàn tất khảo sát</string>
+    <string name="survey_submitted">Đã lưu khảo sát, tổng %1$d điểm</string>
+    <string name="survey_invalid">Còn %1$d câu chưa đạt yêu cầu</string>
+    <string name="survey_issue_missing">Chưa trả lời</string>
+    <string name="survey_issue_photos">Cần ít nhất %1$d ảnh, hiện có %2$d</string>
+    <string name="survey_pick_type">Chọn loại khảo sát</string>
+    <string name="survey_no_type">Chưa có loại khảo sát nào. Bấm Đồng bộ lại ở màn chính.</string>
+
+    <!-- Camera -->
+    <string name="camera_close">Đóng</string>
+    <string name="camera_shutter">Chụp</string>
+    <string name="camera_permission_denied">Cần quyền camera để chụp ảnh minh chứng</string>
+    <string name="camera_start_failed">Không khởi động được camera</string>
+    <string name="camera_capture_failed">Chụp ảnh thất bại: %1$s</string>
 </resources>

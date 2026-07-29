@@ -15,8 +15,12 @@ import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentCustomerDetailBinding
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
+import com.tinhcd.esalessfa.domain.repository.SurveyRepository
+import com.tinhcd.esalessfa.domain.repository.SurveyTypeInfo
 import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
 import com.tinhcd.esalessfa.feature.order.ProductPickerFragment
+import com.tinhcd.esalessfa.feature.survey.SurveyFormViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tinhcd.esalessfa.feature.inventory.StockCountViewModel
 import com.tinhcd.esalessfa.feature.visit.CheckInViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CustomerDetailViewModel @Inject constructor(
     private val repository: CustomerRepository,
+    private val surveyRepository: SurveyRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,8 +47,14 @@ class CustomerDetailViewModel @Inject constructor(
     private val _customer = MutableStateFlow<Customer?>(null)
     val customer: StateFlow<Customer?> = _customer.asStateFlow()
 
+    private val _surveyTypes = MutableStateFlow<List<SurveyTypeInfo>>(emptyList())
+    val surveyTypes: StateFlow<List<SurveyTypeInfo>> = _surveyTypes.asStateFlow()
+
     init {
-        viewModelScope.launch { _customer.value = repository.getById(customerId) }
+        viewModelScope.launch {
+            _customer.value = repository.getById(customerId)
+            _surveyTypes.value = surveyRepository.types()
+        }
     }
 }
 
@@ -70,6 +81,23 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
                 R.id.action_customerDetail_to_stockCount,
                 bundleOf(StockCountViewModel.ARG_CUSTOMER_ID to customer.id),
             )
+        }
+
+        binding.surveyButton.setOnClickListener {
+            val customer = viewModel.customer.value ?: return@setOnClickListener
+            val types = viewModel.surveyTypes.value
+
+            when (types.size) {
+                0 -> Snackbar.make(view, R.string.survey_no_type, Snackbar.LENGTH_SHORT).show()
+                // Một loại duy nhất thì vào thẳng, đừng bắt chọn giữa một lựa chọn.
+                1 -> openSurvey(customer.id, types.first().id)
+                else -> MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.survey_pick_type)
+                    .setItems(types.map { it.name }.toTypedArray()) { _, index ->
+                        openSurvey(customer.id, types[index].id)
+                    }
+                    .show()
+            }
         }
 
         binding.checkInButton.setOnClickListener {
@@ -107,6 +135,16 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
             // Không có toạ độ thì không xác thực được bán kính check-in.
             binding.checkInButton.isEnabled = customer.canValidateCheckIn
         }
+    }
+
+    private fun openSurvey(customerId: String, surveyTypeId: String) {
+        findNavController().navigate(
+            R.id.action_customerDetail_to_survey,
+            bundleOf(
+                SurveyFormViewModel.ARG_CUSTOMER_ID to customerId,
+                SurveyFormViewModel.ARG_SURVEY_TYPE_ID to surveyTypeId,
+            ),
+        )
     }
 
     companion object {

@@ -144,7 +144,7 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [x] GPS check-in / check-out — xác thực bán kính, chống mock location
 - [x] Take Order — giỏ hàng, đa đơn vị tính, khuyến mãi tính realtime
 - [x] Kiểm kê tồn kho — lưới nhập liệu, gợi ý đặt hàng
-- [ ] Khảo sát trưng bày + CameraX
+- [x] Khảo sát trưng bày + CameraX — form động, nén ảnh, watermark GPS
 - [x] Dashboard KPI + Báo cáo đơn hàng — biểu đồ tự vẽ, xuất CSV
 - [ ] Chuyển UI sang Jetpack Compose
 

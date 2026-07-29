@@ -114,3 +114,40 @@ data class StockCountDetailUploadBody(
     @SerialName("prev_base_qty") val prevBaseQty: Double,
     @SerialName("suggest_qty") val suggestQty: Double,
 )
+
+@Serializable
+data class SurveyUploadBody(
+    val id: String,
+    @SerialName("survey_type_id") val surveyTypeId: String,
+    @SerialName("customer_id") val customerId: String,
+    @SerialName("visit_id") val visitId: String? = null,
+    @SerialName("survey_date") val surveyDate: String,
+    @SerialName("total_score") val totalScore: Double,
+    @SerialName("is_passed") val isPassed: Boolean,
+    val note: String? = null,
+    @SerialName("client_created_at") val clientCreatedAt: String,
+)
+
+@Serializable
+data class SurveyAnswerUploadBody(
+    val id: String,
+    @SerialName("survey_id") val surveyId: String,
+    @SerialName("question_id") val questionId: String,
+    @SerialName("option_id") val optionId: String? = null,
+    @SerialName("answer_text") val answerText: String? = null,
+    @SerialName("answer_value") val answerValue: Double? = null,
+    @SerialName("answer_bool") val answerBool: Boolean? = null,
+    val score: Double,
+)
+
+@Serializable
+data class SurveyPhotoUploadBody(
+    val id: String,
+    @SerialName("survey_id") val surveyId: String,
+    @SerialName("question_id") val questionId: String? = null,
+    @SerialName("storage_path") val storagePath: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    @SerialName("taken_at") val takenAt: String,
+    @SerialName("file_size") val fileSize: Int,
+)

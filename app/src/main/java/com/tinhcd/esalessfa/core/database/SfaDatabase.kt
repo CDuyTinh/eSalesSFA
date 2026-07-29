@@ -16,6 +16,8 @@ import com.tinhcd.esalessfa.core.database.dao.ReportDao
 import com.tinhcd.esalessfa.core.database.dao.ReasonCodeDao
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.StockCountDao
+import com.tinhcd.esalessfa.core.database.dao.SurveyConfigDao
+import com.tinhcd.esalessfa.core.database.dao.SurveyResultDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -118,6 +120,8 @@ abstract class SfaDatabase : RoomDatabase() {
     abstract fun reasonCodeDao(): ReasonCodeDao
     abstract fun salespersonDao(): SalespersonDao
     abstract fun stockCountDao(): StockCountDao
+    abstract fun surveyConfigDao(): SurveyConfigDao
+    abstract fun surveyResultDao(): SurveyResultDao
     abstract fun visitDao(): VisitDao
     abstract fun orderDao(): OrderDao
     abstract fun syncStateDao(): SyncStateDao

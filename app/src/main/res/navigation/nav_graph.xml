@@ -95,6 +95,9 @@
         <action
             android:id="@+id/action_customerDetail_to_stockCount"
             app:destination="@id/stockCountFragment" />
+        <action
+            android:id="@+id/action_customerDetail_to_survey"
+            app:destination="@id/surveyFormFragment" />
     </fragment>
 
     <fragment
@@ -136,6 +139,22 @@
         android:id="@+id/orderReportFragment"
         android:name="com.tinhcd.esalessfa.feature.report.OrderReportFragment"
         android:label="Báo cáo đơn hàng" />
+
+    <fragment
+        android:id="@+id/surveyFormFragment"
+        android:name="com.tinhcd.esalessfa.feature.survey.SurveyFormFragment"
+        android:label="Khảo sát">
+        <argument android:name="customerId" app:argType="string" />
+        <argument android:name="surveyTypeId" app:argType="string" />
+        <action
+            android:id="@+id/action_surveyForm_to_camera"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.tinhcd.esalessfa.feature.survey.CameraFragment"
+        android:label="Chụp ảnh" />
 
     <fragment
         android:id="@+id/checkInFragment"

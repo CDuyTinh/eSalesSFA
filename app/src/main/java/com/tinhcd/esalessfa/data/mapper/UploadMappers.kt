@@ -5,12 +5,18 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyAnswerEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyPhotoEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
 import com.tinhcd.esalessfa.core.network.dto.OrderDetailUploadBody
 import com.tinhcd.esalessfa.core.network.dto.OrderPromotionUploadBody
 import com.tinhcd.esalessfa.core.network.dto.OrderUploadBody
 import com.tinhcd.esalessfa.core.network.dto.StockCountDetailUploadBody
 import com.tinhcd.esalessfa.core.network.dto.StockCountUploadBody
+import com.tinhcd.esalessfa.core.network.dto.SurveyAnswerUploadBody
+import com.tinhcd.esalessfa.core.network.dto.SurveyPhotoUploadBody
+import com.tinhcd.esalessfa.core.network.dto.SurveyUploadBody
 import com.tinhcd.esalessfa.core.network.dto.VisitUploadBody
 import java.time.Instant
 
@@ -113,4 +119,42 @@ fun StockCountDetailEntity.toUploadBody() = StockCountDetailUploadBody(
     baseQty = baseQty,
     prevBaseQty = prevBaseQty,
     suggestQty = suggestQty,
+)
+
+fun SurveyEntity.toUploadBody() = SurveyUploadBody(
+    id = id,
+    surveyTypeId = surveyTypeId,
+    customerId = customerId,
+    visitId = visitId,
+    surveyDate = surveyDate,
+    totalScore = totalScore,
+    isPassed = isPassed,
+    note = note,
+    clientCreatedAt = clientCreatedAt.toIso(),
+)
+
+fun SurveyAnswerEntity.toUploadBody() = SurveyAnswerUploadBody(
+    id = id,
+    surveyId = surveyId,
+    questionId = questionId,
+    optionId = optionId,
+    answerText = answerText,
+    answerValue = answerValue,
+    answerBool = answerBool,
+    score = score,
+)
+
+/**
+ * Chỉ gọi được khi storagePath đã có giá trị — SurveyResultDao.getPending() lọc
+ * sẵn những bài còn ảnh chưa upload xong.
+ */
+fun SurveyPhotoEntity.toUploadBody() = SurveyPhotoUploadBody(
+    id = id,
+    surveyId = surveyId,
+    questionId = questionId,
+    storagePath = requireNotNull(storagePath) { "Ảnh $id chưa upload xong" },
+    latitude = latitude,
+    longitude = longitude,
+    takenAt = takenAt.toIso(),
+    fileSize = fileSize,
 )

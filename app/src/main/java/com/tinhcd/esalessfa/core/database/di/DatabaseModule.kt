@@ -17,6 +17,8 @@ import com.tinhcd.esalessfa.core.database.dao.ReportDao
 import com.tinhcd.esalessfa.core.database.dao.ReasonCodeDao
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.StockCountDao
+import com.tinhcd.esalessfa.core.database.dao.SurveyConfigDao
+import com.tinhcd.esalessfa.core.database.dao.SurveyResultDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -54,6 +56,8 @@ object DatabaseModule {
     @Provides fun provideOrderDao(db: SfaDatabase): OrderDao = db.orderDao()
     @Provides fun provideSalespersonDao(db: SfaDatabase): SalespersonDao = db.salespersonDao()
     @Provides fun provideStockCountDao(db: SfaDatabase): StockCountDao = db.stockCountDao()
+    @Provides fun provideSurveyConfigDao(db: SfaDatabase): SurveyConfigDao = db.surveyConfigDao()
+    @Provides fun provideSurveyResultDao(db: SfaDatabase): SurveyResultDao = db.surveyResultDao()
     @Provides fun provideSyncStateDao(db: SfaDatabase): SyncStateDao = db.syncStateDao()
     @Provides fun providePendingUploadDao(db: SfaDatabase): PendingUploadDao = db.pendingUploadDao()
     @Provides fun provideSyncErrorDao(db: SfaDatabase): SyncErrorDao = db.syncErrorDao()

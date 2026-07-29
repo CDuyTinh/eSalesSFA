@@ -36,6 +36,7 @@ okhttp = "5.4.0"
 kotlinxSerialization = "1.11.0"
 coil = "3.5.0"
 camerax = "1.6.1"
+exifinterface = "1.4.1"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.2.0"
 
@@ -108,6 +109,7 @@ camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = 
 camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 

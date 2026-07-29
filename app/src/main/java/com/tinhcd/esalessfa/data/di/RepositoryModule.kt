@@ -9,6 +9,7 @@ import com.tinhcd.esalessfa.data.repository.PromotionRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SalespersonRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.ReportRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.StockCountRepositoryImpl
+import com.tinhcd.esalessfa.data.repository.SurveyRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SyncRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.VisitRepositoryImpl
 import com.tinhcd.esalessfa.domain.repository.AuthRepository
@@ -20,6 +21,7 @@ import com.tinhcd.esalessfa.domain.repository.PromotionRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
 import com.tinhcd.esalessfa.domain.repository.StockCountRepository
+import com.tinhcd.esalessfa.domain.repository.SurveyRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import dagger.Binds
@@ -69,4 +71,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindReportRepository(impl: ReportRepositoryImpl): ReportRepository
+
+    @Binds @Singleton
+    abstract fun bindSurveyRepository(impl: SurveyRepositoryImpl): SurveyRepository
 }
