@@ -15,6 +15,12 @@ import type { Caller } from '../_shared/auth.ts'
  * Danh sách này là whitelist: client gửi tên bảng lạ sẽ bị bỏ qua, không thể
  * dùng endpoint để dò bảng khác trong database.
  */
+/**
+ * Trần cứng của PostgREST trên Supabase (`db-max-rows`). Không thể vượt bằng
+ * `.limit()`; muốn tải hết thì client phải lặp cho tới khi `has_more = false`.
+ */
+const MAX_ROWS_PER_REQUEST = 1000
+
 type Scope = 'ALL' | 'BY_SALESPERSON' | 'BY_ROUTE'
 
 const SYNC_TABLES: Record<string, Scope> = {
@@ -57,7 +63,12 @@ Deno.serve(async (req: Request) => {
       throw new HttpError(400, 'MISSING_SESSION', 'Thiếu session_id')
     }
 
-    const pageSize = Math.min(body.page_size ?? 1000, 5000)
+    // PostgREST của Supabase chặn cứng 1000 dòng mỗi request (db-max-rows), bất
+    // kể .limit() đặt bao nhiêu. Nếu để pageSize > 1000 thì phép kiểm tra
+    // `rows.length >= pageSize` bên dưới không bao giờ đúng, và server sẽ báo
+    // has_more = false trong khi dữ liệu đã bị cắt cụt — client mất dữ liệu mà
+    // không hề biết. Cắt trần đúng bằng giới hạn thật của PostgREST.
+    const pageSize = Math.min(body.page_size ?? MAX_ROWS_PER_REQUEST, MAX_ROWS_PER_REQUEST)
     const versions = body.versions ?? {}
 
     await db.from('sync_sessions').upsert({
@@ -83,6 +94,8 @@ Deno.serve(async (req: Request) => {
           (max: number, r: Record<string, unknown>) => Math.max(max, Number(r.row_version)),
           since,
         )
+        // Lấy đủ một trang nghĩa là rất có thể còn nữa -> client gọi lại với
+        // max_version mới. Cùng lắm thừa một lượt gọi trả về rỗng.
         if (rows.length >= pageSize) hasMore = true
 
         tables[table] = {

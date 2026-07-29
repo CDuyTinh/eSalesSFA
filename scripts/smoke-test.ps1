@@ -69,42 +69,66 @@ $headers = @{
     Authorization = "Bearer $token"
 }
 
-# ── 2. Sync lần đầu ─────────────────────────────────────────────────────────
-Write-Host "`n[2/4] sync-download lan dau (versions rong = tai toan bo)..." -ForegroundColor Cyan
-$body1 = @{
-    session_id = [guid]::NewGuid().ToString()
-    versions   = @{}
-    page_size  = 5000
-} | ConvertTo-Json
+# ── 2. Sync đầy đủ ──────────────────────────────────────────────────────────
+# PostgREST chặn 1000 dòng mỗi request, nên phải LẶP tới khi has_more = false —
+# đúng như SyncWorker trên Android sẽ làm.
+Write-Host "`n[2/4] sync-download - lap toi khi tai het..." -ForegroundColor Cyan
 
-try {
-    $r1 = Invoke-RestMethod -Method Post -Uri "$base/functions/v1/sync-download" `
-        -Headers $headers -ContentType 'application/json' -Body $body1
-} catch {
-    Write-Host "  THAT BAI: $(Get-ErrorBody $_)" -ForegroundColor Red
-    Write-Host "  -> Neu la 'NO_SALESPERSON': chua noi user voi nhan vien. Chay trong SQL Editor:" -ForegroundColor Yellow
-    Write-Host "     UPDATE salespersons SET user_id = (SELECT id FROM auth.users" -ForegroundColor Yellow
-    Write-Host "     WHERE email = '$Email') WHERE code = 'NV001';" -ForegroundColor Yellow
-    exit 1
-}
+$versions  = @{}
+$rowCounts = @{}
+$page      = 0
 
-$versions = @{}
+do {
+    $page++
+    $body = @{
+        session_id = [guid]::NewGuid().ToString()
+        versions   = $versions
+        page_size  = 1000
+    } | ConvertTo-Json
+
+    try {
+        $r = Invoke-RestMethod -Method Post -Uri "$base/functions/v1/sync-download" `
+            -Headers $headers -ContentType 'application/json' -Body $body
+    } catch {
+        Write-Host "  THAT BAI: $(Get-ErrorBody $_)" -ForegroundColor Red
+        Write-Host "  -> Neu la 'NO_SALESPERSON': chua noi user voi nhan vien. Chay trong SQL Editor:" -ForegroundColor Yellow
+        Write-Host "     UPDATE salespersons SET user_id = (SELECT id FROM auth.users" -ForegroundColor Yellow
+        Write-Host "     WHERE email = '$Email') WHERE code = 'NV001';" -ForegroundColor Yellow
+        exit 1
+    }
+
+    $pageRows = 0
+    foreach ($p in $r.tables.PSObject.Properties) {
+        $n = $p.Value.rows.Count
+        $pageRows += $n
+        $rowCounts[$p.Name] = ($rowCounts[$p.Name] | ForEach-Object { $_ }) + $n
+        $versions[$p.Name]  = $p.Value.max_version
+    }
+    "    trang {0}: {1,6} dong   (has_more = {2})" -f $page, $pageRows, $r.has_more | Write-Host
+
+    if ($page -ge 20) {
+        Write-Host "  DUNG - qua 20 trang, nghi ngo vong lap vo han." -ForegroundColor Red
+        exit 1
+    }
+} while ($r.has_more)
+
 $total = 0
-Write-Host "  Bang nhan duoc:" -ForegroundColor Green
-foreach ($p in $r1.tables.PSObject.Properties | Sort-Object Name) {
-    $n = $p.Value.rows.Count
-    $total += $n
-    $versions[$p.Name] = $p.Value.max_version
-    "    {0,-22} {1,6} dong   (max_version {2})" -f $p.Name, $n, $p.Value.max_version | Write-Host
+Write-Host "  Tong hop theo bang:" -ForegroundColor Green
+foreach ($k in $rowCounts.Keys | Sort-Object) {
+    $total += $rowCounts[$k]
+    "    {0,-22} {1,6} dong" -f $k, $rowCounts[$k] | Write-Host
 }
-Write-Host "  Tong: $total dong / $($versions.Count) bang" -ForegroundColor Green
+Write-Host "  Tong: $total dong / $($rowCounts.Count) bang / $page lan goi" -ForegroundColor Green
 
-# ── 3. Sync lần hai — phải rỗng ─────────────────────────────────────────────
-Write-Host "`n[3/4] sync-download lan hai (gui lai version vua nhan)..." -ForegroundColor Cyan
+# ── 3. Gọi lại sau khi đã tải hết — phải rỗng ───────────────────────────────
+# Đây mới là phép thử thật cho delta sync: đã tải hết rồi thì lần sau không
+# được trả lại gì. Nếu vẫn có dữ liệu, nhân viên sẽ tải lại toàn bộ danh mục
+# mỗi lần sync — đúng thứ cơ chế này sinh ra để tránh.
+Write-Host "`n[3/4] Goi lai sau khi da tai het (phai rong)..." -ForegroundColor Cyan
 $body2 = @{
     session_id = [guid]::NewGuid().ToString()
     versions   = $versions
-    page_size  = 5000
+    page_size  = 1000
 } | ConvertTo-Json
 
 $r2 = Invoke-RestMethod -Method Post -Uri "$base/functions/v1/sync-download" `
