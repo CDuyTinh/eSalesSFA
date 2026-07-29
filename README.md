@@ -20,7 +20,7 @@ App phải hoạt động **trọn vẹn khi offline**: xem tuyến, check-in b�
 | | |
 |---|---|
 | **Sync engine offline-first 2 chiều** | Delta version theo từng bảng · outbox pattern · idempotent bằng session UUID · WorkManager unique work chống sync trùng · ghi batch trong Room transaction |
-| **Promotion engine** | Module **Kotlin thuần, không phụ thuộc Android** · chiết khấu bậc theo SL/giá trị, KM dòng & toàn đơn, hàng tặng, combo bộ, chiết khấu tay, quota · Strategy + Chain of Responsibility · unit test chạy trên JVM |
+| **Promotion engine** | **Kotlin thuần, không import `android.*`** · chiết khấu bậc theo SL/giá trị, KM dòng & toàn đơn, hàng tặng, combo bộ, chiết khấu tay, ngân sách, loại trừ chương trình · Strategy + Chain of Responsibility · **37 unit test chạy trên JVM trong 0,02s** · đơn 200 dòng tính lại < 50ms |
 | **GPS check-in/out** | FusedLocation bọc thành Flow · xác thực bán kính & độ chính xác · bắt lý do khi vượt khoảng cách · Foreground Service tracking · phát hiện mock location |
 | **Media** | CameraX chụp ảnh minh chứng · nén < 300KB + watermark GPS/thời gian · hàng đợi upload offline lên Supabase Storage |
 
@@ -139,9 +139,9 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [x] **Sync engine download** — delta version, phân trang, ghi theo transaction
 - [x] Đăng nhập + màn hình đồng bộ + Home
 - [ ] Sync engine **upload** (outbox → `sync-upload`)
-- [ ] Danh sách & chi tiết khách hàng, sales step
+- [x] Danh sách & chi tiết khách hàng (Paging 3, tìm kiếm có debounce)
+- [x] **Promotion engine** — 5 loại rule, 37 unit test
 - [ ] GPS check-in / check-out
-- [ ] **Promotion engine** + unit test
 - [ ] Take Order
 - [ ] Kiểm kê tồn kho + Khảo sát trưng bày + CameraX
 - [ ] Dashboard KPI + Báo cáo

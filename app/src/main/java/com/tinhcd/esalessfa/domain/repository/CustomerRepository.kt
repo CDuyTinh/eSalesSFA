@@ -1,5 +1,8 @@
 package com.tinhcd.esalessfa.domain.repository
 
+// PagingData nằm trong artifact paging-common — Kotlin thuần, không kéo theo
+// Android SDK (phần phụ thuộc Android là paging-runtime). Đây là ngoại lệ duy
+// nhất trong package domain, và nó vẫn compile/test được trên JVM.
 import androidx.paging.PagingData
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.model.RouteCustomer
