@@ -147,10 +147,17 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [ ] Dashboard KPI + Báo cáo
 - [ ] Chuyển UI sang Jetpack Compose
 
-### Đã chạy thật
+### Đã chạy thật trên thiết bị
 
-Đăng nhập → tải **5.613 dòng / 17 bảng qua 4 lượt phân trang** → Home hiển thị
+**Tải xuống** — đăng nhập → **5.613 dòng / 17 bảng qua 4 lượt phân trang** → Home hiển thị
 200 khách hàng · 300 sản phẩm · 15 chương trình khuyến mãi · 34 khách trong tuyến hôm nay.
+
+**Đặt hàng** — chọn khách trong tuyến → thêm sản phẩm theo đơn vị Thùng/Lốc/Lẻ → engine
+tính khuyến mãi ngay khi đổi số lượng → xác nhận.
+
+**Gửi lên** — đơn vào outbox với trạng thái `PENDING`, worker đẩy lên Edge Function, server
+đối chiếu giá rồi ghi vào Postgres. Đơn xuất hiện đầy đủ trong bảng `orders` và
+`order_details` kèm dòng hàng tặng.
 
 ---
 
