@@ -10,6 +10,7 @@ import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.ProductDao
 import com.tinhcd.esalessfa.core.database.dao.PromotionDao
+import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -88,6 +89,7 @@ abstract class SfaDatabase : RoomDatabase() {
     abstract fun customerDao(): CustomerDao
     abstract fun productDao(): ProductDao
     abstract fun promotionDao(): PromotionDao
+    abstract fun salespersonDao(): SalespersonDao
     abstract fun visitDao(): VisitDao
     abstract fun orderDao(): OrderDao
     abstract fun syncStateDao(): SyncStateDao

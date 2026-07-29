@@ -10,6 +10,7 @@ import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.ProductDao
 import com.tinhcd.esalessfa.core.database.dao.PromotionDao
+import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -40,6 +41,7 @@ object DatabaseModule {
     @Provides fun providePromotionDao(db: SfaDatabase): PromotionDao = db.promotionDao()
     @Provides fun provideVisitDao(db: SfaDatabase): VisitDao = db.visitDao()
     @Provides fun provideOrderDao(db: SfaDatabase): OrderDao = db.orderDao()
+    @Provides fun provideSalespersonDao(db: SfaDatabase): SalespersonDao = db.salespersonDao()
     @Provides fun provideSyncStateDao(db: SfaDatabase): SyncStateDao = db.syncStateDao()
     @Provides fun providePendingUploadDao(db: SfaDatabase): PendingUploadDao = db.pendingUploadDao()
     @Provides fun provideSyncErrorDao(db: SfaDatabase): SyncErrorDao = db.syncErrorDao()

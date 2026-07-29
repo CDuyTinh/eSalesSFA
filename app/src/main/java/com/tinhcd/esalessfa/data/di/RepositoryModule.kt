@@ -1,6 +1,8 @@
 package com.tinhcd.esalessfa.data.di
 
+import com.tinhcd.esalessfa.data.repository.AuthRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SyncRepositoryImpl
+import com.tinhcd.esalessfa.domain.repository.AuthRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
 import dagger.Binds
 import dagger.Module
@@ -21,4 +23,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSyncRepository(impl: SyncRepositoryImpl): SyncRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 }

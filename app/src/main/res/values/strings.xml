@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">eSalesSFA</string>
+
+    <!-- Login -->
+    <string name="login_subtitle">Đăng nhập để bắt đầu ngày làm việc</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Mật khẩu</string>
+    <string name="login_submit">Đăng nhập</string>
+
+    <!-- Sync -->
+    <string name="sync_preparing">Đang chuẩn bị…</string>
+    <string name="sync_running">Đang tải dữ liệu</string>
+    <string name="sync_done">Đã đồng bộ xong</string>
+    <string name="sync_failed">Đồng bộ thất bại</string>
+    <string name="sync_retry">Thử lại</string>
+    <string name="sync_progress">Trang %1$d · %2$d dòng</string>
+    <string name="sync_summary">%1$d dòng · %2$d lượt tải</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Xin chào, %1$s</string>
+    <string name="home_last_sync">Đồng bộ lần cuối: %1$s</string>
+    <string name="home_never_synced">Chưa đồng bộ lần nào</string>
+    <string name="home_customers">Khách hàng</string>
+    <string name="home_products">Sản phẩm</string>
+    <string name="home_promotions">Khuyến mãi</string>
+    <string name="home_route_today">Tuyến hôm nay</string>
+    <string name="home_pending">Chờ đồng bộ lên</string>
+    <string name="home_sync_again">Đồng bộ lại</string>
 </resources>

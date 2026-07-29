@@ -168,3 +168,19 @@ interface PromotionDao {
     @Query("SELECT COUNT(*) FROM promotion_programs")
     suspend fun count(): Int
 }
+
+@Dao
+interface SalespersonDao {
+
+    /**
+     * Hồ sơ nhân viên ứng với user đang đăng nhập.
+     *
+     * sync-download chỉ trả về đúng một dòng (scope BY_SALESPERSON), nên bảng này
+     * luôn chứa duy nhất nhân viên hiện tại.
+     */
+    @Query("SELECT * FROM salespersons WHERE userId = :userId LIMIT 1")
+    fun observeByUserId(userId: String): Flow<SalespersonEntity?>
+
+    @Query("SELECT * FROM salespersons LIMIT 1")
+    suspend fun getCurrent(): SalespersonEntity?
+}
