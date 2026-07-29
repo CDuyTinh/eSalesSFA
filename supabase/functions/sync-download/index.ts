@@ -165,16 +165,19 @@ async function fetchChanges(
     // vào SQLite của điện thoại là vô nghĩa.
     if (table === 'orders') q = q.gte('order_date', historyFromDate())
   } else if (scope === 'BY_ORDER') {
-    // Chi tiết đơn theo các đơn của nhân viên này. Giới hạn theo cùng cửa sổ
-    // thời gian với đơn để không kéo về hàng chục nghìn dòng lịch sử cũ.
-    const { data: orders } = await db
-      .from('orders')
-      .select('id')
-      .eq('salesperson_id', caller.salespersonId)
-      .gte('order_date', historyFromDate())
-    const orderIds = (orders ?? []).map((o: { id: string }) => o.id)
-    if (orderIds.length === 0) return []
-    q = q.in('order_id', orderIds)
+    // Lọc qua QUAN HỆ thay vì gom id rồi truyền vào .in().
+    //
+    // Cách gom id sẽ nhét ~720 UUID vào query string (~27KB) và PostgREST trả
+    // 400. Cú pháp orders!inner đẩy phép lọc xuống thành JOIN trong SQL, nên
+    // URL giữ nguyên độ dài bất kể lịch sử có bao nhiêu đơn.
+    q = db
+      .from(table)
+      .select('*, orders!inner(id)')
+      .gt('row_version', since)
+      .order('row_version', { ascending: true })
+      .limit(limit)
+      .eq('orders.salesperson_id', caller.salespersonId)
+      .gte('orders.order_date', historyFromDate())
   } else if (scope === 'BY_ROUTE') {
     // Chỉ khách hàng và tuyến thuộc nhân viên này.
     const { data: routes } = await db
@@ -199,6 +202,13 @@ async function fetchChanges(
   }
 
   const { data, error } = await q
-  if (error) throw new HttpError(500, 'DB_ERROR', `${table}: ${error.message}`)
+  if (error) {
+    // PostgREST để nguyên nhân thật trong details/hint; chỉ lấy message thì
+    // nhận được "Bad Request" và không lần ra được gì.
+    const detail = [error.message, error.details, error.hint]
+      .filter(Boolean)
+      .join(' | ')
+    throw new HttpError(500, 'DB_ERROR', `${table}: ${detail}`)
+  }
   return (data ?? []) as Record<string, unknown>[]
 }
