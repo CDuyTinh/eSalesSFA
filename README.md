@@ -142,7 +142,7 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [x] Danh sách & chi tiết khách hàng (Paging 3, tìm kiếm có debounce)
 - [x] **Promotion engine** — 5 loại rule, 37 unit test
 - [ ] GPS check-in / check-out
-- [ ] Take Order
+- [x] Take Order — giỏ hàng, đa đơn vị tính, khuyến mãi tính realtime
 - [ ] Kiểm kê tồn kho + Khảo sát trưng bày + CameraX
 - [ ] Dashboard KPI + Báo cáo
 - [ ] Chuyển UI sang Jetpack Compose

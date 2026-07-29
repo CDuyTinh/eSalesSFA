@@ -9,11 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentCustomerDetailBinding
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
+import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
+import com.tinhcd.esalessfa.feature.order.ProductPickerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,8 +63,15 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
             Snackbar.make(view, R.string.feature_coming_soon, Snackbar.LENGTH_SHORT).show()
         }
         binding.checkInButton.setOnClickListener(notReady)
-        binding.orderButton.setOnClickListener(notReady)
         binding.stockButton.setOnClickListener(notReady)
+
+        binding.orderButton.setOnClickListener {
+            val customer = viewModel.customer.value ?: return@setOnClickListener
+            findNavController().navigate(
+                R.id.action_customerDetail_to_orderEdit,
+                bundleOf(OrderEditViewModel.ARG_CUSTOMER_ID to customer.id),
+            )
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             val customer = viewModel.customer.filterNotNull().first()

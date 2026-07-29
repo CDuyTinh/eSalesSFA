@@ -118,6 +118,9 @@ interface ProductDao {
     @Query("SELECT * FROM products WHERE isActive = 1 ORDER BY name")
     fun observeAll(): Flow<List<ProductEntity>>
 
+    @Query("SELECT * FROM products WHERE id = :id")
+    suspend fun findById(id: String): ProductEntity?
+
     @Query("SELECT * FROM products WHERE barcode = :barcode LIMIT 1")
     suspend fun findByBarcode(barcode: String): ProductEntity?
 

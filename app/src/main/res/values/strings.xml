@@ -57,4 +57,23 @@
     <string name="action_take_order">Đặt hàng</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển</string>
     <string name="value_empty">—</string>
+
+    <!-- Take order -->
+    <string name="order_empty">Chưa có sản phẩm nào.\nBấm “Thêm sản phẩm” để bắt đầu.</string>
+    <string name="order_add_product">Thêm sản phẩm</string>
+    <string name="order_confirm">Xác nhận</string>
+    <string name="order_remove">Xoá</string>
+    <string name="order_subtotal">Tạm tính</string>
+    <string name="order_discount">Chiết khấu</string>
+    <string name="order_vat">VAT</string>
+    <string name="order_total">Tổng cộng</string>
+    <string name="order_qty">Số lượng</string>
+    <string name="order_qty_default">1</string>
+    <string name="order_qty_price">%1$s %2$s × %3$s</string>
+    <string name="order_line_discount">KM −%1$s</string>
+    <string name="order_gift_badge">TẶNG</string>
+    <string name="order_applied_promotions">Áp dụng: %1$s</string>
+    <string name="order_price_preview">Đơn giá %1$s · Thành tiền %2$s</string>
+    <string name="order_saved">Đã lưu đơn %1$s, chờ đồng bộ</string>
+    <string name="product_search_hint">Tìm sản phẩm</string>
 </resources>

@@ -83,5 +83,25 @@
         <argument
             android:name="customerId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_customerDetail_to_orderEdit"
+            app:destination="@id/orderEditFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/orderEditFragment"
+        android:name="com.tinhcd.esalessfa.feature.order.OrderEditFragment"
+        android:label="Đặt hàng">
+        <argument
+            android:name="customerId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_orderEdit_to_productPicker"
+            app:destination="@id/productPickerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/productPickerFragment"
+        android:name="com.tinhcd.esalessfa.feature.order.ProductPickerFragment"
+        android:label="Chọn sản phẩm" />
 </navigation>
