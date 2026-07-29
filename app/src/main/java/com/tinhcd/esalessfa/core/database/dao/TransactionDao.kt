@@ -95,6 +95,19 @@ interface VisitDao {
     )
     fun observeActiveVisit(): Flow<ActiveVisitRow?>
 
+    /** Bản đọc một lần, dùng ngay trước khi ghi để kiểm tra điều kiện. */
+    @Query(
+        """
+        SELECT v.id AS visitId, v.customerId AS customerId,
+               c.name AS customerName, v.checkInAt AS checkInAt
+        FROM visits v
+        INNER JOIN customers c ON c.id = v.customerId
+        WHERE v.checkOutAt IS NULL
+        ORDER BY v.checkInAt LIMIT 1
+        """
+    )
+    suspend fun getActiveVisit(): ActiveVisitRow?
+
     // ── outbox ──
     // Outbox là một QUERY chứ không phải bảng riêng. Ghi trạng thái ngay trên bản
     // ghi nghiệp vụ giúp tránh dual-write (ghi hai nơi rồi lệch nhau).

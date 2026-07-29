@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
@@ -157,38 +158,55 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
             binding.location.text = customer.location
                 ?.let { getString(R.string.customer_coords, it.latitude, it.longitude) }
                 ?: getString(R.string.customer_no_coords)
-
-            // Không có toạ độ thì không xác thực được bán kính check-in.
-            binding.checkInButton.isEnabled = customer.canValidateCheckIn
         }
 
-        // Ba nút nghiệp vụ chỉ mở khi đã check-in. Quan sát thay vì đọc một lần
-        // để quay lại từ màn check-in là thấy đổi ngay.
+        // Toàn bộ trạng thái bật/tắt của bốn nút do DUY NHẤT khối này quyết định.
+        //
+        // Trước đó có thêm một khối chạy-một-lần cũng gán checkInButton.isEnabled;
+        // hai khối chạy bất đồng bộ nên khối kia có thể ghi đè sau và mở lại nút
+        // đã bị khoá. Gom về một nơi thì không còn cửa cho lỗi đó.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.gate.collect { gate ->
-                    val canAct = gate is VisitGate.CheckedInHere
+                combine(viewModel.gate, viewModel.customer) { gate, customer ->
+                    gate to customer
+                }.collect { (gate, customer) ->
+                    val canAct = gate.canDoBusiness()
                     binding.stockButton.isEnabled = canAct
                     binding.surveyButton.isEnabled = canAct
                     binding.orderButton.isEnabled = canAct
 
-                    // Đang ghé nơi khác thì khoá luôn check-in. Nút này còn phụ
-                    // thuộc việc khách hàng có toạ độ hay không.
-                    val customer = viewModel.customer.value
+                    // Chỉ mở check-in khi CHƯA ghé đâu cả: đang ghé chính đây thì
+                    // phải check-out, đang ghé nơi khác thì phải đi giải quyết ở đó.
+                    // Ngoài ra khách hàng phải có toạ độ mới xác thực được.
                     binding.checkInButton.isEnabled =
-                        gate !is VisitGate.BlockedByOther &&
-                            (customer?.canValidateCheckIn ?: false)
+                        gate.canCheckIn() && (customer?.canValidateCheckIn ?: false)
 
                     when (gate) {
-                        is VisitGate.CheckedInHere -> binding.stepHint.visibility = View.GONE
+                        is VisitGate.CheckedInHere -> {
+                            // Đang ghé đây: nhắc phải check-out để chốt lượt ghé.
+                            binding.stepHint.visibility = View.VISIBLE
+                            binding.stepHint.setBackgroundResource(R.drawable.bg_chip_green)
+                            binding.stepHint.setTextColor(
+                                requireContext().getColor(R.color.stateGreen)
+                            )
+                            binding.stepHint.setText(R.string.step_checked_in_here)
+                        }
 
                         VisitGate.CanCheckIn -> {
                             binding.stepHint.visibility = View.VISIBLE
+                            binding.stepHint.setBackgroundResource(R.drawable.bg_chip_red)
+                            binding.stepHint.setTextColor(
+                                requireContext().getColor(R.color.brandRed)
+                            )
                             binding.stepHint.setText(R.string.step_need_checkin)
                         }
 
                         is VisitGate.BlockedByOther -> {
                             binding.stepHint.visibility = View.VISIBLE
+                            binding.stepHint.setBackgroundResource(R.drawable.bg_chip_orange)
+                            binding.stepHint.setTextColor(
+                                requireContext().getColor(R.color.stateOrange)
+                            )
                             binding.stepHint.text = getString(
                                 R.string.step_blocked_by_other,
                                 gate.visit.customerName,

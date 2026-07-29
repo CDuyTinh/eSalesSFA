@@ -51,7 +51,8 @@ sealed interface CheckInEvent {
     data object CheckedOut : CheckInEvent
     data class Error(val message: String) : CheckInEvent
     data class TooEarly(val minutesLeft: Int) : CheckInEvent
-    data class BlockedByOther(val customerName: String) : CheckInEvent
+    /** Đã có lượt ghé đang mở — ở đây hoặc nơi khác. */
+    data class AlreadyOpen(val customerName: String, val isSameCustomer: Boolean) : CheckInEvent
 }
 
 @HiltViewModel
@@ -78,11 +79,19 @@ class CheckInViewModel @Inject constructor(
                 it.copy(
                     customer = customerRepository.getById(customerId),
                     config = visitRepository.checkInConfig(),
-                    openVisit = visitRepository.openVisit(customerId),
                     reasonCodes = visitRepository.reasonCodes(
                         VisitRepository.REASON_OVER_DISTANCE
                     ),
                 )
+            }
+        }
+
+        // QUAN SÁT lượt ghé thay vì đọc một lần lúc khởi tạo. Đọc một lần thì
+        // user bấm nhanh trước khi truy vấn xong sẽ thấy nút vẫn là "Check-in"
+        // dù đã ghé rồi.
+        viewModelScope.launch {
+            visitRepository.observeOpenVisit(customerId).collect { visit ->
+                _uiState.update { it.copy(openVisit = visit) }
             }
         }
     }
@@ -124,12 +133,6 @@ class CheckInViewModel @Inject constructor(
             // hai màn check-in liên tiếp trước khi trạng thái kịp cập nhật thì
             // vẫn có thể lọt. Hai lượt ghé chồng nhau sẽ khiến không lượt nào có
             // giờ ra đúng.
-            val active = visitRepository.observeActiveVisit().first()
-            if (active != null && active.customerId != customerId) {
-                _events.send(CheckInEvent.BlockedByOther(active.customerName))
-                return@launch
-            }
-
             _uiState.update { it.copy(isSaving = true) }
             runCatching {
                 visitRepository.checkIn(
@@ -139,14 +142,20 @@ class CheckInViewModel @Inject constructor(
                     reasonCode = reasonCode,
                     batteryPct = batteryPct,
                 )
-            }.onSuccess { visitId ->
-                _uiState.update {
-                    it.copy(
-                        isSaving = false,
-                        openVisit = OpenVisit(visitId, customerId, System.currentTimeMillis()),
-                    )
+            }.onSuccess { result ->
+                _uiState.update { it.copy(isSaving = false) }
+                when (result) {
+                    is VisitRepository.CheckInResult.Success ->
+                        _events.send(CheckInEvent.CheckedIn(result.visitId))
+
+                    is VisitRepository.CheckInResult.AlreadyOpen ->
+                        _events.send(
+                            CheckInEvent.AlreadyOpen(
+                                customerName = result.visit.customerName,
+                                isSameCustomer = result.isSameCustomer,
+                            )
+                        )
                 }
-                _events.send(CheckInEvent.CheckedIn(visitId))
             }.onFailure { e ->
                 _uiState.update { it.copy(isSaving = false) }
                 _events.send(CheckInEvent.Error(e.message ?: "Không check-in được"))

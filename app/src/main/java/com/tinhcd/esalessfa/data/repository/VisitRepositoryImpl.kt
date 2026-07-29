@@ -74,10 +74,26 @@ class VisitRepositoryImpl @Inject constructor(
         distanceMeters: Double?,
         reasonCode: String?,
         batteryPct: Int?,
-    ): String {
+    ): VisitRepository.CheckInResult {
         val salesperson = requireNotNull(salespersonDao.getCurrent()) {
             "Chưa có hồ sơ nhân viên — cần đồng bộ trước khi check-in"
         }
+
+        // Kiểm tra ngay trước khi ghi, tại tầng dữ liệu.
+        //
+        // Chặn ở ViewModel không đủ: state ở đó có thể còn cũ khi user bấm nhanh,
+        // và mọi đường gọi khác trong tương lai sẽ phải tự nhớ kiểm tra lại. Chốt
+        // ở đây thì không có cách nào tạo được hai lượt ghé mở cùng lúc.
+        //
+        // Chặn cả trường hợp CÙNG cửa hàng: ghé lại nơi đang mở sẽ tạo lượt thứ
+        // hai và không lượt nào có giờ ra đúng.
+        visitDao.getActiveVisit()?.let { row ->
+            return VisitRepository.CheckInResult.AlreadyOpen(
+                visit = ActiveVisit(row.visitId, row.customerId, row.customerName, row.checkInAt),
+                isSameCustomer = row.customerId == customerId,
+            )
+        }
+
         val now = System.currentTimeMillis()
         val id = UUID.randomUUID().toString()
 
@@ -109,7 +125,7 @@ class VisitRepositoryImpl @Inject constructor(
                 clientCreatedAt = now,
             )
         )
-        return id
+        return VisitRepository.CheckInResult.Success(id)
     }
 
     override suspend fun checkOut(

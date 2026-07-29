@@ -29,6 +29,17 @@ data class ActiveVisit(
  */
 sealed interface VisitGate {
 
+    /**
+     * Chỉ được check-in khi CHƯA có lượt ghé nào đang mở.
+     *
+     * Đang ghé chính cửa hàng này cũng phải chặn — nếu không sẽ sinh lượt ghé
+     * thứ hai và không lượt nào có giờ ra đúng.
+     */
+    fun canCheckIn(): Boolean = this is CanCheckIn
+
+    /** Kiểm kê, khảo sát, đặt hàng chỉ mở khi đang ghé chính cửa hàng này. */
+    fun canDoBusiness(): Boolean = this is CheckedInHere
+
     /** Chưa ghé đâu cả — được phép check-in, chưa được thao tác nghiệp vụ. */
     data object CanCheckIn : VisitGate
 
@@ -63,13 +74,26 @@ interface VisitRepository {
     /** Lượt ghé đang mở trên toàn app, null nếu không có. */
     fun observeActiveVisit(): Flow<ActiveVisit?>
 
+    /**
+     * Kết quả check-in.
+     *
+     * Trả về kiểu có nhánh thay vì ném lỗi hay trả String rỗng: nơi gọi buộc
+     * phải xử lý trường hợp bị từ chối, không thể lỡ tay bỏ qua.
+     */
+    sealed interface CheckInResult {
+        data class Success(val visitId: String) : CheckInResult
+
+        /** Đã có lượt ghé đang mở — tại chính cửa hàng này hoặc ở nơi khác. */
+        data class AlreadyOpen(val visit: ActiveVisit, val isSameCustomer: Boolean) : CheckInResult
+    }
+
     suspend fun checkIn(
         customerId: String,
         sample: LocationSample?,
         distanceMeters: Double?,
         reasonCode: String?,
         batteryPct: Int?,
-    ): String
+    ): CheckInResult
 
     suspend fun checkOut(
         visitId: String,

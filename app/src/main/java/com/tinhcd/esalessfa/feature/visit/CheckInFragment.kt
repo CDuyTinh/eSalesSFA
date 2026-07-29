@@ -136,13 +136,17 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                                 Snackbar.LENGTH_LONG,
                             ).show()
 
-                            is CheckInEvent.BlockedByOther -> {
-                                Snackbar.make(
-                                    view,
-                                    getString(R.string.checkin_blocked_by_other, event.customerName),
-                                    Snackbar.LENGTH_LONG,
-                                ).show()
-                                findNavController().navigateUp()
+                            is CheckInEvent.AlreadyOpen -> {
+                                // Cùng cửa hàng thì ở lại màn này — state vừa cập
+                                // nhật nên nút đã đổi thành Check-out. Khác cửa
+                                // hàng thì thoát ra vì ở đây không làm gì được.
+                                val message = if (event.isSameCustomer) {
+                                    getString(R.string.checkin_already_here)
+                                } else {
+                                    getString(R.string.checkin_blocked_by_other, event.customerName)
+                                }
+                                Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
+                                if (!event.isSameCustomer) findNavController().navigateUp()
                             }
 
                             is CheckInEvent.Error ->
