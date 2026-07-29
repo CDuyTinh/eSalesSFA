@@ -27,6 +27,26 @@ $secure = Read-Host "Mat khau cua $Email" -AsSecureString
 $password = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
     [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure))
 
+<#
+  PowerShell 5.1 thường để $_.ErrorDetails.Message rỗng với lỗi HTTP, khiến
+  thông báo mất sạch nội dung. Phải tự đọc response stream mới lấy được body
+  thật mà server trả về.
+#>
+function Get-ErrorBody($ErrorRecord) {
+    if ($ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) {
+        return $ErrorRecord.ErrorDetails.Message
+    }
+    $resp = $ErrorRecord.Exception.Response
+    if ($null -eq $resp) { return $ErrorRecord.Exception.Message }
+    try {
+        $stream = $resp.GetResponseStream()
+        $stream.Position = 0
+        return (New-Object IO.StreamReader($stream)).ReadToEnd()
+    } catch {
+        return "HTTP $([int]$resp.StatusCode) $($resp.StatusDescription)"
+    }
+}
+
 # ── 1. Đăng nhập ────────────────────────────────────────────────────────────
 Write-Host "`n[1/4] Dang nhap..." -ForegroundColor Cyan
 try {
@@ -36,7 +56,7 @@ try {
         -ContentType 'application/json' `
         -Body (@{ email = $Email; password = $password } | ConvertTo-Json)
 } catch {
-    Write-Host "  THAT BAI: $($_.ErrorDetails.Message)" -ForegroundColor Red
+    Write-Host "  THAT BAI: $(Get-ErrorBody $_)" -ForegroundColor Red
     Write-Host "  -> Neu la 'email_not_confirmed': vao Authentication > Users, xoa user" -ForegroundColor Yellow
     Write-Host "     roi tao lai va BAT 'Auto Confirm User'." -ForegroundColor Yellow
     exit 1
@@ -61,7 +81,7 @@ try {
     $r1 = Invoke-RestMethod -Method Post -Uri "$base/functions/v1/sync-download" `
         -Headers $headers -ContentType 'application/json' -Body $body1
 } catch {
-    Write-Host "  THAT BAI: $($_.ErrorDetails.Message)" -ForegroundColor Red
+    Write-Host "  THAT BAI: $(Get-ErrorBody $_)" -ForegroundColor Red
     Write-Host "  -> Neu la 'NO_SALESPERSON': chua noi user voi nhan vien. Chay trong SQL Editor:" -ForegroundColor Yellow
     Write-Host "     UPDATE salespersons SET user_id = (SELECT id FROM auth.users" -ForegroundColor Yellow
     Write-Host "     WHERE email = '$Email') WHERE code = 'NV001';" -ForegroundColor Yellow
