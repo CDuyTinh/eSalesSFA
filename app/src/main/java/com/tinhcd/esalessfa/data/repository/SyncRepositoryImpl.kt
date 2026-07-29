@@ -1,0 +1,266 @@
+package com.tinhcd.esalessfa.data.repository
+
+import androidx.room.withTransaction
+import com.tinhcd.esalessfa.core.common.dispatcher.DispatcherProvider
+import com.tinhcd.esalessfa.core.database.SfaDatabase
+import com.tinhcd.esalessfa.core.database.dao.MasterWriteDao
+import com.tinhcd.esalessfa.core.database.dao.OrderDao
+import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
+import com.tinhcd.esalessfa.core.database.dao.VisitDao
+import com.tinhcd.esalessfa.core.database.entity.local.SyncStateEntity
+import com.tinhcd.esalessfa.core.network.api.SyncApi
+import com.tinhcd.esalessfa.core.network.dto.AppConfigDto
+import com.tinhcd.esalessfa.core.network.dto.BranchDto
+import com.tinhcd.esalessfa.core.network.dto.ChannelDto
+import com.tinhcd.esalessfa.core.network.dto.CustomerDto
+import com.tinhcd.esalessfa.core.network.dto.PriceGroupDto
+import com.tinhcd.esalessfa.core.network.dto.PriceListDto
+import com.tinhcd.esalessfa.core.network.dto.ProductCategoryDto
+import com.tinhcd.esalessfa.core.network.dto.ProductDto
+import com.tinhcd.esalessfa.core.network.dto.ProductUomDto
+import com.tinhcd.esalessfa.core.network.dto.PromotionBreakDto
+import com.tinhcd.esalessfa.core.network.dto.PromotionItemDto
+import com.tinhcd.esalessfa.core.network.dto.PromotionProgramDto
+import com.tinhcd.esalessfa.core.network.dto.ReasonCodeDto
+import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
+import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
+import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
+import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
+import com.tinhcd.esalessfa.core.network.dto.TableChangeSet
+import com.tinhcd.esalessfa.core.network.dto.UomDto
+import com.tinhcd.esalessfa.data.mapper.toEntity
+import com.tinhcd.esalessfa.domain.repository.SyncRepository
+import com.tinhcd.esalessfa.domain.sync.SyncProgress
+import com.tinhcd.esalessfa.domain.sync.SyncTables
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.decodeFromJsonElement
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class SyncRepositoryImpl @Inject constructor(
+    private val api: SyncApi,
+    private val db: SfaDatabase,
+    private val masterDao: MasterWriteDao,
+    private val syncStateDao: SyncStateDao,
+    private val visitDao: VisitDao,
+    private val orderDao: OrderDao,
+    private val json: Json,
+    private val dispatchers: DispatcherProvider,
+) : SyncRepository {
+
+    /**
+     * Chặn hai lượt sync chạy chồng nhau trong cùng tiến trình.
+     *
+     * WorkManager đã chống trùng ở mức công việc bằng unique work, nhưng vẫn có
+     * đường gọi trực tiếp từ UI (nút "Đồng bộ"). Mutex bịt nốt khe đó.
+     */
+    private val syncMutex = Mutex()
+
+    override fun downloadMasterData(): Flow<SyncProgress> = flow {
+        if (syncMutex.isLocked) {
+            emit(SyncProgress.Failed("Đang có một lượt đồng bộ khác chạy", isRetryable = false))
+            return@flow
+        }
+
+        syncMutex.withLock {
+            val startedAt = System.currentTimeMillis()
+            emit(SyncProgress.Started)
+
+            var page = 0
+            var totalRows = 0
+            var hasMore = true
+
+            while (hasMore) {
+                page++
+
+                // Đọc lại mốc version mỗi vòng: trang trước vừa ghi xong đã cập nhật.
+                val versions = syncStateDao.getAll()
+                    .associate { it.tableName to it.lastVersion }
+
+                val response = api.download(
+                    SyncDownloadRequest(
+                        sessionId = UUID.randomUUID().toString(),
+                        versions = versions,
+                        pageSize = PAGE_SIZE,
+                    )
+                )
+
+                if (!response.isSuccessful) {
+                    val code = response.code()
+                    emit(
+                        SyncProgress.Failed(
+                            message = "Máy chủ trả về lỗi $code: ${response.errorBody()?.string().orEmpty()}",
+                            // 4xx là lỗi phía client (token hỏng, chưa nối nhân viên) —
+                            // retry cũng vô ích. 5xx thì đáng thử lại.
+                            isRetryable = code >= 500,
+                        )
+                    )
+                    return@withLock
+                }
+
+                val body = response.body()
+                if (body == null) {
+                    emit(SyncProgress.Failed("Máy chủ trả về nội dung rỗng", isRetryable = true))
+                    return@withLock
+                }
+
+                // Cả trang ghi trong MỘT transaction: hoặc vào trọn vẹn, hoặc
+                // không gì cả. Mốc version chỉ tiến khi dữ liệu đã nằm trong DB,
+                // nên mất mạng giữa chừng thì lần sau tải lại đúng phần còn thiếu.
+                var pageRows = 0
+                db.withTransaction {
+                    body.tables.forEach { (table, changeSet) ->
+                        pageRows += writeTable(table, changeSet)
+                    }
+                }
+
+                totalRows += pageRows
+                hasMore = body.hasMore
+
+                emit(
+                    SyncProgress.Downloading(
+                        page = page,
+                        rowsThisPage = pageRows,
+                        totalRows = totalRows,
+                        currentTable = body.tables.keys.lastOrNull(),
+                    )
+                )
+
+                if (page >= MAX_PAGES) {
+                    emit(
+                        SyncProgress.Failed(
+                            "Vượt quá $MAX_PAGES trang — nghi ngờ vòng lặp không kết thúc",
+                            isRetryable = false,
+                        )
+                    )
+                    return@withLock
+                }
+            }
+
+            emit(
+                SyncProgress.Completed(
+                    totalRows = totalRows,
+                    pages = page,
+                    durationMs = System.currentTimeMillis() - startedAt,
+                )
+            )
+        }
+    }.flowOn(dispatchers.io)
+
+    /**
+     * Giải mã và ghi một bảng. Trả về số dòng đã ghi.
+     *
+     * Bảng lạ (server thêm mới, client chưa biết) bị bỏ qua thay vì ném lỗi —
+     * app phiên bản cũ vẫn sync được sau khi server nâng cấp.
+     */
+    private suspend fun writeTable(table: String, changeSet: TableChangeSet): Int {
+        val rows = changeSet.rows
+
+        when (table) {
+            SyncTables.APP_CONFIGS ->
+                masterDao.upsertAppConfigs(rows.decode<AppConfigDto>().map { it.toEntity() })
+
+            SyncTables.UOMS ->
+                masterDao.upsertUoms(rows.decode<UomDto>().map { it.toEntity() })
+
+            SyncTables.BRANCHES ->
+                masterDao.upsertBranches(rows.decode<BranchDto>().map { it.toEntity() })
+
+            SyncTables.CHANNELS ->
+                masterDao.upsertChannels(rows.decode<ChannelDto>().map { it.toEntity() })
+
+            SyncTables.PRICE_GROUPS ->
+                masterDao.upsertPriceGroups(rows.decode<PriceGroupDto>().map { it.toEntity() })
+
+            SyncTables.REASON_CODES ->
+                masterDao.upsertReasonCodes(rows.decode<ReasonCodeDto>().map { it.toEntity() })
+
+            SyncTables.SALESPERSONS ->
+                masterDao.upsertSalespersons(rows.decode<SalespersonDto>().map { it.toEntity() })
+
+            SyncTables.CUSTOMERS -> {
+                masterDao.upsertCustomers(rows.decode<CustomerDto>().map { it.toEntity() })
+                if (changeSet.deletedIds.isNotEmpty()) masterDao.deleteCustomers(changeSet.deletedIds)
+            }
+
+            SyncTables.SALES_ROUTES ->
+                masterDao.upsertRoutes(rows.decode<SalesRouteDto>().map { it.toEntity() })
+
+            SyncTables.SALES_ROUTE_DETAILS -> {
+                masterDao.upsertRouteDetails(rows.decode<SalesRouteDetailDto>().map { it.toEntity() })
+                if (changeSet.deletedIds.isNotEmpty()) masterDao.deleteRouteDetails(changeSet.deletedIds)
+            }
+
+            SyncTables.PRODUCT_CATEGORIES ->
+                masterDao.upsertCategories(rows.decode<ProductCategoryDto>().map { it.toEntity() })
+
+            SyncTables.PRODUCTS -> {
+                masterDao.upsertProducts(rows.decode<ProductDto>().map { it.toEntity() })
+                if (changeSet.deletedIds.isNotEmpty()) masterDao.deleteProducts(changeSet.deletedIds)
+            }
+
+            SyncTables.PRODUCT_UOMS ->
+                masterDao.upsertProductUoms(rows.decode<ProductUomDto>().map { it.toEntity() })
+
+            SyncTables.PRICE_LISTS -> {
+                masterDao.upsertPriceLists(rows.decode<PriceListDto>().map { it.toEntity() })
+                if (changeSet.deletedIds.isNotEmpty()) masterDao.deletePriceLists(changeSet.deletedIds)
+            }
+
+            SyncTables.PROMOTION_PROGRAMS -> {
+                masterDao.upsertPromotionPrograms(rows.decode<PromotionProgramDto>().map { it.toEntity() })
+                if (changeSet.deletedIds.isNotEmpty()) masterDao.deletePromotionPrograms(changeSet.deletedIds)
+            }
+
+            SyncTables.PROMOTION_BREAKS ->
+                masterDao.upsertPromotionBreaks(rows.decode<PromotionBreakDto>().map { it.toEntity() })
+
+            SyncTables.PROMOTION_ITEMS ->
+                masterDao.upsertPromotionItems(rows.decode<PromotionItemDto>().map { it.toEntity() })
+
+            else -> return 0
+        }
+
+        syncStateDao.upsert(
+            SyncStateEntity(
+                tableName = table,
+                lastVersion = changeSet.maxVersion,
+                lastSyncedAt = System.currentTimeMillis(),
+                rowCount = rows.size,
+            )
+        )
+        return rows.size
+    }
+
+    private inline fun <reified T> List<JsonElement>.decode(): List<T> =
+        map { json.decodeFromJsonElement(it) }
+
+    override fun observePendingCount(): Flow<Int> =
+        combine(
+            visitDao.observePendingCount(),
+            orderDao.observePendingCount(),
+        ) { visits, orders -> visits + orders }
+
+    override fun observeLastSyncedAt(): Flow<Long?> =
+        syncStateDao.observeOldestSync().map { if (it == 0L) null else it }
+
+    override suspend fun resetSyncState() = syncStateDao.clear()
+
+    private companion object {
+        /** Khớp trần db-max-rows của PostgREST; đặt lớn hơn cũng bị server cắt. */
+        const val PAGE_SIZE = 1000
+
+        /** Chặn vòng lặp vô hạn nếu server luôn báo has_more do lỗi logic. */
+        const val MAX_PAGES = 50
+    }
+}

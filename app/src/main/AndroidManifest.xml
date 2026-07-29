@@ -25,6 +25,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+          Gỡ khởi tạo tự động của WorkManager. SfaApplication tự cấu hình để
+          worker nhận được dependency từ Hilt; nếu để mặc định, WorkManager
+          dựng trước Hilt và SyncDownloadWorker sẽ crash vì thiếu factory.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>
