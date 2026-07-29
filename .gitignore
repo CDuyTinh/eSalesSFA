@@ -21,3 +21,7 @@ secrets.properties
 
 # Room schema: KHÔNG ignore — schema JSON phải được commit để review migration trong PR
 !**/schemas/*.json
+
+# Supabase CLI — state cục bộ của máy, không phải cấu hình project
+supabase/.temp/
+supabase/.branches/
