@@ -132,17 +132,25 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 ## Roadmap
 
 - [x] Khung project, Version Catalog, Hilt + Room + KSP
+- [x] Supabase schema (24 bảng) + RLS + seed data
+- [x] Edge Functions `sync-download` / `sync-upload`
 - [x] Tầng network: Retrofit → Edge Functions, Supabase Auth/Storage
-- [ ] Supabase schema + RLS + seed data
-- [ ] Auth + Room entity + Navigation
-- [ ] **Sync engine** (download delta + upload outbox)
-- [ ] Tuyến viếng thăm + danh sách khách hàng
+- [x] Room 24 bảng + DAO + outbox
+- [x] **Sync engine download** — delta version, phân trang, ghi theo transaction
+- [x] Đăng nhập + màn hình đồng bộ + Home
+- [ ] Sync engine **upload** (outbox → `sync-upload`)
+- [ ] Danh sách & chi tiết khách hàng, sales step
 - [ ] GPS check-in / check-out
 - [ ] **Promotion engine** + unit test
 - [ ] Take Order
 - [ ] Kiểm kê tồn kho + Khảo sát trưng bày + CameraX
 - [ ] Dashboard KPI + Báo cáo
 - [ ] Chuyển UI sang Jetpack Compose
+
+### Đã chạy thật
+
+Đăng nhập → tải **5.613 dòng / 17 bảng qua 4 lượt phân trang** → Home hiển thị
+200 khách hàng · 300 sản phẩm · 15 chương trình khuyến mãi · 34 khách trong tuyến hôm nay.
 
 ---
 
