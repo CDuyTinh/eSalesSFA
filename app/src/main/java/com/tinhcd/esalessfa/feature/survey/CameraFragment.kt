@@ -1,7 +1,10 @@
 package com.tinhcd.esalessfa.feature.survey
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentCameraBinding
@@ -35,11 +39,29 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) startCamera() else {
-            Snackbar.make(requireView(), R.string.camera_permission_denied, Snackbar.LENGTH_LONG)
-                .show()
-            findNavController().navigateUp()
-        }
+        if (granted) startCamera() else showPermissionDenied()
+    }
+
+    /**
+     * Từ chối kèm "Không hỏi lại" thì hệ thống bỏ qua mọi lần xin sau, dialog
+     * không bao giờ hiện nữa. Đường duy nhất còn lại là mở Cài đặt ứng dụng.
+     */
+    private fun showPermissionDenied() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.camera_permission_title)
+            .setMessage(R.string.camera_permission_denied)
+            .setPositiveButton(R.string.checkin_open_settings) { _, _ ->
+                startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", requireContext().packageName, null),
+                    )
+                )
+                findNavController().navigateUp()
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> findNavController().navigateUp() }
+            .setCancelable(false)
+            .show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

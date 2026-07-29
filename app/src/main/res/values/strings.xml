@@ -159,7 +159,8 @@
     <!-- Camera -->
     <string name="camera_close">Đóng</string>
     <string name="camera_shutter">Chụp</string>
-    <string name="camera_permission_denied">Cần quyền camera để chụp ảnh minh chứng</string>
+    <string name="camera_permission_title">Cần quyền camera</string>
+    <string name="camera_permission_denied">Ứng dụng cần quyền camera để chụp ảnh minh chứng trưng bày. Hãy cấp quyền trong Cài đặt.</string>
     <string name="camera_start_failed">Không khởi động được camera</string>
     <string name="camera_capture_failed">Chụp ảnh thất bại: %1$s</string>
 </resources>
