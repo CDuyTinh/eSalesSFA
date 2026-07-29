@@ -145,7 +145,7 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [x] Take Order — giỏ hàng, đa đơn vị tính, khuyến mãi tính realtime
 - [x] Kiểm kê tồn kho — lưới nhập liệu, gợi ý đặt hàng
 - [ ] Khảo sát trưng bày + CameraX
-- [ ] Dashboard KPI + Báo cáo
+- [x] Dashboard KPI + Báo cáo đơn hàng — biểu đồ tự vẽ, xuất CSV
 - [ ] Chuyển UI sang Jetpack Compose
 
 ### Đã chạy thật trên thiết bị

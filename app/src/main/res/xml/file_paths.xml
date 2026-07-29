@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- File CSV xuất ra nằm ở cache: hệ thống tự dọn khi thiếu dung lượng, và
+         báo cáo vốn chỉ cần tồn tại đủ lâu để chia sẻ đi. -->
+    <cache-path name="reports" path="reports/" />
+</paths>

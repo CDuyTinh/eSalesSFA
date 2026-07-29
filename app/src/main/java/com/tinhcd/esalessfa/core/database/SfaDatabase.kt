@@ -12,6 +12,7 @@ import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.ProductDao
 import com.tinhcd.esalessfa.core.database.dao.PromotionDao
+import com.tinhcd.esalessfa.core.database.dao.ReportDao
 import com.tinhcd.esalessfa.core.database.dao.ReasonCodeDao
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.StockCountDao
@@ -113,6 +114,7 @@ abstract class SfaDatabase : RoomDatabase() {
     abstract fun catalogQueryDao(): CatalogQueryDao
     abstract fun productDao(): ProductDao
     abstract fun promotionDao(): PromotionDao
+    abstract fun reportDao(): ReportDao
     abstract fun reasonCodeDao(): ReasonCodeDao
     abstract fun salespersonDao(): SalespersonDao
     abstract fun stockCountDao(): StockCountDao

@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_home_to_customerList"
             app:destination="@id/customerListFragment" />
+        <action
+            android:id="@+id/action_home_to_dashboard"
+            app:destination="@id/dashboardFragment" />
     </fragment>
 
     <fragment
@@ -119,6 +122,20 @@
             android:name="customerId"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.tinhcd.esalessfa.feature.report.DashboardFragment"
+        android:label="Báo cáo">
+        <action
+            android:id="@+id/action_dashboard_to_orderReport"
+            app:destination="@id/orderReportFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/orderReportFragment"
+        android:name="com.tinhcd.esalessfa.feature.report.OrderReportFragment"
+        android:label="Báo cáo đơn hàng" />
 
     <fragment
         android:id="@+id/checkInFragment"

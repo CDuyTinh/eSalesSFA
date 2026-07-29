@@ -7,6 +7,7 @@ import com.tinhcd.esalessfa.data.repository.OrderRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.ProductRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.PromotionRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SalespersonRepositoryImpl
+import com.tinhcd.esalessfa.data.repository.ReportRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.StockCountRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SyncRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.VisitRepositoryImpl
@@ -17,6 +18,7 @@ import com.tinhcd.esalessfa.domain.repository.OrderRepository
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import com.tinhcd.esalessfa.domain.repository.PromotionRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
+import com.tinhcd.esalessfa.domain.repository.ReportRepository
 import com.tinhcd.esalessfa.domain.repository.StockCountRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
@@ -64,4 +66,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindStockCountRepository(impl: StockCountRepositoryImpl): StockCountRepository
+
+    @Binds @Singleton
+    abstract fun bindReportRepository(impl: ReportRepositoryImpl): ReportRepository
 }

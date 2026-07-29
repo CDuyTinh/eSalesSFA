@@ -110,6 +110,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.syncButton.setOnClickListener { viewModel.syncAgain() }
         binding.routeButton.setOnClickListener { openCustomerList(CustomerListMode.ROUTE_TODAY) }
         binding.allCustomersButton.setOnClickListener { openCustomerList(CustomerListMode.ALL) }
+        binding.dashboardButton.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_dashboard)
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

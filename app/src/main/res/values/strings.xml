@@ -108,4 +108,32 @@
     <string name="stock_no_suggestion">Chưa có gợi ý đặt hàng</string>
     <string name="stock_save">Lưu phiếu kiểm kê</string>
     <string name="stock_saved">Đã lưu phiếu kiểm kê, chờ đồng bộ</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Báo cáo &amp; KPI</string>
+    <string name="dashboard_open">Xem báo cáo</string>
+    <string name="dashboard_today">Doanh số hôm nay</string>
+    <string name="dashboard_orders">Đơn hàng</string>
+    <string name="dashboard_visits">Đã ghé</string>
+    <string name="dashboard_chart_title">Doanh số 14 ngày gần nhất</string>
+    <string name="dashboard_month">Tháng này</string>
+    <string name="dashboard_month_revenue">Doanh số</string>
+    <string name="dashboard_month_orders">Số đơn</string>
+    <string name="dashboard_avg_order">Giá trị đơn trung bình</string>
+    <string name="dashboard_top_products">Top sản phẩm 30 ngày</string>
+    <string name="dashboard_top_customers">Top khách hàng 30 ngày</string>
+    <string name="dashboard_open_report">Báo cáo đơn hàng chi tiết</string>
+    <string name="report_no_data">Chưa có dữ liệu</string>
+
+    <!-- Order report -->
+    <string name="report_title">Báo cáo đơn hàng</string>
+    <string name="report_range">%1$s → %2$s</string>
+    <string name="report_pick_range">Chọn khoảng ngày</string>
+    <string name="report_summary">%1$d đơn · %2$s</string>
+    <string name="report_line_count">%1$d dòng</string>
+    <string name="report_empty">Không có đơn hàng nào trong khoảng ngày này</string>
+    <string name="report_pending_badge">CHỜ ĐỒNG BỘ</string>
+    <string name="report_export">Xuất CSV</string>
+    <string name="report_share">Chia sẻ báo cáo</string>
+    <string name="report_export_failed">Không xuất được file báo cáo</string>
 </resources>
