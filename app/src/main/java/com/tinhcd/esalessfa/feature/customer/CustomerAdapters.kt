@@ -38,11 +38,21 @@ class CustomerViewHolder(
         binding.name.text = customer.name
         binding.code.text = customer.code
         binding.address.text = customer.address.orEmpty()
+        binding.initial.text = customer.name.trim().take(1).uppercase()
+
+        binding.phone.text = customer.phone.orEmpty()
+        binding.phoneRow.visibility =
+            if (customer.phone.isNullOrBlank()) View.GONE else View.VISIBLE
 
         binding.order.text = order?.toString().orEmpty()
         binding.order.visibility = if (order != null) View.VISIBLE else View.GONE
 
-        binding.status.visibility = if (state != null) View.VISIBLE else View.GONE
+        // Danh sách toàn bộ khách hàng không có khái niệm trạng thái ghé, nên ẩn
+        // luôn cả đường kẻ để thẻ không thừa một khoảng trống.
+        val hasStatus = state != null
+        binding.status.visibility = if (hasStatus) View.VISIBLE else View.GONE
+        binding.divider.visibility = if (hasStatus) View.VISIBLE else View.GONE
+
         if (state != null) {
             binding.status.setText(
                 when (state) {
@@ -51,15 +61,15 @@ class CustomerViewHolder(
                     VisitState.DONE -> R.string.visit_done
                 }
             )
-            binding.status.setTextColor(
-                binding.root.context.getColor(
-                    when (state) {
-                        VisitState.NOT_VISITED -> android.R.color.darker_gray
-                        VisitState.IN_PROGRESS -> android.R.color.holo_orange_dark
-                        VisitState.DONE -> android.R.color.holo_green_dark
-                    }
-                )
-            )
+            // Nền nhạt + chữ đậm cùng tông: đọc được trạng thái từ xa mà không
+            // cần nhìn kỹ chữ, giống cách bản gốc phân biệt bằng màu.
+            val (bg, fg) = when (state) {
+                VisitState.NOT_VISITED -> R.drawable.bg_chip_orange to R.color.stateOrange
+                VisitState.IN_PROGRESS -> R.drawable.bg_chip_blue to R.color.stateBlue
+                VisitState.DONE -> R.drawable.bg_chip_green to R.color.stateGreen
+            }
+            binding.status.setBackgroundResource(bg)
+            binding.status.setTextColor(binding.root.context.getColor(fg))
         }
 
         binding.root.setOnClickListener { onClick(customer.id) }

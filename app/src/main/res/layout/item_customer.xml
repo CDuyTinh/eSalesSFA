@@ -1,70 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Thẻ khách hàng theo bố cục bản eSales gốc: ảnh đại diện bên trái, tên kèm nhãn
+  mã ở hàng đầu, các dòng thông tin phụ có biểu tượng dẫn, và hàng trạng thái
+  ở cuối.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:background="?attr/selectableItemBackground"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="14dp">
-
-    <TextView
-        android:id="@+id/order"
-        android:layout_width="28dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="1" />
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            tools:text="Cửa hàng Minh Anh 12" />
-
-        <TextView
-            android:id="@+id/address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="12 Đường số 3, Quận 1, TP.HCM" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="end">
+        android:padding="@dimen/space_md">
 
-        <TextView
-            android:id="@+id/code"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceLabelSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="KH0012" />
+            android:orientation="horizontal">
+
+            <!-- Số thứ tự ghé trong tuyến; ẩn ở danh sách toàn bộ khách hàng. -->
+            <TextView
+                android:id="@+id/order"
+                style="@style/Sfa.Badge"
+                android:layout_width="24dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:background="@drawable/bg_badge_gray"
+                tools:text="1" />
+
+            <FrameLayout
+                android:layout_width="@dimen/thumb_size"
+                android:layout_height="@dimen/thumb_size"
+                android:layout_marginStart="@dimen/space_sm"
+                android:background="@drawable/bg_thumb">
+
+                <!-- Chữ cái đầu tên thay cho ảnh: master data không có ảnh cửa
+                     hàng, mà ô trống trơn nhìn như đang tải lỗi. -->
+                <TextView
+                    android:id="@+id/initial"
+                    style="@style/Sfa.Text.Title"
+                    android:layout_gravity="center"
+                    android:textColor="@color/textGray"
+                    tools:text="M" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/Sfa.Text.Body"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textStyle="bold"
+                        tools:text="Cửa hàng Minh Anh 12" />
+
+                    <TextView
+                        android:id="@+id/code"
+                        style="@style/Sfa.Badge"
+                        android:layout_marginStart="@dimen/space_sm"
+                        tools:text="KH0012" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/glyph_pin" />
+
+                    <TextView
+                        android:id="@+id/address"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/space_xs"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        tools:text="12 Đường số 3, Quận 1, TP.HCM" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/phoneRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/glyph_phone" />
+
+                    <TextView
+                        android:id="@+id/phone"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_marginStart="@dimen/space_xs"
+                        tools:text="0901234567" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@color/lineGray" />
 
         <TextView
             android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            tools:text="Đã ghé" />
+            style="@style/Sfa.Text.Tiny"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/space_sm"
+            android:paddingHorizontal="@dimen/space_sm"
+            android:paddingVertical="3dp"
+            android:gravity="center"
+            android:background="@drawable/bg_chip_orange"
+            tools:text="Chưa ghé" />
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

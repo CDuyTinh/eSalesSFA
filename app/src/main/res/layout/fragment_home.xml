@@ -1,160 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground">
 
+    <!-- Dải màu thương hiệu mang lời chào và thời điểm đồng bộ, giống cách bản
+         gốc dùng vùng màu đỏ làm phần đầu màn hình. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:background="@color/brandRed"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingBottom="@dimen/space_xl">
 
         <TextView
             android:id="@+id/greetingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:textStyle="bold" />
+            style="@style/Sfa.Text.Title"
+            android:textColor="@color/white"
+            tools:text="Xin chào, Nguyễn Văn Sales" />
 
         <TextView
             android:id="@+id/lastSyncText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?android:attr/textColorSecondary" />
+            style="@style/Sfa.Text.Tiny"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/white"
+            android:alpha="0.85"
+            tools:text="Đồng bộ lần cuối: 29/07/2026 17:38" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_lg"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <!-- Thẻ nhô lên đè vào dải đỏ để tạo chiều sâu cho phần đầu. -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/customerCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_customers"
-                    android:textAppearance="?attr/textAppearanceBodySmall" />
-            </LinearLayout>
+                android:layout_marginTop="-16dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/productCount"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_products"
-                    android:textAppearance="?attr/textAppearanceBodySmall" />
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:baselineAligned="false"
+                    android:padding="@dimen/space_lg">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/promotionCount"
-                    android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/customerCount"
+                            style="@style/Sfa.Text.Number"
+                            tools:text="200" />
+                        <TextView
+                            style="@style/Sfa.Text.Tiny"
+                            android:text="@string/home_customers" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/lineGray" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/productCount"
+                            style="@style/Sfa.Text.Number"
+                            tools:text="300" />
+                        <TextView
+                            style="@style/Sfa.Text.Tiny"
+                            android:text="@string/home_products" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/lineGray" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/promotionCount"
+                            style="@style/Sfa.Text.Number"
+                            tools:text="15" />
+                        <TextView
+                            style="@style/Sfa.Text.Tiny"
+                            android:text="@string/home_promotions" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tuyến hôm nay -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            style="@style/Sfa.Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textStyle="bold"
+                            android:text="@string/home_route_today" />
+
+                        <TextView
+                            android:id="@+id/routeCount"
+                            style="@style/Sfa.Text.Number"
+                            tools:text="34" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/routeButton"
+                        style="@style/Sfa.Button"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:text="@string/home_view_route" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/allCustomersButton"
+                        style="@style/Sfa.Button.Outlined"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/home_view_all_customers" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Đồng bộ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_promotions"
-                    android:textAppearance="?attr/textAppearanceBodySmall" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            style="@style/Sfa.Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/home_pending" />
+
+                        <TextView
+                            android:id="@+id/pendingCount"
+                            style="@style/Sfa.Text.Number"
+                            tools:text="0" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/syncWarning"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:padding="@dimen/space_sm"
+                        android:background="@drawable/bg_chip_red"
+                        android:textColor="@color/brandRed"
+                        android:visibility="gone"
+                        tools:text="Chưa đồng bộ được: còn đang check-in tại Cửa hàng Minh Anh 12." />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/dashboardButton"
+                        style="@style/Sfa.Button.Outlined"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:text="@string/dashboard_open" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/syncButton"
+                        style="@style/Sfa.Button"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/home_sync_again" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:text="@string/home_route_today"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <TextView
-            android:id="@+id/routeCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineLarge"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/routeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/home_view_route" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/allCustomersButton"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/home_view_all_customers" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/home_pending"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <TextView
-            android:id="@+id/pendingCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleLarge"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dashboardButton"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/dashboard_open" />
-
-        <TextView
-            android:id="@+id/syncWarning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorError"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/syncButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/home_sync_again" />
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

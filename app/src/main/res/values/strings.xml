@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">eSalesSFA</string>
 
+    <!-- Ký tự dẫn thay cho thư viện icon font: nhẹ hơn nhiều và hiển thị đồng
+         nhất trên mọi máy, không phụ thuộc font được cài. -->
+    <string name="glyph_pin" translatable="false">◉</string>
+    <string name="glyph_phone" translatable="false">✆</string>
+
     <!-- Login -->
     <string name="login_subtitle">Đăng nhập để bắt đầu ngày làm việc</string>
     <string name="login_email">Email</string>

@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bảng màu theo bộ nhận diện của hệ thống eSales gốc: đỏ làm màu chủ đạo, nền
+  xám rất nhạt để các thẻ trắng nổi lên, và một dải màu phụ dùng riêng cho việc
+  phân biệt trạng thái nghiệp vụ.
+-->
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Chủ đạo -->
+    <color name="brandRed">#E41A23</color>
+    <color name="brandRedDark">#B6141C</color>
+    <color name="brandRedLight">#E9474F</color>
+    <color name="brandRedFaint">#1AE41A23</color>
+
+    <!-- Nền &amp; đường kẻ -->
+    <color name="surfaceGray">#F7F7F8</color>
+    <color name="lineGray">#E7E7E9</color>
+
+    <!-- Chữ -->
+    <color name="textDark">#0A091B</color>
+    <color name="textGrayDark">#6D6D7A</color>
+    <color name="textGray">#A4A4A8</color>
+
+    <!-- Trạng thái nghiệp vụ -->
+    <color name="stateBlue">#2D2DFE</color>
+    <color name="stateGreen">#04A489</color>
+    <color name="stateOrange">#FF5A30</color>
+    <color name="stateBlueFaint">#1A2D2DFE</color>
+    <color name="stateGreenFaint">#1A04A489</color>
+    <color name="stateOrangeFaint">#1AFF5A30</color>
 </resources>

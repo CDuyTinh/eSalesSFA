@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bộ style dùng chung, đặt tên theo vai trò chứ không theo hình thức.
+  Đổi diện mạo toàn app chỉ cần sửa ở đây thay vì tìm trong 20 layout.
+-->
+<resources>
+
+    <!-- ── Thẻ ──────────────────────────────────────────────────────────── -->
+    <style name="Sfa.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="android:layout_marginHorizontal">@dimen/space_md</item>
+        <item name="android:layout_marginTop">@dimen/space_sm</item>
+    </style>
+
+    <!-- ── Chữ ──────────────────────────────────────────────────────────── -->
+    <style name="Sfa.Text" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textDark</item>
+    </style>
+
+    <style name="Sfa.Text.Title" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Sfa.Text.Body" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <style name="Sfa.Text.Small" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/textGrayDark</item>
+    </style>
+
+    <style name="Sfa.Text.Tiny" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_tiny</item>
+        <item name="android:textColor">@color/textGray</item>
+    </style>
+
+    <!-- Con số lớn trên dashboard và các ô thống kê. -->
+    <style name="Sfa.Text.Number" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_number</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/brandRed</item>
+    </style>
+
+    <!-- Nhãn nhỏ nền màu: mã khách hàng, trạng thái ghé, nhãn TẶNG. -->
+    <style name="Sfa.Badge" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_tiny</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingHorizontal">@dimen/space_sm</item>
+        <item name="android:paddingVertical">2dp</item>
+        <item name="android:background">@drawable/bg_badge_red</item>
+    </style>
+
+    <!-- ── Nút ──────────────────────────────────────────────────────────── -->
+    <style name="Sfa.Button" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cornerRadius">@dimen/card_radius</item>
+        <item name="android:paddingVertical">@dimen/space_md</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <style name="Sfa.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cornerRadius">@dimen/card_radius</item>
+        <item name="android:paddingVertical">@dimen/space_md</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="strokeColor">@color/lineGray</item>
+        <item name="android:textColor">@color/textDark</item>
+    </style>
+
+    <!-- Nút hành động nhỏ nằm trong thẻ danh sách. -->
+    <style name="Sfa.Button.Compact" parent="Widget.Material3.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/space_xs</item>
+        <item name="android:paddingHorizontal">@dimen/space_md</item>
+        <item name="android:paddingVertical">@dimen/space_xs</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
+
+    <!-- ── Thanh tiêu đề ───────────────────────────────────────────────── -->
+    <style name="Sfa.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/brandRed</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
+        <item name="navigationIconTint">@color/white</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <!-- ── Ô nhập ──────────────────────────────────────────────────────── -->
+    <style name="Sfa.Input" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/card_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/card_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/card_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/card_radius</item>
+    </style>
+
+    <style name="Sfa.Input.Dense" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxCornerRadiusTopStart">@dimen/card_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/card_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/card_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/card_radius</item>
+    </style>
+</resources>

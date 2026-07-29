@@ -1,9 +1,44 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ESalesSFA" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!--
+      Theme sáng cố định, không dùng DayNight.
+      Nhân viên bán hàng làm việc ngoài trời nên nền sáng dễ đọc hơn hẳn; và app
+      doanh nghiệp cần giữ màu nhận diện ổn định, không đổi theo cài đặt máy.
+    -->
+    <style name="Base.Theme.ESalesSFA" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/brandRed</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brandRedFaint</item>
+        <item name="colorOnPrimaryContainer">@color/brandRedDark</item>
+
+        <item name="colorSecondary">@color/stateBlue</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorError">@color/brandRed</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Nền xám nhạt để thẻ trắng nổi lên — đúng cách bố trí của bản gốc. -->
+        <item name="android:colorBackground">@color/surfaceGray</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/textDark</item>
+        <item name="colorSurfaceVariant">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/textGrayDark</item>
+        <item name="colorOutline">@color/lineGray</item>
+        <item name="colorOutlineVariant">@color/lineGray</item>
+
+        <item name="android:textColorPrimary">@color/textDark</item>
+        <item name="android:textColorSecondary">@color/textGrayDark</item>
+        <item name="android:listDivider">@color/lineGray</item>
+
+        <item name="android:statusBarColor">@color/brandRedDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Sfa.Dialog</item>
     </style>
 
     <style name="Theme.ESalesSFA" parent="Base.Theme.ESalesSFA" />
+
+    <style name="ThemeOverlay.Sfa.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/brandRed</item>
+    </style>
 </resources>

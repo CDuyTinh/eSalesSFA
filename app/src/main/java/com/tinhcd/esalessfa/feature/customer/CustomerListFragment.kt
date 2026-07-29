@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentCustomerListBinding
@@ -39,10 +38,9 @@ class CustomerListFragment : Fragment(R.layout.fragment_customer_list) {
             else R.string.customer_all
         )
 
+        // Không dùng DividerItemDecoration nữa: mỗi khách hàng đã là một thẻ
+        // riêng có khoảng cách, thêm đường kẻ giữa các thẻ sẽ thành thừa.
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
 
         // Ô tìm kiếm chỉ set text một lần: gán lại mỗi khi state đổi sẽ đẩy con trỏ
         // về đầu dòng trong lúc user đang gõ.
