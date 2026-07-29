@@ -19,6 +19,12 @@ import com.tinhcd.esalessfa.core.database.entity.master.ReasonCodeEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalesRouteDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalesRouteEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalespersonEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionGroupEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionOptionEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyTypeEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.OrderDetailEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
 import com.tinhcd.esalessfa.core.database.entity.master.UomEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -48,6 +54,15 @@ interface MasterWriteDao {
     @Upsert suspend fun upsertPromotionPrograms(items: List<PromotionProgramEntity>)
     @Upsert suspend fun upsertPromotionBreaks(items: List<PromotionBreakEntity>)
     @Upsert suspend fun upsertPromotionItems(items: List<PromotionItemEntity>)
+    @Upsert suspend fun upsertSurveyTypes(items: List<SurveyTypeEntity>)
+    @Upsert suspend fun upsertSurveyQuestionGroups(items: List<SurveyQuestionGroupEntity>)
+    @Upsert suspend fun upsertSurveyQuestions(items: List<SurveyQuestionEntity>)
+    @Upsert suspend fun upsertSurveyQuestionOptions(items: List<SurveyQuestionOptionEntity>)
+
+    // Lịch sử đơn tải ngược về. Upsert theo id nên đơn do chính máy này tạo
+    // quay lại cũng chỉ ghi đè chính nó.
+    @Upsert suspend fun upsertOrders(items: List<OrderEntity>)
+    @Upsert suspend fun upsertOrderDetails(items: List<OrderDetailEntity>)
 
     // Server dùng soft delete; client nhận danh sách id đã xoá rồi gỡ khỏi máy.
     @Query("DELETE FROM customers WHERE id IN (:ids)")

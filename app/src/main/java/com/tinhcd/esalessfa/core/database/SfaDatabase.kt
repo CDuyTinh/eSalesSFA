@@ -36,10 +36,19 @@ import com.tinhcd.esalessfa.core.database.entity.master.ReasonCodeEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalesRouteDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalesRouteEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SalespersonEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionGroupEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionOptionEntity
+import com.tinhcd.esalessfa.core.database.entity.master.SurveyTypeEntity
 import com.tinhcd.esalessfa.core.database.entity.master.UomEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountDetailEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyAnswerEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyPhotoEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
 
 /**
@@ -71,17 +80,26 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
         PromotionProgramEntity::class,
         PromotionBreakEntity::class,
         PromotionItemEntity::class,
+        SurveyTypeEntity::class,
+        SurveyQuestionGroupEntity::class,
+        SurveyQuestionEntity::class,
+        SurveyQuestionOptionEntity::class,
         // transaction
         VisitEntity::class,
         OrderEntity::class,
         OrderDetailEntity::class,
         OrderPromotionEntity::class,
+        StockCountEntity::class,
+        StockCountDetailEntity::class,
+        SurveyEntity::class,
+        SurveyAnswerEntity::class,
+        SurveyPhotoEntity::class,
         // local
         SyncStateEntity::class,
         PendingUploadEntity::class,
         SyncErrorEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

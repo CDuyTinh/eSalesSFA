@@ -27,7 +27,13 @@ import com.tinhcd.esalessfa.core.network.dto.PromotionProgramDto
 import com.tinhcd.esalessfa.core.network.dto.ReasonCodeDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
+import com.tinhcd.esalessfa.core.network.dto.OrderDetailDownloadDto
+import com.tinhcd.esalessfa.core.network.dto.OrderDownloadDto
 import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
+import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionDto
+import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionGroupDto
+import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionOptionDto
+import com.tinhcd.esalessfa.core.network.dto.SurveyTypeDto
 import com.tinhcd.esalessfa.core.network.dto.OrderUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
 import com.tinhcd.esalessfa.core.network.dto.SyncUploadRequest
@@ -238,6 +244,34 @@ class SyncRepositoryImpl @Inject constructor(
 
             SyncTables.PROMOTION_ITEMS ->
                 masterDao.upsertPromotionItems(rows.decode<PromotionItemDto>().map { it.toEntity() })
+
+            SyncTables.SURVEY_TYPES ->
+                masterDao.upsertSurveyTypes(rows.decode<SurveyTypeDto>().map { it.toEntity() })
+
+            SyncTables.SURVEY_QUESTION_GROUPS ->
+                masterDao.upsertSurveyQuestionGroups(
+                    rows.decode<SurveyQuestionGroupDto>().map { it.toEntity() }
+                )
+
+            SyncTables.SURVEY_QUESTIONS ->
+                masterDao.upsertSurveyQuestions(
+                    rows.decode<SurveyQuestionDto>().map { it.toEntity() }
+                )
+
+            SyncTables.SURVEY_QUESTION_OPTIONS ->
+                masterDao.upsertSurveyQuestionOptions(
+                    rows.decode<SurveyQuestionOptionDto>().map { it.toEntity() }
+                )
+
+            SyncTables.ORDERS -> {
+                val now = System.currentTimeMillis()
+                masterDao.upsertOrders(rows.decode<OrderDownloadDto>().map { it.toEntity(now) })
+            }
+
+            SyncTables.ORDER_DETAILS ->
+                masterDao.upsertOrderDetails(
+                    rows.decode<OrderDetailDownloadDto>().map { it.toEntity() }
+                )
 
             else -> return 0
         }

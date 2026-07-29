@@ -19,6 +19,12 @@ object SyncTables {
     const val PROMOTION_PROGRAMS = "promotion_programs"
     const val PROMOTION_BREAKS = "promotion_breaks"
     const val PROMOTION_ITEMS = "promotion_items"
+    const val SURVEY_TYPES = "survey_types"
+    const val SURVEY_QUESTION_GROUPS = "survey_question_groups"
+    const val SURVEY_QUESTIONS = "survey_questions"
+    const val SURVEY_QUESTION_OPTIONS = "survey_question_options"
+    const val ORDERS = "orders"
+    const val ORDER_DETAILS = "order_details"
 }
 
 /**
