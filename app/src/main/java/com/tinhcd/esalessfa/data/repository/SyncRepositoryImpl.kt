@@ -3,10 +3,13 @@ package com.tinhcd.esalessfa.data.repository
 import androidx.room.withTransaction
 import com.tinhcd.esalessfa.core.common.dispatcher.DispatcherProvider
 import com.tinhcd.esalessfa.core.database.SfaDatabase
+import com.tinhcd.esalessfa.core.database.SyncStatus
 import com.tinhcd.esalessfa.core.database.dao.MasterWriteDao
 import com.tinhcd.esalessfa.core.database.dao.OrderDao
+import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
+import com.tinhcd.esalessfa.core.database.entity.local.SyncErrorEntity
 import com.tinhcd.esalessfa.core.database.entity.local.SyncStateEntity
 import com.tinhcd.esalessfa.core.network.api.SyncApi
 import com.tinhcd.esalessfa.core.network.dto.AppConfigDto
@@ -25,10 +28,13 @@ import com.tinhcd.esalessfa.core.network.dto.ReasonCodeDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
 import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
+import com.tinhcd.esalessfa.core.network.dto.OrderUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
+import com.tinhcd.esalessfa.core.network.dto.SyncUploadRequest
 import com.tinhcd.esalessfa.core.network.dto.TableChangeSet
 import com.tinhcd.esalessfa.core.network.dto.UomDto
 import com.tinhcd.esalessfa.data.mapper.toEntity
+import com.tinhcd.esalessfa.data.mapper.toUploadBody
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
 import com.tinhcd.esalessfa.domain.sync.SyncProgress
 import com.tinhcd.esalessfa.domain.sync.SyncTables
@@ -42,6 +48,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -54,6 +61,7 @@ class SyncRepositoryImpl @Inject constructor(
     private val syncStateDao: SyncStateDao,
     private val visitDao: VisitDao,
     private val orderDao: OrderDao,
+    private val syncErrorDao: SyncErrorDao,
     private val json: Json,
     private val dispatchers: DispatcherProvider,
 ) : SyncRepository {
@@ -65,6 +73,9 @@ class SyncRepositoryImpl @Inject constructor(
      * đường gọi trực tiếp từ UI (nút "Đồng bộ"). Mutex bịt nốt khe đó.
      */
     private val syncMutex = Mutex()
+
+    /** Mutex riêng cho upload: tải xuống và gửi lên không cần chặn nhau. */
+    private val uploadMutex = Mutex()
 
     override fun downloadMasterData(): Flow<SyncProgress> = flow {
         if (syncMutex.isLocked) {
@@ -244,6 +255,125 @@ class SyncRepositoryImpl @Inject constructor(
 
     private inline fun <reified T> List<JsonElement>.decode(): List<T> =
         map { json.decodeFromJsonElement(it) }
+
+    override fun uploadPending(): Flow<SyncProgress> = flow {
+        if (uploadMutex.isLocked) {
+            emit(SyncProgress.Failed("Đang có một lượt gửi khác chạy", isRetryable = false))
+            return@flow
+        }
+
+        uploadMutex.withLock {
+            val startedAt = System.currentTimeMillis()
+            emit(SyncProgress.Started)
+
+            val visits = visitDao.getPending()
+            val orders = orderDao.getPending()
+            val total = visits.size + orders.size
+
+            if (total == 0) {
+                emit(SyncProgress.Completed(0, 0, 0))
+                return@withLock
+            }
+
+            // sessionId mới mỗi lượt là an toàn: Edge Function upsert theo id bản
+            // ghi với ignoreDuplicates, nên gửi lại cùng một đơn không tạo bản
+            // ghi thứ hai dù session khác.
+            val sessionId = UUID.randomUUID().toString()
+            val visitIds = visits.map { it.id }
+            val orderIds = orders.map { it.order.id }
+
+            visitDao.markStatus(visitIds, SyncStatus.SYNCING, sessionId)
+            orderDao.markStatus(orderIds, SyncStatus.SYNCING, sessionId)
+
+            emit(SyncProgress.Uploading(sent = 0, total = total))
+
+            val request = SyncUploadRequest(
+                sessionId = sessionId,
+                visits = visits.map { json.encodeToJsonElement(it.toUploadBody()) },
+                orders = orders.map { row ->
+                    OrderUploadDto(
+                        order = json.encodeToJsonElement(row.order.toUploadBody()),
+                        details = row.details.map { json.encodeToJsonElement(it.toUploadBody()) },
+                        promotions = row.promotions.map { json.encodeToJsonElement(it.toUploadBody()) },
+                    )
+                },
+            )
+
+            val response = try {
+                api.upload(request)
+            } catch (e: Exception) {
+                // Không biết server đã nhận hay chưa -> trả về PENDING để lượt sau
+                // gửi lại. Bỏ qua bước này thì bản ghi kẹt SYNCING vĩnh viễn.
+                revertToPending(visitIds, orderIds)
+                emit(SyncProgress.Failed(e.message ?: "Lỗi kết nối", isRetryable = true))
+                return@withLock
+            }
+
+            if (!response.isSuccessful) {
+                revertToPending(visitIds, orderIds)
+                val code = response.code()
+                emit(
+                    SyncProgress.Failed(
+                        "Máy chủ trả về lỗi $code",
+                        isRetryable = code >= 500,
+                    )
+                )
+                return@withLock
+            }
+
+            val body = response.body()
+            if (body == null) {
+                revertToPending(visitIds, orderIds)
+                emit(SyncProgress.Failed("Máy chủ trả về nội dung rỗng", isRetryable = true))
+                return@withLock
+            }
+
+            val now = System.currentTimeMillis()
+            val accepted = body.accepted.toSet()
+
+            visitDao.markSynced(visitIds.filter { it in accepted }, now)
+            orderDao.markSynced(orderIds.filter { it in accepted }, now)
+
+            // Bị từ chối vì lỗi nghiệp vụ: đánh dấu FAILED kèm lý do để user thấy,
+            // KHÔNG đưa về PENDING vì gửi lại vẫn bị từ chối y hệt.
+            body.rejected.forEach { item ->
+                syncErrorDao.insert(
+                    SyncErrorEntity(
+                        sessionId = sessionId,
+                        tableName = item.entity,
+                        entityId = item.id,
+                        message = "${item.code}: ${item.message}",
+                        createdAt = now,
+                    )
+                )
+                when (item.entity) {
+                    "order" -> orderDao.markFailed(item.id, "${item.code}: ${item.message}")
+                    "visit" -> visitDao.markFailed(item.id, "${item.code}: ${item.message}")
+                }
+            }
+
+            // Id không nằm trong cả accepted lẫn rejected -> server im lặng bỏ qua.
+            // Trả về PENDING để lượt sau thử lại, thay vì để kẹt SYNCING.
+            val handled = accepted + body.rejected.map { it.id }.toSet()
+            revertToPending(
+                visitIds.filterNot { it in handled },
+                orderIds.filterNot { it in handled },
+            )
+
+            emit(
+                SyncProgress.Completed(
+                    totalRows = accepted.size,
+                    pages = 1,
+                    durationMs = System.currentTimeMillis() - startedAt,
+                )
+            )
+        }
+    }.flowOn(dispatchers.io)
+
+    private suspend fun revertToPending(visitIds: List<String>, orderIds: List<String>) {
+        if (visitIds.isNotEmpty()) visitDao.markStatus(visitIds, SyncStatus.PENDING, null)
+        if (orderIds.isNotEmpty()) orderDao.markStatus(orderIds, SyncStatus.PENDING, null)
+    }
 
     override fun observePendingCount(): Flow<Int> =
         combine(

@@ -76,3 +76,45 @@ class SyncDownloadWorker @AssistedInject constructor(
         )
     }
 }
+
+/**
+ * Đẩy giao dịch trong outbox lên server.
+ *
+ * Tách khỏi worker tải xuống vì hai việc có ràng buộc khác nhau: tải xuống có
+ * thể huỷ và chạy lại bất cứ lúc nào, còn gửi lên phải chạy tới nơi để đơn hàng
+ * của nhân viên không kẹt lại trong máy.
+ */
+@HiltWorker
+class SyncUploadWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val syncRepository: SyncRepository,
+) : CoroutineWorker(context, params) {
+
+    override suspend fun doWork(): Result {
+        var outcome: Result = Result.success()
+
+        syncRepository.uploadPending().collect { progress ->
+            when (progress) {
+                is SyncProgress.Uploading -> setProgress(
+                    workDataOf(
+                        SyncDownloadWorker.KEY_TOTAL_ROWS to progress.total,
+                    )
+                )
+
+                is SyncProgress.Completed -> outcome = Result.success(
+                    workDataOf(SyncDownloadWorker.KEY_TOTAL_ROWS to progress.totalRows)
+                )
+
+                is SyncProgress.Failed -> {
+                    val data = workDataOf(SyncDownloadWorker.KEY_ERROR to progress.message)
+                    outcome = if (progress.isRetryable) Result.retry() else Result.failure(data)
+                }
+
+                else -> Unit
+            }
+        }
+
+        return outcome
+    }
+}

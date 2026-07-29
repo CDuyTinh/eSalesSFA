@@ -3,6 +3,7 @@ package com.tinhcd.esalessfa.feature.order
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tinhcd.esalessfa.core.sync.SyncManager
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.promotion.OrderCalculator
 import com.tinhcd.esalessfa.domain.promotion.OrderTotals
@@ -61,6 +62,7 @@ class OrderEditViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
     private val orderRepository: OrderRepository,
+    private val syncManager: SyncManager,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -163,6 +165,10 @@ class OrderEditViewModel @Inject constructor(
                 )
             }.onSuccess { orderNo ->
                 _uiState.update { it.copy(isSaving = false) }
+                // Đẩy lên ngay. Có mạng thì đơn lên trong vài giây; không mạng
+                // thì WorkManager giữ lại và tự chạy khi kết nối trở lại — nhân
+                // viên không phải nhớ bấm đồng bộ.
+                syncManager.startUpload()
                 _events.send(OrderEvent.Saved(orderNo))
             }.onFailure { e ->
                 _uiState.update { it.copy(isSaving = false, errorMessage = e.message) }

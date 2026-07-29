@@ -17,6 +17,14 @@ interface SyncRepository {
      */
     fun downloadMasterData(): Flow<SyncProgress>
 
+    /**
+     * Đẩy giao dịch trong outbox lên server.
+     *
+     * Server từ chối vì lỗi nghiệp vụ (giá lệch, khách ngoài tuyến) sẽ đánh dấu
+     * bản ghi FAILED và KHÔNG thử lại — chỉ lỗi hạ tầng mới đáng retry.
+     */
+    fun uploadPending(): Flow<SyncProgress>
+
     /** Số bản ghi đang chờ đẩy lên (outbox). */
     fun observePendingCount(): Flow<Int>
 

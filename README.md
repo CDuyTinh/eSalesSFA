@@ -138,7 +138,7 @@ Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
 - [x] Room 24 bảng + DAO + outbox
 - [x] **Sync engine download** — delta version, phân trang, ghi theo transaction
 - [x] Đăng nhập + màn hình đồng bộ + Home
-- [ ] Sync engine **upload** (outbox → `sync-upload`)
+- [x] **Sync engine upload** — outbox → `sync-upload`, idempotent, tự retry
 - [x] Danh sách & chi tiết khách hàng (Paging 3, tìm kiếm có debounce)
 - [x] **Promotion engine** — 5 loại rule, 37 unit test
 - [ ] GPS check-in / check-out

@@ -93,7 +93,8 @@ class HomeViewModel @Inject constructor(
         .map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
-    fun syncAgain() = syncManager.startDownload(force = true)
+    /** Gửi outbox lên trước rồi mới tải xuống — xem SyncManager.startFullSync. */
+    fun syncAgain() = syncManager.startFullSync()
 }
 
 @AndroidEntryPoint
