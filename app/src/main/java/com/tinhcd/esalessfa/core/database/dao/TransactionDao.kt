@@ -44,6 +44,41 @@ interface VisitDao {
     @Query("SELECT * FROM visits WHERE visitDate = :date ORDER BY checkInAt")
     fun observeByDate(date: String): Flow<List<VisitEntity>>
 
+    /**
+     * Lượt ghé đang mở của một khách hàng, dạng Flow.
+     *
+     * Màn chi tiết khách hàng phải biết ngay khi quay lại từ check-in, nên phải
+     * quan sát thay vì đọc một lần lúc khởi tạo.
+     */
+    @Query(
+        """
+        SELECT * FROM visits
+        WHERE customerId = :customerId AND visitDate = :date AND checkOutAt IS NULL
+        LIMIT 1
+        """
+    )
+    fun observeOpenVisit(customerId: String, date: String): Flow<VisitEntity?>
+
+    /**
+     * Còn lượt ghé nào chưa check-out không.
+     *
+     * Dùng để chặn đồng bộ lên: đơn hàng, kiểm kê và khảo sát của một lượt viếng
+     * thăm chưa kết thúc vẫn có thể bị sửa, đẩy lên sớm là gửi số liệu chưa chốt.
+     */
+    @Query("SELECT COUNT(*) FROM visits WHERE checkOutAt IS NULL")
+    suspend fun countOpenVisits(): Int
+
+    /** Tên cửa hàng đang mở lượt ghé, để báo cho user biết vướng ở đâu. */
+    @Query(
+        """
+        SELECT c.name FROM visits v
+        INNER JOIN customers c ON c.id = v.customerId
+        WHERE v.checkOutAt IS NULL
+        ORDER BY v.checkInAt LIMIT 1
+        """
+    )
+    fun observeOpenVisitCustomerName(): Flow<String?>
+
     // ── outbox ──
     // Outbox là một QUERY chứ không phải bảng riêng. Ghi trạng thái ngay trên bản
     // ghi nghiệp vụ giúp tránh dual-write (ghi hai nơi rồi lệch nhau).

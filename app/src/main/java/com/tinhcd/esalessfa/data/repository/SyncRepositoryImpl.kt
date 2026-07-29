@@ -302,6 +302,17 @@ class SyncRepositoryImpl @Inject constructor(
             return@flow
         }
 
+        // Quy tắc nghiệp vụ: còn cửa hàng đang check-in thì chưa đồng bộ lên.
+        // Đơn hàng, kiểm kê và khảo sát của lượt ghé đó vẫn có thể bị sửa cho tới
+        // khi check-out, gửi sớm là đẩy số liệu chưa chốt.
+        //
+        // Chặn ở tầng repository chứ không chỉ khoá nút: auto-upload sau mỗi lần
+        // chốt đơn hay lưu phiếu cũng phải tuân theo.
+        if (visitDao.countOpenVisits() > 0) {
+            emit(SyncProgress.Skipped("Còn cửa hàng chưa check-out"))
+            return@flow
+        }
+
         uploadMutex.withLock {
             val startedAt = System.currentTimeMillis()
             emit(SyncProgress.Started)

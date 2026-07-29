@@ -13,11 +13,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.core.sync.SyncManager
+import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
 import com.tinhcd.esalessfa.domain.repository.CatalogRepository
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
+import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import com.tinhcd.esalessfa.feature.customer.CustomerListMode
 import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,6 +56,7 @@ class HomeViewModel @Inject constructor(
     salespersonRepository: SalespersonRepository,
     syncRepository: SyncRepository,
     private val syncManager: SyncManager,
+    visitRepository: VisitRepository,
 ) : ViewModel() {
 
     // combine chỉ có overload giữ nguyên kiểu tới 5 luồng; nhiều hơn sẽ rơi vào
@@ -88,6 +91,14 @@ class HomeViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
 
+    /**
+     * Tên cửa hàng đang chặn đồng bộ, null nếu không có.
+     *
+     * Hiện lý do thay vì để nút bấm không phản hồi — nhân viên sẽ tưởng app hỏng.
+     */
+    val blockingCustomer: StateFlow<String?> = visitRepository.observeBlockingCustomerName()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
     val routeCount: StateFlow<Int> = customerRepository
         .routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query = "")
         .map { it.size }
@@ -107,7 +118,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val binding = FragmentHomeBinding.bind(view)
         val timeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
-        binding.syncButton.setOnClickListener { viewModel.syncAgain() }
+        binding.syncButton.setOnClickListener {
+            val blocking = viewModel.blockingCustomer.value
+            if (blocking != null) {
+                Snackbar.make(
+                    view,
+                    getString(R.string.sync_blocked_by_visit, blocking),
+                    Snackbar.LENGTH_LONG,
+                ).show()
+            } else {
+                viewModel.syncAgain()
+            }
+        }
         binding.routeButton.setOnClickListener { openCustomerList(CustomerListMode.ROUTE_TODAY) }
         binding.allCustomersButton.setOnClickListener { openCustomerList(CustomerListMode.ALL) }
         binding.dashboardButton.setOnClickListener {
@@ -131,6 +153,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
                 launch {
                     viewModel.routeCount.collect { binding.routeCount.text = it.toString() }
+                }
+                launch {
+                    viewModel.blockingCustomer.collect { name ->
+                        binding.syncWarning.visibility =
+                            if (name == null) View.GONE else View.VISIBLE
+                        if (name != null) {
+                            binding.syncWarning.text =
+                                getString(R.string.sync_blocked_by_visit, name)
+                        }
+                    }
                 }
             }
         }

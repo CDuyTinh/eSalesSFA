@@ -26,6 +26,7 @@
     <string name="home_route_today">Tuyến hôm nay</string>
     <string name="home_pending">Chờ đồng bộ lên</string>
     <string name="home_sync_again">Đồng bộ lại</string>
+    <string name="sync_blocked_by_visit">Chưa đồng bộ được: còn đang check-in tại %1$s. Hãy check-out trước.</string>
     <string name="home_view_route">Xem tuyến hôm nay</string>
     <string name="home_view_all_customers">Tất cả khách hàng</string>
 
@@ -56,6 +57,7 @@
     <string name="action_stock_count">Kiểm kê tồn kho</string>
     <string name="action_take_order">Đặt hàng</string>
     <string name="feature_coming_soon">Tính năng đang được phát triển</string>
+    <string name="step_need_checkin">Cần check-in tại cửa hàng trước khi kiểm kê, khảo sát hoặc đặt hàng.</string>
     <string name="value_empty">—</string>
 
     <!-- Take order -->

@@ -59,6 +59,15 @@ sealed interface SyncProgress {
         val message: String,
         val isRetryable: Boolean,
     ) : SyncProgress
+
+    /**
+     * Bỏ qua vì điều kiện nghiệp vụ chưa cho phép, không phải lỗi.
+     *
+     * Khác Failed ở chỗ worker coi đây là thành công: chuỗi gửi-lên-rồi-tải-xuống
+     * vẫn chạy tiếp phần tải xuống, và WorkManager không ghi nhận một lần thất bại
+     * giả.
+     */
+    data class Skipped(val reason: String) : SyncProgress
 }
 
 /** Kết quả một lượt sync, dùng cho worker quyết định retry hay bỏ. */

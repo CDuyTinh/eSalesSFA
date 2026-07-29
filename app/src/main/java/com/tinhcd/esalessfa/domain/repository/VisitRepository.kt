@@ -23,6 +23,20 @@ interface VisitRepository {
     /** Lượt ghé đang mở của khách hàng hôm nay, null nếu chưa check-in. */
     suspend fun openVisit(customerId: String): OpenVisit?
 
+    /** Dạng Flow để màn hình cập nhật ngay sau khi check-in hoặc check-out. */
+    fun observeOpenVisit(customerId: String): Flow<OpenVisit?>
+
+    /**
+     * Còn cửa hàng nào đang trong trạng thái check-in không.
+     *
+     * Quy tắc nghiệp vụ: chưa check-out thì chưa được đồng bộ lên, vì dữ liệu
+     * của lượt ghé đó còn có thể thay đổi.
+     */
+    suspend fun hasOpenVisit(): Boolean
+
+    /** Tên cửa hàng đang mở lượt ghé, dùng cho thông báo trên màn chính. */
+    fun observeBlockingCustomerName(): Flow<String?>
+
     suspend fun checkIn(
         customerId: String,
         sample: LocationSample?,

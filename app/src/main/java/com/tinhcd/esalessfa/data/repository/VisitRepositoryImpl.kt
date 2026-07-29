@@ -55,6 +55,16 @@ class VisitRepositoryImpl @Inject constructor(
             OpenVisit(it.id, it.customerId, it.checkInAt)
         }
 
+    override fun observeOpenVisit(customerId: String): Flow<OpenVisit?> =
+        visitDao.observeOpenVisit(customerId, today()).map { visit ->
+            visit?.let { OpenVisit(it.id, it.customerId, it.checkInAt) }
+        }
+
+    override suspend fun hasOpenVisit(): Boolean = visitDao.countOpenVisits() > 0
+
+    override fun observeBlockingCustomerName(): Flow<String?> =
+        visitDao.observeOpenVisitCustomerName()
+
     override suspend fun checkIn(
         customerId: String,
         sample: LocationSample?,

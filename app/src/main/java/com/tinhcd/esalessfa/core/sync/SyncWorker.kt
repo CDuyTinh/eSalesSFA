@@ -111,6 +111,12 @@ class SyncUploadWorker @AssistedInject constructor(
                     outcome = if (progress.isRetryable) Result.retry() else Result.failure(data)
                 }
 
+                // Bỏ qua vì điều kiện nghiệp vụ -> coi là thành công để chuỗi
+                // công việc chạy tiếp phần tải xuống.
+                is SyncProgress.Skipped -> outcome = Result.success(
+                    workDataOf(SyncDownloadWorker.KEY_ERROR to progress.reason)
+                )
+
                 else -> Unit
             }
         }

@@ -89,6 +89,15 @@
                 android:text="@string/customer_actions"
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
 
+            <TextView
+                android:id="@+id/stepHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/step_need_checkin"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorError" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/checkInButton"
                 android:layout_width="match_parent"
