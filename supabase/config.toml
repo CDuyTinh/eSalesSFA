@@ -1,0 +1,14 @@
+# Cấu hình Supabase CLI cho project này.
+# Nhờ file này, lệnh `supabase functions deploy` chạy được từ thư mục gốc repo
+# mà không cần `supabase link` (link còn hỏi mật khẩu database, ở đây không cần).
+
+project_id = "kvlzyuhvhwzmdvocyhnr"
+
+# verify_jwt = true: Supabase tự kiểm tra chữ ký JWT trước khi function chạy.
+# Request thiếu hoặc sai token bị chặn ngay ở cổng, code trong function không hề
+# được gọi. Đây là lý do resolveCaller() có thể tin tưởng payload của token.
+[functions.sync-download]
+verify_jwt = true
+
+[functions.sync-upload]
+verify_jwt = true
