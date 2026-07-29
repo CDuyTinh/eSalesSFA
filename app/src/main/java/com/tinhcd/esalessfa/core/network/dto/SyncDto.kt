@@ -47,6 +47,14 @@ data class SyncUploadRequest(
     @SerialName("session_id") val sessionId: String,
     @SerialName("visits") val visits: List<JsonElement> = emptyList(),
     @SerialName("orders") val orders: List<OrderUploadDto> = emptyList(),
+    @SerialName("stock_counts") val stockCounts: List<StockCountUploadDto> = emptyList(),
+)
+
+/** Phiếu kiểm kê gửi kèm các dòng đã đếm. */
+@Serializable
+data class StockCountUploadDto(
+    @SerialName("header") val header: JsonElement,
+    @SerialName("details") val details: List<JsonElement>,
 )
 
 /** Đơn hàng gửi kèm chi tiết và khuyến mãi — server ghi cả cụm trong một transaction. */

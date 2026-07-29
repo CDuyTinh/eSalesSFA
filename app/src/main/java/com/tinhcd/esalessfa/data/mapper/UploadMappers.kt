@@ -3,10 +3,14 @@ package com.tinhcd.esalessfa.data.mapper
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountDetailEntity
+import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
 import com.tinhcd.esalessfa.core.network.dto.OrderDetailUploadBody
 import com.tinhcd.esalessfa.core.network.dto.OrderPromotionUploadBody
 import com.tinhcd.esalessfa.core.network.dto.OrderUploadBody
+import com.tinhcd.esalessfa.core.network.dto.StockCountDetailUploadBody
+import com.tinhcd.esalessfa.core.network.dto.StockCountUploadBody
 import com.tinhcd.esalessfa.core.network.dto.VisitUploadBody
 import java.time.Instant
 
@@ -89,4 +93,24 @@ fun VisitEntity.toUploadBody() = VisitUploadBody(
     batteryPct = batteryPct,
     deviceId = deviceId,
     clientCreatedAt = clientCreatedAt.toIso(),
+)
+
+fun StockCountEntity.toUploadBody() = StockCountUploadBody(
+    id = id,
+    customerId = customerId,
+    visitId = visitId,
+    countDate = countDate,
+    note = note,
+    clientCreatedAt = clientCreatedAt.toIso(),
+)
+
+fun StockCountDetailEntity.toUploadBody() = StockCountDetailUploadBody(
+    id = id,
+    stockCountId = stockCountId,
+    productId = productId,
+    uomCode = uomCode,
+    qty = qty,
+    baseQty = baseQty,
+    prevBaseQty = prevBaseQty,
+    suggestQty = suggestQty,
 )

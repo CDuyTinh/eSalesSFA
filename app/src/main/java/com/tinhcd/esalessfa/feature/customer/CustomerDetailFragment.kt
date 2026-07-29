@@ -17,6 +17,7 @@ import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
 import com.tinhcd.esalessfa.feature.order.ProductPickerFragment
+import com.tinhcd.esalessfa.feature.inventory.StockCountViewModel
 import com.tinhcd.esalessfa.feature.visit.CheckInViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,7 +64,13 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
         val notReady = View.OnClickListener {
             Snackbar.make(view, R.string.feature_coming_soon, Snackbar.LENGTH_SHORT).show()
         }
-        binding.stockButton.setOnClickListener(notReady)
+        binding.stockButton.setOnClickListener {
+            val customer = viewModel.customer.value ?: return@setOnClickListener
+            findNavController().navigate(
+                R.id.action_customerDetail_to_stockCount,
+                bundleOf(StockCountViewModel.ARG_CUSTOMER_ID to customer.id),
+            )
+        }
 
         binding.checkInButton.setOnClickListener {
             val customer = viewModel.customer.value ?: return@setOnClickListener

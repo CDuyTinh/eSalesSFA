@@ -89,6 +89,9 @@
         <action
             android:id="@+id/action_customerDetail_to_checkIn"
             app:destination="@id/checkInFragment" />
+        <action
+            android:id="@+id/action_customerDetail_to_stockCount"
+            app:destination="@id/stockCountFragment" />
     </fragment>
 
     <fragment
@@ -107,6 +110,15 @@
         android:id="@+id/productPickerFragment"
         android:name="com.tinhcd.esalessfa.feature.order.ProductPickerFragment"
         android:label="Chọn sản phẩm" />
+
+    <fragment
+        android:id="@+id/stockCountFragment"
+        android:name="com.tinhcd.esalessfa.feature.inventory.StockCountFragment"
+        android:label="Kiểm kê tồn kho">
+        <argument
+            android:name="customerId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/checkInFragment"

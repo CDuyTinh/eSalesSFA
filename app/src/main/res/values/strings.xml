@@ -98,4 +98,14 @@
     <string name="checkin_permission_title">Cần quyền vị trí</string>
     <string name="checkin_permission_message">Ứng dụng cần quyền vị trí để xác thực bạn có mặt tại cửa hàng. Hãy cấp quyền trong Cài đặt.</string>
     <string name="checkin_open_settings">Mở Cài đặt</string>
+
+    <!-- Stock count -->
+    <string name="stock_empty">Khách hàng này chưa có lịch sử mua nên chưa có mặt hàng để kiểm kê.</string>
+    <string name="stock_progress">Đã đếm %1$d/%2$d mặt hàng</string>
+    <string name="stock_prev_qty">Kỳ trước: %1$s</string>
+    <string name="stock_suggest_qty">Đặt: %1$s</string>
+    <string name="stock_suggest_summary">Gợi ý đặt tổng cộng %1$s đơn vị</string>
+    <string name="stock_no_suggestion">Chưa có gợi ý đặt hàng</string>
+    <string name="stock_save">Lưu phiếu kiểm kê</string>
+    <string name="stock_saved">Đã lưu phiếu kiểm kê, chờ đồng bộ</string>
 </resources>

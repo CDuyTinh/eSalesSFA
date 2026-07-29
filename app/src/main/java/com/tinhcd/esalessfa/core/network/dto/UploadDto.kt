@@ -92,3 +92,25 @@ data class VisitUploadBody(
     @SerialName("device_id") val deviceId: String? = null,
     @SerialName("client_created_at") val clientCreatedAt: String,
 )
+
+@Serializable
+data class StockCountUploadBody(
+    val id: String,
+    @SerialName("customer_id") val customerId: String,
+    @SerialName("visit_id") val visitId: String? = null,
+    @SerialName("count_date") val countDate: String,
+    val note: String? = null,
+    @SerialName("client_created_at") val clientCreatedAt: String,
+)
+
+@Serializable
+data class StockCountDetailUploadBody(
+    val id: String,
+    @SerialName("stock_count_id") val stockCountId: String,
+    @SerialName("product_id") val productId: String,
+    @SerialName("uom_code") val uomCode: String,
+    val qty: Double,
+    @SerialName("base_qty") val baseQty: Double,
+    @SerialName("prev_base_qty") val prevBaseQty: Double,
+    @SerialName("suggest_qty") val suggestQty: Double,
+)

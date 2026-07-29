@@ -6,6 +6,7 @@ import com.tinhcd.esalessfa.core.database.SfaDatabase
 import com.tinhcd.esalessfa.core.database.SyncStatus
 import com.tinhcd.esalessfa.core.database.dao.MasterWriteDao
 import com.tinhcd.esalessfa.core.database.dao.OrderDao
+import com.tinhcd.esalessfa.core.database.dao.StockCountDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -36,6 +37,7 @@ import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionOptionDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyTypeDto
 import com.tinhcd.esalessfa.core.network.dto.OrderUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
+import com.tinhcd.esalessfa.core.network.dto.StockCountUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SyncUploadRequest
 import com.tinhcd.esalessfa.core.network.dto.TableChangeSet
 import com.tinhcd.esalessfa.core.network.dto.UomDto
@@ -67,6 +69,7 @@ class SyncRepositoryImpl @Inject constructor(
     private val syncStateDao: SyncStateDao,
     private val visitDao: VisitDao,
     private val orderDao: OrderDao,
+    private val stockCountDao: StockCountDao,
     private val syncErrorDao: SyncErrorDao,
     private val json: Json,
     private val dispatchers: DispatcherProvider,
@@ -302,7 +305,8 @@ class SyncRepositoryImpl @Inject constructor(
 
             val visits = visitDao.getPending()
             val orders = orderDao.getPending()
-            val total = visits.size + orders.size
+            val stockCounts = stockCountDao.getPending()
+            val total = visits.size + orders.size + stockCounts.size
 
             if (total == 0) {
                 emit(SyncProgress.Completed(0, 0, 0))
@@ -315,9 +319,11 @@ class SyncRepositoryImpl @Inject constructor(
             val sessionId = UUID.randomUUID().toString()
             val visitIds = visits.map { it.id }
             val orderIds = orders.map { it.order.id }
+            val stockIds = stockCounts.map { it.header.id }
 
             visitDao.markStatus(visitIds, SyncStatus.SYNCING, sessionId)
             orderDao.markStatus(orderIds, SyncStatus.SYNCING, sessionId)
+            stockCountDao.markStatus(stockIds, SyncStatus.SYNCING, sessionId)
 
             emit(SyncProgress.Uploading(sent = 0, total = total))
 
@@ -331,6 +337,12 @@ class SyncRepositoryImpl @Inject constructor(
                         promotions = row.promotions.map { json.encodeToJsonElement(it.toUploadBody()) },
                     )
                 },
+                stockCounts = stockCounts.map { row ->
+                    StockCountUploadDto(
+                        header = json.encodeToJsonElement(row.header.toUploadBody()),
+                        details = row.details.map { json.encodeToJsonElement(it.toUploadBody()) },
+                    )
+                },
             )
 
             val response = try {
@@ -338,13 +350,13 @@ class SyncRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 // Không biết server đã nhận hay chưa -> trả về PENDING để lượt sau
                 // gửi lại. Bỏ qua bước này thì bản ghi kẹt SYNCING vĩnh viễn.
-                revertToPending(visitIds, orderIds)
+                revertToPending(visitIds, orderIds, stockIds)
                 emit(SyncProgress.Failed(e.message ?: "Lỗi kết nối", isRetryable = true))
                 return@withLock
             }
 
             if (!response.isSuccessful) {
-                revertToPending(visitIds, orderIds)
+                revertToPending(visitIds, orderIds, stockIds)
                 val code = response.code()
                 emit(
                     SyncProgress.Failed(
@@ -357,7 +369,7 @@ class SyncRepositoryImpl @Inject constructor(
 
             val body = response.body()
             if (body == null) {
-                revertToPending(visitIds, orderIds)
+                revertToPending(visitIds, orderIds, stockIds)
                 emit(SyncProgress.Failed("Máy chủ trả về nội dung rỗng", isRetryable = true))
                 return@withLock
             }
@@ -367,6 +379,7 @@ class SyncRepositoryImpl @Inject constructor(
 
             visitDao.markSynced(visitIds.filter { it in accepted }, now)
             orderDao.markSynced(orderIds.filter { it in accepted }, now)
+            stockCountDao.markSynced(stockIds.filter { it in accepted }, now)
 
             // Bị từ chối vì lỗi nghiệp vụ: đánh dấu FAILED kèm lý do để user thấy,
             // KHÔNG đưa về PENDING vì gửi lại vẫn bị từ chối y hệt.
@@ -383,6 +396,7 @@ class SyncRepositoryImpl @Inject constructor(
                 when (item.entity) {
                     "order" -> orderDao.markFailed(item.id, "${item.code}: ${item.message}")
                     "visit" -> visitDao.markFailed(item.id, "${item.code}: ${item.message}")
+                    "stock_count" -> stockCountDao.markFailed(item.id, "${item.code}: ${item.message}")
                 }
             }
 
@@ -392,6 +406,7 @@ class SyncRepositoryImpl @Inject constructor(
             revertToPending(
                 visitIds.filterNot { it in handled },
                 orderIds.filterNot { it in handled },
+                stockIds.filterNot { it in handled },
             )
 
             emit(
@@ -404,16 +419,22 @@ class SyncRepositoryImpl @Inject constructor(
         }
     }.flowOn(dispatchers.io)
 
-    private suspend fun revertToPending(visitIds: List<String>, orderIds: List<String>) {
+    private suspend fun revertToPending(
+        visitIds: List<String>,
+        orderIds: List<String>,
+        stockIds: List<String> = emptyList(),
+    ) {
         if (visitIds.isNotEmpty()) visitDao.markStatus(visitIds, SyncStatus.PENDING, null)
         if (orderIds.isNotEmpty()) orderDao.markStatus(orderIds, SyncStatus.PENDING, null)
+        if (stockIds.isNotEmpty()) stockCountDao.markStatus(stockIds, SyncStatus.PENDING, null)
     }
 
     override fun observePendingCount(): Flow<Int> =
         combine(
             visitDao.observePendingCount(),
             orderDao.observePendingCount(),
-        ) { visits, orders -> visits + orders }
+            stockCountDao.observePendingCount(),
+        ) { visits, orders, stocks -> visits + orders + stocks }
 
     override fun observeLastSyncedAt(): Flow<Long?> =
         syncStateDao.observeOldestSync().map { if (it == 0L) null else it }
