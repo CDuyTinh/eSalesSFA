@@ -92,6 +92,9 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // ── Vị trí ────────────────────────────────────────────────────────────
+    implementation(libs.play.services.location)
+
     // ── Network ───────────────────────────────────────────────────────────
     // Supabase: CHỈ Auth (JWT) và Storage (ảnh). Cố ý KHÔNG khai báo postgrest-kt —
     // dữ liệu nghiệp vụ phải đi qua Edge Functions, thiếu dependency này thì lỡ tay

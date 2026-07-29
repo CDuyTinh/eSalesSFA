@@ -76,4 +76,26 @@
     <string name="order_price_preview">Đơn giá %1$s · Thành tiền %2$s</string>
     <string name="order_saved">Đã lưu đơn %1$s, chờ đồng bộ</string>
     <string name="product_search_hint">Tìm sản phẩm</string>
+
+    <!-- Check-in -->
+    <string name="action_check_out">Check-out</string>
+    <string name="checkin_ready">Sẵn sàng check-in</string>
+    <string name="checkin_waiting_gps">Đang chờ GPS ổn định…</string>
+    <string name="checkin_over_distance">Ngoài bán kính cho phép</string>
+    <string name="checkin_blocked">Không thể check-in</string>
+    <string name="checkin_accuracy">Độ chính xác: %1$d m</string>
+    <string name="checkin_distance">Cách cửa hàng: %1$d m</string>
+    <string name="checkin_over_distance_detail">Bạn đang cách cửa hàng %1$d m, vượt quá %2$d m cho phép. Chọn lý do để tiếp tục.</string>
+    <string name="checkin_accuracy_too_low">GPS đang lệch %1$d m, cần dưới %2$d m. Ra chỗ thoáng và chờ thêm.</string>
+    <string name="checkin_mock_location">Phát hiện ứng dụng giả lập vị trí. Tắt ứng dụng đó rồi thử lại.</string>
+    <string name="checkin_no_customer_location">Khách hàng chưa có toạ độ nên không xác thực được khoảng cách.</string>
+    <string name="checkin_reason">Lý do</string>
+    <string name="checkin_reason_required">Chọn lý do trước khi check-in</string>
+    <string name="checkin_visit_info">Đã check-in lúc %1$s</string>
+    <string name="checkin_success">Đã check-in</string>
+    <string name="checkout_success">Đã check-out, chờ đồng bộ</string>
+    <string name="checkout_too_early">Cần ở lại thêm %1$d phút nữa mới check-out được</string>
+    <string name="checkin_permission_title">Cần quyền vị trí</string>
+    <string name="checkin_permission_message">Ứng dụng cần quyền vị trí để xác thực bạn có mặt tại cửa hàng. Hãy cấp quyền trong Cài đặt.</string>
+    <string name="checkin_open_settings">Mở Cài đặt</string>
 </resources>

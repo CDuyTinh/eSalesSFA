@@ -8,6 +8,7 @@ import com.tinhcd.esalessfa.data.repository.ProductRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.PromotionRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SalespersonRepositoryImpl
 import com.tinhcd.esalessfa.data.repository.SyncRepositoryImpl
+import com.tinhcd.esalessfa.data.repository.VisitRepositoryImpl
 import com.tinhcd.esalessfa.domain.repository.AuthRepository
 import com.tinhcd.esalessfa.domain.repository.CatalogRepository
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
@@ -16,6 +17,7 @@ import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import com.tinhcd.esalessfa.domain.repository.PromotionRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
+import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -54,4 +56,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindOrderRepository(impl: OrderRepositoryImpl): OrderRepository
+
+    @Binds @Singleton
+    abstract fun bindVisitRepository(impl: VisitRepositoryImpl): VisitRepository
 }

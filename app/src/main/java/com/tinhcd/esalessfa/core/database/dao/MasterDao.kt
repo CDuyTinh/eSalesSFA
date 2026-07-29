@@ -187,3 +187,11 @@ interface SalespersonDao {
     @Query("SELECT * FROM salespersons LIMIT 1")
     suspend fun getCurrent(): SalespersonEntity?
 }
+
+@Dao
+interface ReasonCodeDao {
+
+    /** Lý do theo ngữ cảnh: vượt bán kính, không đặt hàng, huỷ đơn... */
+    @Query("SELECT * FROM reason_codes WHERE applyFor = :applyFor ORDER BY sortOrder")
+    suspend fun getByApplyFor(applyFor: String): List<ReasonCodeEntity>
+}

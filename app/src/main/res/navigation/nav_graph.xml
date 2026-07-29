@@ -86,6 +86,9 @@
         <action
             android:id="@+id/action_customerDetail_to_orderEdit"
             app:destination="@id/orderEditFragment" />
+        <action
+            android:id="@+id/action_customerDetail_to_checkIn"
+            app:destination="@id/checkInFragment" />
     </fragment>
 
     <fragment
@@ -104,4 +107,13 @@
         android:id="@+id/productPickerFragment"
         android:name="com.tinhcd.esalessfa.feature.order.ProductPickerFragment"
         android:label="Chọn sản phẩm" />
+
+    <fragment
+        android:id="@+id/checkInFragment"
+        android:name="com.tinhcd.esalessfa.feature.visit.CheckInFragment"
+        android:label="Check-in">
+        <argument
+            android:name="customerId"
+            app:argType="string" />
+    </fragment>
 </navigation>

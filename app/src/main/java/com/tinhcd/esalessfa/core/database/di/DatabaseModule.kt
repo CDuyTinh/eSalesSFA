@@ -12,6 +12,7 @@ import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.ProductDao
 import com.tinhcd.esalessfa.core.database.dao.PromotionDao
+import com.tinhcd.esalessfa.core.database.dao.ReasonCodeDao
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.SyncErrorDao
 import com.tinhcd.esalessfa.core.database.dao.SyncStateDao
@@ -43,6 +44,7 @@ object DatabaseModule {
     @Provides fun provideCatalogQueryDao(db: SfaDatabase): CatalogQueryDao = db.catalogQueryDao()
     @Provides fun provideProductDao(db: SfaDatabase): ProductDao = db.productDao()
     @Provides fun providePromotionDao(db: SfaDatabase): PromotionDao = db.promotionDao()
+    @Provides fun provideReasonCodeDao(db: SfaDatabase): ReasonCodeDao = db.reasonCodeDao()
     @Provides fun provideVisitDao(db: SfaDatabase): VisitDao = db.visitDao()
     @Provides fun provideOrderDao(db: SfaDatabase): OrderDao = db.orderDao()
     @Provides fun provideSalespersonDao(db: SfaDatabase): SalespersonDao = db.salespersonDao()
