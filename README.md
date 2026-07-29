@@ -48,23 +48,47 @@ App phải hoạt động **trọn vẹn khi offline**: xem tuyến, check-in b�
 └──────────────────────────────────────────────────────┘
 ```
 
-**Luật kiến trúc:** `:feature:*` **không được** phụ thuộc `:data` — chỉ nói chuyện qua `:domain`.
-Nhờ vậy khi chuyển UI từ XML sang Jetpack Compose, tầng domain và data không phải sửa một dòng nào.
+**Luật kiến trúc:** package `feature` **không được** import từ package `data` — chỉ nói chuyện
+qua `domain`. Nhờ vậy khi chuyển UI từ XML sang Jetpack Compose, tầng domain và data không
+phải sửa một dòng nào.
 
-### Module
+### Cấu trúc package
+
+Project là **single-module**; phân tầng giữ bằng package bên trong `:app`.
 
 ```
-:app                    Application, Navigation graph gốc, DI root
-:domain                 ⭐ Pure Kotlin JVM — business logic, test trên JVM
-:data                   RepositoryImpl, mapper, datasource
-:core:common            AppResult, DispatcherProvider, extensions
-:core:database          Room DB, DAO, Entity, Migration
-:core:network           Supabase client, error mapper
-:core:datastore         DataStore, SessionManager
-:core:ui                BaseFragment, theme, custom view
-:core:sync              SyncManager, WorkManager worker, outbox
-:feature:auth           Đăng nhập / phiên làm việc
+com.tinhcd.esalessfa
+├── domain/             ⭐ Business logic thuần — không import android.*
+│   ├── model/              Entity nghiệp vụ
+│   ├── repository/         Interface (implement ở data/)
+│   ├── usecase/
+│   ├── promotion/          Engine khuyến mãi — Strategy + Chain of Responsibility
+│   └── geo/                Haversine, validate bán kính check-in
+├── data/
+│   ├── repository/         RepositoryImpl
+│   ├── mapper/             DTO ↔ Entity ↔ Domain model
+│   └── datasource/
+├── core/
+│   ├── common/             AppResult, DispatcherProvider, extensions
+│   ├── database/           Room DB, DAO, Entity, Migration
+│   ├── network/            Supabase Auth/Storage, Retrofit → Edge Functions
+│   ├── datastore/          DataStore, SessionManager
+│   ├── ui/                 BaseFragment, custom view, binding adapter
+│   └── sync/               SyncManager, WorkManager worker, outbox
+└── feature/
+    ├── auth/               Đăng nhập / phiên làm việc
+    ├── home/               Dashboard + tuyến hôm nay
+    ├── customer/           Danh sách, chi tiết, sales step, bản đồ
+    ├── visit/              Check-in/out, GPS service
+    ├── order/              Take order + UI khuyến mãi
+    ├── inventory/          Kiểm kê tồn cửa hàng
+    ├── survey/             Perfect Store, MSL/OOS, CameraX
+    └── report/
 ```
+
+> Unit test của `domain/` nằm ở `app/src/test` nên vẫn **chạy trên JVM**, không cần emulator.
+> Luật "domain không import android.*" giờ là quy ước — không còn được compiler chặn như khi
+> tách module riêng.
 
 ---
 
@@ -74,10 +98,11 @@ Nhờ vậy khi chuyển UI từ XML sang Jetpack Compose, tầng domain và dat
 |---|---|
 | Ngôn ngữ | Kotlin 2.3, Coroutines, Flow |
 | UI | XML + ViewBinding, Material 3, Navigation Component *(sẽ chuyển sang Jetpack Compose)* |
-| Kiến trúc | MVVM + Clean Architecture, multi-module Gradle |
+| Kiến trúc | MVVM + Clean Architecture (phân tầng bằng package) |
 | DI | Hilt |
 | Local | Room, Paging 3, DataStore |
-| Backend | Supabase — Postgres, Auth, Storage, RLS, Edge Functions, Realtime |
+| Backend | Supabase — Postgres, Auth, Storage, RLS, **Edge Functions (Deno)** |
+| Gọi API | Retrofit + kotlinx.serialization → `/functions/v1/*` |
 | Background | WorkManager, Foreground Service |
 | Media / Map | CameraX, Coil, Google Maps, FusedLocation |
 | Test | JUnit, Truth, MockK, Turbine, Room in-memory |
@@ -93,17 +118,21 @@ Nhờ vậy khi chuyển UI từ XML sang Jetpack Compose, tầng domain và dat
 git clone https://github.com/CDuyTinh/eSalesSFA.git
 cd eSalesSFA
 cp local.properties.example local.properties
-# điền sdk.dir, SUPABASE_URL, SUPABASE_ANON_KEY vào local.properties
+# điền sdk.dir, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY vào local.properties
 
-./gradlew :app:assembleDebug     # build
-./gradlew :domain:test           # chạy unit test business logic
+./gradlew :app:assembleDebug       # build
+./gradlew :app:testDebugUnitTest   # chạy unit test (JVM, không cần emulator)
 ```
+
+Backend: xem [`supabase/README.md`](supabase/README.md) (schema + seed) và
+[`supabase/functions/README.md`](supabase/functions/README.md) (deploy Edge Functions).
 
 ---
 
 ## Roadmap
 
-- [x] Multi-module skeleton, Version Catalog, Hilt + Room + KSP
+- [x] Khung project, Version Catalog, Hilt + Room + KSP
+- [x] Tầng network: Retrofit → Edge Functions, Supabase Auth/Storage
 - [ ] Supabase schema + RLS + seed data
 - [ ] Auth + Room entity + Navigation
 - [ ] **Sync engine** (download delta + upload outbox)

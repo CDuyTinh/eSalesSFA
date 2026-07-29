@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.core.network.interceptor
 
-import com.tinhcd.esalessfa.core.network.BuildConfig
+import com.tinhcd.esalessfa.BuildConfig
 import io.github.jan.supabase.auth.Auth
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

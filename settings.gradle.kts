@@ -24,21 +24,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "eSalesSFA"
 
+// Single-module. Phân tầng Clean Architecture giữ bằng package bên trong :app
+// (core / domain / data / feature) — xem README.
 include(":app")
-
-// Pure Kotlin JVM — business logic, KHÔNG phụ thuộc Android
-include(":domain")
-
-// Data layer — RepositoryImpl, mapper, datasource
-include(":data")
-
-// Core
-include(":core:common")
-include(":core:database")
-include(":core:network")
-include(":core:datastore")
-include(":core:ui")
-include(":core:sync")
-
-// Features
-include(":feature:auth")

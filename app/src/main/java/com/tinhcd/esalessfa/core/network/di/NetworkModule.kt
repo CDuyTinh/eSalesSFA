@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.core.network.di
 
-import com.tinhcd.esalessfa.core.network.BuildConfig
+import com.tinhcd.esalessfa.BuildConfig
 import com.tinhcd.esalessfa.core.network.api.SyncApi
 import com.tinhcd.esalessfa.core.network.interceptor.AuthInterceptor
 import dagger.Module

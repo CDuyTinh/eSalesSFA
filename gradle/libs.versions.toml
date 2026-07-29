@@ -1,7 +1,7 @@
 [versions]
 # ── Build toolchain ─────────────────────────────────────────
 agp = "9.2.1"                 # có built-in Kotlin support -> KHÔNG apply kotlin.android
-kotlinJvm = "2.3.21"          # chỉ dùng cho module :domain (pure Kotlin JVM)
+kotlin = "2.3.21"              # cho kotlinx.serialization compiler plugin
 ksp = "2.3.10"
 compileSdk = "37"
 minSdk = "26"
@@ -88,7 +88,8 @@ coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # Supabase — CHỈ dùng Auth (đăng nhập/JWT) và Storage (upload ảnh).
-# Dữ liệu nghiệp vụ KHÔNG đi qua Postgrest mà qua Edge Functions, xem :core:network/README.
+# Dữ liệu nghiệp vụ KHÔNG đi qua Postgrest mà qua Edge Functions,
+# xem supabase/functions/README.md.
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt" }
 supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt" }
@@ -127,8 +128,6 @@ unit-test = ["junit", "truth", "mockk", "turbine", "coroutines-test"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinJvm" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

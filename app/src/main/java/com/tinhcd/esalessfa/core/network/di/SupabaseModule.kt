@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.core.network.di
 
-import com.tinhcd.esalessfa.core.network.BuildConfig
+import com.tinhcd.esalessfa.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
