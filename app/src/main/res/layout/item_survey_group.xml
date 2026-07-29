@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Tiêu đề nhóm câu hỏi: chữ nhỏ in hoa màu xám, đóng vai trò phân đoạn chứ
+     không cạnh tranh sự chú ý với nội dung câu hỏi bên dưới. -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/groupName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="6dp"
-    android:textAppearance="?attr/textAppearanceTitleMedium"
-    android:textColor="?attr/colorPrimary"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:paddingTop="@dimen/space_lg"
+    android:paddingBottom="@dimen/space_xs"
+    android:textSize="@dimen/text_small"
+    android:textStyle="bold"
+    android:textAllCaps="true"
+    android:textColor="@color/textGrayDark"
     tools:text="Trưng bày kệ" />

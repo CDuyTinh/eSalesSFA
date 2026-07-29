@@ -1,83 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="10dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/productName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="Nước giải khát loại 12" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_md">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/productCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="SP0012" />
+                android:id="@+id/productName"
+                style="@style/Sfa.Text.Body"
+                android:layout_width="match_parent"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Nước giải khát loại 12" />
 
-            <TextView
-                android:id="@+id/prevQty"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="Kỳ trước: 24" />
+                android:layout_marginTop="@dimen/space_xs"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/suggestQty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?attr/colorPrimary"
-                tools:text="Đặt: 10" />
+                <TextView
+                    android:id="@+id/productCode"
+                    style="@style/Sfa.Text.Tiny"
+                    tools:text="SP0012" />
+
+                <TextView
+                    android:id="@+id/prevQty"
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_marginStart="@dimen/space_sm"
+                    tools:text="Kỳ trước: 24" />
+
+                <!-- Gợi ý đặt hàng tô xanh dương để tách khỏi các con số tồn kho
+                     xung quanh — đây là thông tin hành động, không phải số liệu. -->
+                <TextView
+                    android:id="@+id/suggestQty"
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:paddingHorizontal="@dimen/space_xs"
+                    android:paddingVertical="1dp"
+                    android:background="@drawable/bg_chip_blue"
+                    android:textColor="@color/stateBlue"
+                    tools:text="Đặt: 10" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/qtyInput"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Sfa.Input.Dense"
+            android:layout_width="88dp"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:gravity="end"
-            android:maxLines="1"
-            android:imeOptions="actionNext" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="@dimen/space_sm">
 
-    <TextView
-        android:id="@+id/uom"
-        android:layout_width="52dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="LE" />
-</LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/qtyInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:gravity="end"
+                android:maxLines="1"
+                android:textSize="@dimen/text_body"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/uom"
+            style="@style/Sfa.Text.Tiny"
+            android:layout_width="42dp"
+            android:layout_marginStart="@dimen/space_xs"
+            tools:text="LE" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

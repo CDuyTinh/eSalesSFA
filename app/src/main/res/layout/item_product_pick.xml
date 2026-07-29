@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="?attr/selectableItemBackground"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="14dp">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
-        tools:text="Nước giải khát loại 12" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_md">
 
-    <TextView
-        android:id="@+id/code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="SP0012" />
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/Sfa.Text.Body"
+                android:layout_width="match_parent"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="Nước giải khát loại 12" />
+
+            <TextView
+                android:id="@+id/code"
+                style="@style/Sfa.Text.Tiny"
+                android:layout_marginTop="2dp"
+                tools:text="SP0012" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/Sfa.Text.Title"
+            android:textColor="@color/brandRed"
+            android:text="+" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

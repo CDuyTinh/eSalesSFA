@@ -17,19 +17,17 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/rangeButton"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        style="@style/Sfa.Button.Outlined"
+        android:layout_marginHorizontal="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
         tools:text="30/06/2026 → 29/07/2026" />
 
     <TextView
         android:id="@+id/summaryText"
+        style="@style/Sfa.Text.Small"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm"
         tools:text="42 đơn · 128.400.000" />
 
     <FrameLayout
@@ -55,8 +53,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/exportButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        style="@style/Sfa.Button"
+        android:layout_margin="@dimen/space_md"
         android:text="@string/report_export" />
 </LinearLayout>

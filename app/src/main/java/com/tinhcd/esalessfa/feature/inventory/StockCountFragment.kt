@@ -8,7 +8,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
@@ -31,9 +30,6 @@ class StockCountFragment : Fragment(R.layout.fragment_stock_count) {
         val adapter = StockCountAdapter(viewModel::onQtyChanged)
 
         binding.lineList.layoutManager = LinearLayoutManager(requireContext())
-        binding.lineList.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
         binding.lineList.adapter = adapter
         // Tắt animation: đổi số trong ô sẽ kích hoạt animation của item và làm
         // ô nhập nhấp nháy trong lúc người dùng đang gõ.

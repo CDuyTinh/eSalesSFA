@@ -1,81 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_md">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/orderNo"
+                    style="@style/Sfa.Text.Small"
+                    android:textColor="@color/textDark"
+                    android:textStyle="bold"
+                    tools:text="NV00120260729001" />
+
+                <TextView
+                    android:id="@+id/syncBadge"
+                    style="@style/Sfa.Badge"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:background="@drawable/bg_badge_orange"
+                    android:text="@string/report_pending_badge" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/orderNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceTitleSmall"
-                tools:text="NV00120260729001" />
+                android:id="@+id/customerName"
+                style="@style/Sfa.Text.Small"
+                android:layout_width="match_parent"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Cửa hàng Minh Anh 12" />
 
-            <TextView
-                android:id="@+id/syncBadge"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/report_pending_badge"
-                android:textAppearance="?attr/textAppearanceLabelSmall"
-                android:textColor="?attr/colorError" />
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/orderDate"
+                    style="@style/Sfa.Text.Tiny"
+                    tools:text="2026-07-29" />
+
+                <TextView
+                    android:id="@+id/lineCount"
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_marginStart="@dimen/space_sm"
+                    tools:text="5 dòng" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
-            android:id="@+id/customerName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            tools:text="Cửa hàng Minh Anh 12" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/orderDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="2026-07-29" />
-
-            <TextView
-                android:id="@+id/lineCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="5 dòng" />
-        </LinearLayout>
+            android:id="@+id/totalAmount"
+            style="@style/Sfa.Text.Body"
+            android:layout_marginStart="@dimen/space_sm"
+            android:textStyle="bold"
+            android:textColor="@color/brandRed"
+            tools:text="3.240.000" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/totalAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
-        android:textStyle="bold"
-        tools:text="3.240.000" />
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

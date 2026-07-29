@@ -1,35 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Hàng tặng dùng thẻ viền xanh ngọc thay vì nền trắng như hàng bán: nhân viên
+     phân biệt được ngay dòng nào không tính tiền. -->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="10dp">
+    app:cardBackgroundColor="@color/stateGreenFaint"
+    app:strokeColor="@color/stateGreen"
+    app:strokeWidth="1dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/order_gift_badge"
-        android:textAppearance="?attr/textAppearanceLabelSmall"
-        android:textColor="?attr/colorPrimary" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_md">
 
-    <TextView
-        android:id="@+id/freeName"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        tools:text="Bánh kẹo loại 7" />
+        <TextView
+            style="@style/Sfa.Badge"
+            android:background="@drawable/bg_badge_green"
+            android:text="@string/order_gift_badge" />
 
-    <TextView
-        android:id="@+id/freeQty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
-        tools:text="x3" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/freeName"
+            style="@style/Sfa.Text.Small"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_sm"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/textDark"
+            tools:text="Bánh kẹo loại 7" />
+
+        <TextView
+            android:id="@+id/freeQty"
+            style="@style/Sfa.Text.Body"
+            android:textStyle="bold"
+            android:textColor="@color/stateGreen"
+            tools:text="x3" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

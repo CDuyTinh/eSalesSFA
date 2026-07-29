@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,120 +17,235 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_lg">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/customer_info"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-            <TableLayout
+            <!-- Thông tin -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:stretchColumns="1">
+                android:layout_height="wrap_content">
 
-                <TableRow>
-                    <TextView android:text="@string/customer_code" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/code" android:gravity="end" />
-                </TableRow>
-                <TableRow>
-                    <TextView android:text="@string/customer_address" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/address" android:gravity="end" />
-                </TableRow>
-                <TableRow>
-                    <TextView android:text="@string/customer_phone" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/phone" android:gravity="end" />
-                </TableRow>
-                <TableRow>
-                    <TextView android:text="@string/customer_location" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/location" android:gravity="end" />
-                </TableRow>
-            </TableLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/customer_credit"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:stretchColumns="1">
-
-                <TableRow>
-                    <TextView android:text="@string/customer_credit_limit" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/creditLimit" android:gravity="end" />
-                </TableRow>
-                <TableRow>
-                    <TextView android:text="@string/customer_debt" android:paddingVertical="6dp" />
-                    <TextView android:id="@+id/debtAmount" android:gravity="end" />
-                </TableRow>
-                <TableRow>
-                    <TextView android:text="@string/customer_available" android:paddingVertical="6dp" />
                     <TextView
-                        android:id="@+id/availableCredit"
-                        android:gravity="end"
-                        android:textStyle="bold" />
-                </TableRow>
-            </TableLayout>
+                        style="@style/Sfa.Text.Body"
+                        android:textStyle="bold"
+                        android:text="@string/customer_info" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="@string/customer_actions"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_code" />
+                        <TextView
+                            android:id="@+id/code"
+                            style="@style/Sfa.Text.Small"
+                            android:textColor="@color/textDark"
+                            tools:text="KH0012" />
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/stepHint"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_address" />
+                        <TextView
+                            android:id="@+id/address"
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:gravity="end"
+                            android:textColor="@color/textDark"
+                            tools:text="12 Đường số 3, Quận 1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_phone" />
+                        <TextView
+                            android:id="@+id/phone"
+                            style="@style/Sfa.Text.Small"
+                            android:textColor="@color/textDark"
+                            tools:text="0901234567" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_location" />
+                        <TextView
+                            android:id="@+id/location"
+                            style="@style/Sfa.Text.Small"
+                            android:textColor="@color/textDark"
+                            tools:text="10.77690, 106.70090" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Công nợ: "Còn được mua" tô đỏ vì đây là con số quyết định có
+                 chốt được đơn hay không. -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/step_need_checkin"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?attr/colorError" />
+                android:layout_height="wrap_content">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/checkInButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/action_check_in" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/stockButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/action_stock_count" />
+                    <TextView
+                        style="@style/Sfa.Text.Body"
+                        android:textStyle="bold"
+                        android:text="@string/customer_credit" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/surveyButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/action_survey" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_credit_limit" />
+                        <TextView
+                            android:id="@+id/creditLimit"
+                            style="@style/Sfa.Text.Small"
+                            android:textColor="@color/textDark"
+                            tools:text="50.000.000" />
+                    </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/orderButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_debt" />
+                        <TextView
+                            android:id="@+id/debtAmount"
+                            style="@style/Sfa.Text.Small"
+                            android:textColor="@color/textDark"
+                            tools:text="1.200.000" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="@dimen/space_sm"
+                        android:background="@color/lineGray" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            style="@style/Sfa.Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/customer_available" />
+                        <TextView
+                            android:id="@+id/availableCredit"
+                            style="@style/Sfa.Text.Body"
+                            android:textStyle="bold"
+                            android:textColor="@color/brandRed"
+                            tools:text="48.800.000" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Các bước viếng thăm -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/action_take_order" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <TextView
+                        style="@style/Sfa.Text.Body"
+                        android:textStyle="bold"
+                        android:text="@string/customer_actions" />
+
+                    <TextView
+                        android:id="@+id/stepHint"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:padding="@dimen/space_sm"
+                        android:background="@drawable/bg_chip_red"
+                        android:textColor="@color/brandRed"
+                        android:text="@string/step_need_checkin" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/checkInButton"
+                        style="@style/Sfa.Button"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:text="@string/action_check_in" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/stockButton"
+                        style="@style/Sfa.Button.Outlined"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/action_stock_count" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/surveyButton"
+                        style="@style/Sfa.Button.Outlined"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/action_survey" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/orderButton"
+                        style="@style/Sfa.Button.Outlined"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/action_take_order" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

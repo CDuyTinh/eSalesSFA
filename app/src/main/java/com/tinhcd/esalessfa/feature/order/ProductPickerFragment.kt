@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentProductPickerBinding
@@ -99,9 +98,6 @@ class ProductPickerFragment : Fragment(R.layout.fragment_product_picker) {
         }
 
         binding.productList.layoutManager = LinearLayoutManager(requireContext())
-        binding.productList.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
         binding.productList.adapter = adapter
 
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }

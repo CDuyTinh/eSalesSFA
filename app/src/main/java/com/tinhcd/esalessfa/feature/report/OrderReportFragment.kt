@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -133,9 +132,6 @@ class OrderReportFragment : Fragment(R.layout.fragment_order_report) {
         val adapter = OrderReportAdapter()
 
         binding.orderList.layoutManager = LinearLayoutManager(requireContext())
-        binding.orderList.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
         binding.orderList.adapter = adapter
 
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }

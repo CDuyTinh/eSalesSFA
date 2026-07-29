@@ -17,11 +17,11 @@
 
     <TextView
         android:id="@+id/progressText"
+        style="@style/Sfa.Text.Tiny"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="6dp"
-        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm"
+        android:background="@color/white"
         tools:text="Đã đếm 4/28 mặt hàng" />
 
     <FrameLayout
@@ -51,21 +51,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="?attr/colorSurfaceVariant"
-        android:padding="16dp">
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:padding="@dimen/space_lg">
 
         <TextView
             android:id="@+id/suggestSummary"
+            style="@style/Sfa.Text.Small"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="Gợi ý đặt tổng cộng 142 đơn vị" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/saveButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            style="@style/Sfa.Button"
+            android:layout_marginTop="@dimen/space_md"
             android:text="@string/stock_save" />
     </LinearLayout>
 </LinearLayout>

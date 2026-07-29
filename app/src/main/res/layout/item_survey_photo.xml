@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="10dp">
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_md">
 
     <TextView
         android:id="@+id/question"
+        style="@style/Sfa.Text.Body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodyLarge"
         tools:text="Chụp ảnh kệ trưng bày" />
 
     <TextView
         android:id="@+id/issueText"
+        style="@style/Sfa.Text.Tiny"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorError"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/brandRed"
         android:visibility="gone"
         tools:text="Cần ít nhất 2 ảnh, hiện có 1" />
 
@@ -37,4 +40,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text="@string/survey_take_photo" />
-</LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

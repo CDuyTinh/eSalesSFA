@@ -20,24 +20,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm">
 
         <TextView
             android:id="@+id/scoreText"
+            style="@style/Sfa.Text.Body"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textStyle="bold"
             tools:text="Điểm: 45/100 (45%)" />
 
         <TextView
             android:id="@+id/passBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Sfa.Badge"
+            android:background="@drawable/bg_badge_green"
             android:text="@string/survey_passed"
-            android:textAppearance="?attr/textAppearanceLabelLarge"
-            android:textColor="?attr/colorPrimary"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -51,8 +50,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submitButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        style="@style/Sfa.Button"
+        android:layout_margin="@dimen/space_md"
         android:text="@string/survey_submit" />
 </LinearLayout>

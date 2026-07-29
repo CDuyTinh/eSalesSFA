@@ -17,12 +17,12 @@
 
     <TextView
         android:id="@+id/promotionSummary"
+        style="@style/Sfa.Text.Tiny"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="6dp"
-        android:textAppearance="?attr/textAppearanceLabelMedium"
-        android:textColor="?attr/colorPrimary"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingVertical="@dimen/space_sm"
+        android:background="@color/stateGreenFaint"
+        android:textColor="@color/stateGreen"
         android:visibility="gone"
         tools:text="Áp dụng: KM01, KM06" />
 
@@ -35,118 +35,118 @@
             android:id="@+id/lineList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:paddingBottom="8dp" />
 
         <TextView
             android:id="@+id/emptyText"
+            style="@style/Sfa.Text.Small"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:padding="32dp"
+            android:padding="@dimen/space_xl"
             android:text="@string/order_empty"
-            android:textColor="?android:attr/textColorSecondary"
             android:visibility="gone" />
     </FrameLayout>
 
+    <!-- Thanh tổng tiền cố định đáy màn: nhân viên đọc lại con số này sau mỗi
+         lần đổi số lượng, không nên phải cuộn xuống mới thấy. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="?attr/colorSurfaceVariant"
-        android:padding="16dp">
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:padding="@dimen/space_lg">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+                style="@style/Sfa.Text.Small"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
                 android:text="@string/order_subtotal" />
             <TextView
                 android:id="@+id/subTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Sfa.Text.Small"
+                android:textColor="@color/textDark"
                 tools:text="10.000.000" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="@dimen/space_xs">
             <TextView
+                style="@style/Sfa.Text.Small"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
                 android:text="@string/order_discount" />
             <TextView
                 android:id="@+id/discountTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
+                style="@style/Sfa.Text.Small"
+                android:textColor="@color/stateGreen"
                 tools:text="-500.000" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="@dimen/space_xs">
             <TextView
+                style="@style/Sfa.Text.Small"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
                 android:text="@string/order_vat" />
             <TextView
                 android:id="@+id/vatTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Sfa.Text.Small"
+                android:textColor="@color/textDark"
                 tools:text="760.000" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="?android:attr/listDivider" />
+            android:layout_marginVertical="@dimen/space_sm"
+            android:background="@color/lineGray" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
             <TextView
+                style="@style/Sfa.Text.Body"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/order_total"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:textStyle="bold"
+                android:text="@string/order_total" />
             <TextView
                 android:id="@+id/grandTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold"
+                style="@style/Sfa.Text.Number"
                 tools:text="10.260.000" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/space_md"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addProductButton"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Sfa.Button.Outlined"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
                 android:text="@string/order_add_product" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confirmButton"
+                style="@style/Sfa.Button"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/space_sm"
                 android:text="@string/order_confirm" />
         </LinearLayout>
     </LinearLayout>
