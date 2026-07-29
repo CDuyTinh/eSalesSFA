@@ -22,6 +22,15 @@ interface UploadRequest {
     details: Record<string, unknown>[]
     promotions?: Record<string, unknown>[]
   }[]
+  stock_counts?: {
+    header: Record<string, unknown>
+    details: Record<string, unknown>[]
+  }[]
+  surveys?: {
+    header: Record<string, unknown>
+    answers: Record<string, unknown>[]
+    photos?: Record<string, unknown>[]
+  }[]
 }
 
 interface Rejected {
@@ -129,6 +138,46 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // ---- Kiểm kê tồn kho ---------------------------------------------------
+    for (const item of body.stock_counts ?? []) {
+      const id = String(item.header.id)
+      try {
+        await upsertWithChildren(
+          db,
+          'stock_counts',
+          { ...item.header, salesperson_id: caller.salespersonId, session_id: body.session_id },
+          'stock_count_details',
+          item.details,
+        )
+        accepted.push(id)
+      } catch (e) {
+        rejected.push({ id, entity: 'stock_count', code: 'DB_ERROR', message: String(e) })
+      }
+    }
+
+    // ---- Khảo sát ----------------------------------------------------------
+    for (const item of body.surveys ?? []) {
+      const id = String(item.header.id)
+      try {
+        await upsertWithChildren(
+          db,
+          'surveys',
+          { ...item.header, salesperson_id: caller.salespersonId, session_id: body.session_id },
+          'survey_answers',
+          item.answers,
+        )
+        if (item.photos && item.photos.length > 0) {
+          const { error } = await db
+            .from('survey_photos')
+            .upsert(item.photos, { onConflict: 'id', ignoreDuplicates: true })
+          if (error) throw new Error(error.message)
+        }
+        accepted.push(id)
+      } catch (e) {
+        rejected.push({ id, entity: 'survey', code: 'DB_ERROR', message: String(e) })
+      }
+    }
+
     const summary = { accepted, rejected }
     await db
       .from('sync_sessions')
@@ -144,6 +193,32 @@ Deno.serve(async (req: Request) => {
     return errorResponse(e)
   }
 })
+
+/**
+ * Ghi header rồi ghi các dòng con.
+ *
+ * ignoreDuplicates theo id khiến thao tác idempotent ở mức từng bản ghi: client
+ * gửi lại cả cụm sau khi mất mạng cũng không tạo bản sao.
+ */
+async function upsertWithChildren(
+  db: SupabaseClient,
+  headerTable: string,
+  header: Record<string, unknown>,
+  childTable: string,
+  children: Record<string, unknown>[],
+): Promise<void> {
+  const { error: headerErr } = await db
+    .from(headerTable)
+    .upsert(header, { onConflict: 'id', ignoreDuplicates: true })
+  if (headerErr) throw new Error(headerErr.message)
+
+  if (children.length === 0) return
+
+  const { error: childErr } = await db
+    .from(childTable)
+    .upsert(children, { onConflict: 'id', ignoreDuplicates: true })
+  if (childErr) throw new Error(childErr.message)
+}
 
 /**
  * Kiểm tra lại đơn hàng bằng dữ liệu server.

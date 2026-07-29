@@ -21,7 +21,16 @@ import type { Caller } from '../_shared/auth.ts'
  */
 const MAX_ROWS_PER_REQUEST = 1000
 
-type Scope = 'ALL' | 'BY_SALESPERSON' | 'BY_ROUTE'
+/** Số ngày lịch sử đơn hàng tải về máy, đủ cho dashboard tháng và báo cáo. */
+const HISTORY_DAYS = 90
+
+function historyFromDate(): string {
+  const d = new Date()
+  d.setDate(d.getDate() - HISTORY_DAYS)
+  return d.toISOString().slice(0, 10)
+}
+
+type Scope = 'ALL' | 'BY_SALESPERSON' | 'BY_ROUTE' | 'BY_ORDER'
 
 const SYNC_TABLES: Record<string, Scope> = {
   app_configs: 'ALL',
@@ -37,10 +46,18 @@ const SYNC_TABLES: Record<string, Scope> = {
   promotion_programs: 'ALL',
   promotion_breaks: 'ALL',
   promotion_items: 'ALL',
+  survey_types: 'ALL',
+  survey_question_groups: 'ALL',
+  survey_questions: 'ALL',
+  survey_question_options: 'ALL',
   salespersons: 'BY_SALESPERSON',
   customers: 'BY_ROUTE',
   sales_routes: 'BY_SALESPERSON',
   sales_route_details: 'BY_ROUTE',
+  // Lịch sử đơn hàng tải ngược về máy để dashboard và báo cáo đọc được khi
+  // offline. Đơn do chính client tạo cũng quay về — vô hại vì upsert theo id.
+  orders: 'BY_SALESPERSON',
+  order_details: 'BY_ORDER',
 }
 
 interface DownloadRequest {
@@ -143,6 +160,21 @@ async function fetchChanges(
     q = table === 'salespersons'
       ? q.eq('id', caller.salespersonId)
       : q.eq('salesperson_id', caller.salespersonId)
+
+    // Lịch sử đơn chỉ lấy trong cửa sổ báo cáo; tải toàn bộ lịch sử nhiều năm
+    // vào SQLite của điện thoại là vô nghĩa.
+    if (table === 'orders') q = q.gte('order_date', historyFromDate())
+  } else if (scope === 'BY_ORDER') {
+    // Chi tiết đơn theo các đơn của nhân viên này. Giới hạn theo cùng cửa sổ
+    // thời gian với đơn để không kéo về hàng chục nghìn dòng lịch sử cũ.
+    const { data: orders } = await db
+      .from('orders')
+      .select('id')
+      .eq('salesperson_id', caller.salespersonId)
+      .gte('order_date', historyFromDate())
+    const orderIds = (orders ?? []).map((o: { id: string }) => o.id)
+    if (orderIds.length === 0) return []
+    q = q.in('order_id', orderIds)
   } else if (scope === 'BY_ROUTE') {
     // Chỉ khách hàng và tuyến thuộc nhân viên này.
     const { data: routes } = await db
