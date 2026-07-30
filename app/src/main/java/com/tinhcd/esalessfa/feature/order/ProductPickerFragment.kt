@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentProductPickerBinding
 import com.tinhcd.esalessfa.domain.model.Product
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
@@ -90,6 +91,8 @@ class ProductPickerFragment : Fragment(R.layout.fragment_product_picker) {
                 findNavController().navigateUp()
             }.show(childFragmentManager, "qty")
         }
+
+        view.padTopForStatusBar()
 
         binding.productList.layoutManager = LinearLayoutManager(requireContext())
         binding.productList.adapter = adapter

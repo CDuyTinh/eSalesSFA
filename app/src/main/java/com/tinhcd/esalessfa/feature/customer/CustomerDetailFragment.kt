@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCustomerDetailBinding
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
@@ -94,6 +95,8 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCustomerDetailBinding.bind(view)
         val money = NumberFormat.getInstance(Locale("vi", "VN"))
+
+        view.padTopForStatusBar()
 
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 

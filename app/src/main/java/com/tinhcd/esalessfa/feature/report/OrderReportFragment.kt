@@ -22,6 +22,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.core.ui.isEmbedded
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentOrderReportBinding
 import com.tinhcd.esalessfa.databinding.ItemOrderReportBinding
 import com.tinhcd.esalessfa.domain.repository.OrderSummary
@@ -131,6 +132,8 @@ class OrderReportFragment : Fragment(R.layout.fragment_order_report) {
         val binding = FragmentOrderReportBinding.bind(view)
         val money = NumberFormat.getInstance(Locale("vi", "VN"))
         val adapter = OrderReportAdapter()
+
+        view.padTopForStatusBar()
 
         binding.orderList.layoutManager = LinearLayoutManager(requireContext())
         binding.orderList.adapter = adapter

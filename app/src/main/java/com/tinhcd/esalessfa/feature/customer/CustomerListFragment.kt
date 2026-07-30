@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.core.ui.isEmbedded
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCustomerListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ class CustomerListFragment : Fragment(R.layout.fragment_customer_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCustomerListBinding.bind(view)
+
+        view.padTopForStatusBar()
 
         // Điều hướng theo ID ĐÍCH thay vì ID action: fragment này chạy ở hai chỗ —
         // vừa là tab Check-in trong màn Home, vừa là đích riêng cho "Tất cả khách

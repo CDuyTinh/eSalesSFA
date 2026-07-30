@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentOrderEditBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,6 +28,8 @@ class OrderEditFragment : Fragment(R.layout.fragment_order_edit) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentOrderEditBinding.bind(view)
         val money = NumberFormat.getInstance(Locale("vi", "VN"))
+
+        view.padTopForStatusBar()
 
         val adapter = CartAdapter(
             onQtyClick = { line -> showQtyDialog(line) },

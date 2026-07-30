@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentStockCountBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -26,6 +27,8 @@ class StockCountFragment : Fragment(R.layout.fragment_stock_count) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentStockCountBinding.bind(view)
         val qtyFormat = NumberFormat.getInstance(Locale("vi", "VN"))
+
+        view.padTopForStatusBar()
 
         val adapter = StockCountAdapter(viewModel::onQtyChanged)
 

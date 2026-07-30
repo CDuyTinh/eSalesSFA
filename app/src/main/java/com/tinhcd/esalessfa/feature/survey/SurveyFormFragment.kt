@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.core.location.LocationProvider
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentSurveyFormBinding
 import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.survey.SurveyIssue
@@ -37,6 +38,8 @@ class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentSurveyFormBinding.bind(view)
+
+        view.padTopForStatusBar()
 
         val adapter = SurveyFormAdapter(
             FormCallbacks(

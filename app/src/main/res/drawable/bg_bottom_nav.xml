@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nền trắng của thanh tab, cố tình để dạng <shape> chứ không phải @color/white.
+
+  BottomNavigationView thay mọi ColorDrawable bằng MaterialShapeDrawable của
+  riêng nó, và Material 3 sẽ phủ lên đó một lớp colorSurfaceTint (ở đây là đỏ)
+  theo elevation — trắng hoá thành hồng nhạt. Dùng drawable thì view giữ nguyên
+  nền ta đưa vào, vẫn đổ bóng theo elevation như thường.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/white" />
+</shape>

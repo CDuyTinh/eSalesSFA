@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="@drawable/img">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,7 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/brandRed"
                 android:paddingHorizontal="@dimen/space_lg"
                 android:paddingTop="@dimen/space_lg"
                 android:paddingBottom="@dimen/space_xl">

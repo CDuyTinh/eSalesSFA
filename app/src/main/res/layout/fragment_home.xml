@@ -23,12 +23,15 @@
         android:layout_weight="1" />
 
     <!-- itemActiveIndicatorStyle=@null: Material 3 vẽ một viên thuốc bo tròn sau
-         icon đang chọn, bản gốc không có. Chỉ đổi màu icon và chữ. -->
+         icon đang chọn, bản gốc không có. Chỉ đổi màu icon và chữ.
+
+         Chiều cao phải là wrap_content. Ghim ?attr/actionBarSize (56dp) thì
+         không đủ chỗ cho cả icon và chữ ở chế độ labeled nên chữ bị cắt mất. -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_nav"
         android:elevation="8dp"
         app:itemIconTint="@color/bottom_nav_item"
         app:itemTextColor="@color/bottom_nav_item"

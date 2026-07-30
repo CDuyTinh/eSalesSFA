@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.core.ui.isEmbedded
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.core.ui.BarEntry
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentDashboardBinding
 import com.tinhcd.esalessfa.domain.repository.DailyRevenue
 import com.tinhcd.esalessfa.domain.repository.DashboardKpi
@@ -60,6 +61,8 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentDashboardBinding.bind(view)
         val money = NumberFormat.getInstance(Locale("vi", "VN"))
+
+        view.padTopForStatusBar()
 
         // Làm tab thì không có gì để quay lại, và báo cáo đơn hàng đã là tab kế
         // bên nên không cần nút mở nữa.

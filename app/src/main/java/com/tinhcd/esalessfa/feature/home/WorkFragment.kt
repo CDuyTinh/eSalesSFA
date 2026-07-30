@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentWorkBinding
 import com.tinhcd.esalessfa.domain.repository.CatalogRepository
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
@@ -114,6 +115,10 @@ class WorkFragment : Fragment(R.layout.fragment_work) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentWorkBinding.bind(view)
         val timeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+        // Tab tự chừa chỗ cho status bar, không phải màn Home: Home còn giữ thanh
+        // tab ở đáy và phải để tab con vẽ nền lên tận đỉnh máy.
+        view.padTopForStatusBar()
 
         binding.syncButton.setOnClickListener {
             val blocking = viewModel.blockingCustomer.value

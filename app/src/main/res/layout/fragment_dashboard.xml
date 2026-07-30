@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:background="@drawable/img">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"

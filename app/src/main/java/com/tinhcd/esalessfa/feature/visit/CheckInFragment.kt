@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCheckInBinding
 import com.tinhcd.esalessfa.domain.visit.CheckInValidation
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +53,8 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCheckInBinding.bind(view)
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        view.padTopForStatusBar()
 
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 

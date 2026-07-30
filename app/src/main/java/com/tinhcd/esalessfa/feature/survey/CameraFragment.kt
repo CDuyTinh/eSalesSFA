@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCameraBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -67,6 +68,10 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCameraBinding.bind(view)
+
+        // Chừa chỗ ở nút Đóng, không ở view gốc: khung ngắm phải chiếm trọn màn
+        // hình, đệm view gốc sẽ bóp nó lại thành một dải trống ở đỉnh.
+        binding.closeButton.padTopForStatusBar()
 
         binding.closeButton.setOnClickListener { findNavController().navigateUp() }
         binding.shutterButton.setOnClickListener { capture() }

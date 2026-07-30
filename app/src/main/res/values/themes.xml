@@ -30,8 +30,13 @@
         <item name="android:textColorSecondary">@color/textGrayDark</item>
         <item name="android:listDivider">@color/lineGray</item>
 
-        <item name="android:statusBarColor">@color/brandRedDark</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <!--
+          Hai thanh hệ thống trong suốt: nội dung màn hình vẽ tràn lên phía sau
+          chúng (xem MainActivity.enableEdgeToEdge và padTopForStatusBar). Màu icon
+          đặt ở MainActivity chứ không ở đây, vì nó đổi theo màn hình đang mở.
+        -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Sfa.Dialog</item>
     </style>
