@@ -34,6 +34,7 @@ import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
 import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
 import com.tinhcd.esalessfa.core.network.dto.UomDto
+import com.tinhcd.esalessfa.domain.util.SearchText
 
 /**
  * DTO (server) -> Entity (local).
@@ -70,8 +71,10 @@ fun CustomerDto.toEntity() = CustomerEntity(
     id = id,
     code = code,
     name = name,
-    // Server thường đã sinh sẵn; nếu thiếu thì tự hạ chữ thường để search vẫn chạy.
-    nameSearch = nameSearch ?: name.lowercase(),
+    // Tự sinh chuỗi tìm kiếm, KHÔNG dùng cột name_search của server: chỉ cần
+    // server sinh theo quy tắc khác là tìm kiếm trên máy chết mà client không
+    // biết. Cùng một hàm với lúc chuẩn hoá từ khoá nên hai đầu luôn khớp.
+    nameSearch = SearchText.normalize(name),
     phone = phone,
     address = address,
     latitude = latitude,
@@ -99,7 +102,7 @@ fun ProductDto.toEntity() = ProductEntity(
     id = id,
     code = code,
     name = name,
-    nameSearch = nameSearch ?: name.lowercase(),
+    nameSearch = SearchText.normalize(name),
     barcode = barcode,
     categoryId = categoryId,
     baseUom = baseUom,

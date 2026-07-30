@@ -103,7 +103,7 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
         PendingUploadEntity::class,
         SyncErrorEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

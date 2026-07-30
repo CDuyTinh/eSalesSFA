@@ -44,8 +44,16 @@ class MasterMappersTest {
         assertThat(entity.latitude).isWithin(1e-9).of(10.7769)
     }
 
+    /**
+     * Chuỗi tìm kiếm do CLIENT sinh từ tên, bỏ dấu — không lấy cột name_search
+     * của server.
+     *
+     * Trước đây lấy nguyên từ server, và server sinh thiếu phần tên riêng
+     * ("cua hang 12" thay vì "cua hang minh anh 12") nên gõ tên khách hàng không
+     * ra kết quả nào.
+     */
     @Test
-    fun `customer without name_search falls back to lowercased name`() {
+    fun `search text is generated from name with diacritics stripped`() {
         val payload = """
             {"id":"c2","code":"KH0002","name":"Tạp Hoá ABC",
              "price_group_id":"pg1","branch_id":"b1","row_version":1}
@@ -53,7 +61,21 @@ class MasterMappersTest {
 
         val entity = json.decodeFromString<CustomerDto>(payload).toEntity()
 
-        assertThat(entity.nameSearch).isEqualTo("tạp hoá abc")
+        assertThat(entity.nameSearch).isEqualTo("tap hoa abc")
+    }
+
+    @Test
+    fun `search text ignores the value sent by server`() {
+        // Server gửi chuỗi thiếu tên riêng — đúng lỗi từng gặp trong seed data.
+        val payload = """
+            {"id":"c9","code":"KH0009","name":"Cửa hàng Minh Anh 9",
+             "name_search":"cua hang 9",
+             "price_group_id":"pg1","branch_id":"b1","row_version":1}
+        """.trimIndent()
+
+        val entity = json.decodeFromString<CustomerDto>(payload).toEntity()
+
+        assertThat(entity.nameSearch).isEqualTo("cua hang minh anh 9")
     }
 
     @Test

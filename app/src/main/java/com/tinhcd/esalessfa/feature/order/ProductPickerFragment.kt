@@ -17,6 +17,7 @@ import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentProductPickerBinding
 import com.tinhcd.esalessfa.domain.model.Product
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
+import com.tinhcd.esalessfa.domain.util.SearchText
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.text.Normalizer
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -44,7 +44,7 @@ class ProductPickerViewModel @Inject constructor(
 
     val products: StateFlow<List<Product>> = query
         .debounce(300)
-        .map { it.trim().normalize() }
+        .map { SearchText.normalize(it) }
         .distinctUntilChanged()
         .flatMapLatest { repository.search(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -53,12 +53,6 @@ class ProductPickerViewModel @Inject constructor(
         query.value = value
     }
 
-    /** Bỏ dấu để khớp cột nameSearch, giống màn danh sách khách hàng. */
-    private fun String.normalize(): String =
-        Normalizer.normalize(this, Normalizer.Form.NFD)
-            .replace(Regex("\\p{Mn}+"), "")
-            .replace('đ', 'd')
-            .lowercase()
 }
 
 @AndroidEntryPoint

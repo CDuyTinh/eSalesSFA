@@ -3,6 +3,7 @@ package com.tinhcd.esalessfa.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.tinhcd.esalessfa.core.database.MIGRATION_1_2
+import com.tinhcd.esalessfa.core.database.MIGRATION_2_3
 import com.tinhcd.esalessfa.core.database.SfaDatabase
 import com.tinhcd.esalessfa.core.database.dao.AppConfigDao
 import com.tinhcd.esalessfa.core.database.dao.CatalogQueryDao
@@ -37,7 +38,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): SfaDatabase =
         Room.databaseBuilder(context, SfaDatabase::class.java, SfaDatabase.NAME)
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             // Cố ý KHÔNG dùng fallbackToDestructiveMigration: đổi schema mà quên
             // viết migration sẽ xoá sạch giao dịch chưa sync của nhân viên ngoài
             // thị trường. Thà crash lúc dev còn hơn mất dữ liệu thật.

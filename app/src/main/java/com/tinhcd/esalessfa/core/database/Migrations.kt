@@ -170,3 +170,24 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         )
     }
 }
+
+/**
+ * v2 -> v3: nạp lại khách hàng và sản phẩm để sinh lại cột tìm kiếm.
+ *
+ * Không đổi schema. Trước đây cột nameSearch lấy nguyên từ server, mà server sinh
+ * thiếu phần tên riêng nên gõ "minh anh" không ra "Cửa hàng Minh Anh". Giờ client
+ * tự sinh bằng SearchText, nhưng các dòng ĐÃ nằm trong máy vẫn giữ giá trị cũ.
+ *
+ * Xoá mốc version của hai bảng đó trong sync_state là đủ: lượt sync tiếp theo coi
+ * chúng như chưa từng tải, kéo lại toàn bộ và mapper sinh lại cột tìm kiếm. Không
+ * cần endpoint riêng hay cờ đặc biệt — dùng đúng cơ chế delta sync đang có.
+ *
+ * Chỉ xoá mốc version, KHÔNG xoá dữ liệu: danh sách khách hàng vẫn dùng được
+ * bình thường cho tới khi sync xong.
+ */
+val MIGRATION_2_3 = object : Migration(2, 3) {
+
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DELETE FROM `sync_state` WHERE `tableName` IN ('customers', 'products')")
+    }
+}

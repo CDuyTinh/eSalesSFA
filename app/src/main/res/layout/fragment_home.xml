@@ -6,32 +6,6 @@
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <!-- Dải màu thương hiệu mang lời chào và thời điểm đồng bộ, giống cách bản
-         gốc dùng vùng màu đỏ làm phần đầu màn hình. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/brandRed"
-        android:paddingHorizontal="@dimen/space_lg"
-        android:paddingTop="@dimen/space_lg"
-        android:paddingBottom="@dimen/space_xl">
-
-        <TextView
-            android:id="@+id/greetingText"
-            style="@style/Sfa.Text.Title"
-            android:textColor="@color/white"
-            tools:text="Xin chào, Nguyễn Văn Sales" />
-
-        <TextView
-            android:id="@+id/lastSyncText"
-            style="@style/Sfa.Text.Tiny"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/white"
-            android:alpha="0.85"
-            tools:text="Đồng bộ lần cuối: 29/07/2026 17:38" />
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,6 +18,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!-- Dải màu thương hiệu mang lời chào và thời điểm đồng bộ, giống cách
+                 bản gốc dùng vùng màu đỏ làm phần đầu màn hình. Đặt BÊN TRONG
+                 ScrollView vì thẻ bên dưới dùng margin âm để nhô lên đè vào nó —
+                 để ngoài thì ScrollView cắt mất phần nhô ra. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/brandRed"
+                android:paddingHorizontal="@dimen/space_lg"
+                android:paddingTop="@dimen/space_lg"
+                android:paddingBottom="@dimen/space_xl">
+
+                <TextView
+                    android:id="@+id/greetingText"
+                    style="@style/Sfa.Text.Title"
+                    android:textColor="@color/white"
+                    tools:text="Xin chào, Nguyễn Văn Sales" />
+
+                <TextView
+                    android:id="@+id/lastSyncText"
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/white"
+                    android:alpha="0.85"
+                    tools:text="Đồng bộ lần cuối: 29/07/2026 17:38" />
+            </LinearLayout>
 
             <!-- Thẻ nhô lên đè vào dải đỏ để tạo chiều sâu cho phần đầu. -->
             <com.google.android.material.card.MaterialCardView

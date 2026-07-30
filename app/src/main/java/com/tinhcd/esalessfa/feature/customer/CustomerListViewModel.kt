@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.tinhcd.esalessfa.domain.model.RouteCustomer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
+import com.tinhcd.esalessfa.domain.util.SearchText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import java.text.Normalizer
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -52,7 +52,7 @@ class CustomerListViewModel @Inject constructor(
      */
     private val debouncedQuery: Flow<String> = queryInput
         .debounce(SEARCH_DEBOUNCE_MS)
-        .map { it.trim().normalizeForSearch() }
+        .map { SearchText.normalize(it) }
         .distinctUntilChanged()
 
     val pagedCustomers: Flow<PagingData<com.tinhcd.esalessfa.domain.model.Customer>> =
@@ -73,18 +73,6 @@ class CustomerListViewModel @Inject constructor(
     fun onChannelSelected(channelId: String?) {
         channelFilter.value = channelId
     }
-
-    /**
-     * Bỏ dấu tiếng Việt để khớp với cột nameSearch do server sinh.
-     * SQLite không có unaccent như Postgres, nếu không chuẩn hoá thì gõ "an khang"
-     * sẽ không tìm ra "An Khang".
-     */
-    private fun String.normalizeForSearch(): String =
-        Normalizer.normalize(this, Normalizer.Form.NFD)
-            .replace(Regex("\\p{Mn}+"), "")
-            .replace('đ', 'd')
-            .replace('Đ', 'D')
-            .lowercase()
 
     companion object {
         const val ARG_MODE = "mode"
