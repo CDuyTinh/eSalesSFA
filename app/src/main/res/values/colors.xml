@@ -14,9 +14,20 @@
     <color name="brandRedLight">#E9474F</color>
     <color name="brandRedFaint">#1AE41A23</color>
 
+    <!-- Hai đầu dải gradient đỏ ở màn Splash/Login. -->
+    <color name="brandRedGradientStart">#E8202A</color>
+    <color name="brandRedGradientEnd">#B31219</color>
+
+    <!-- Xanh navy trong chữ "SFA" của logo. -->
+    <color name="brandNavy">#12275C</color>
+
     <!-- Nền &amp; đường kẻ -->
     <color name="surfaceGray">#F7F7F8</color>
     <color name="lineGray">#E7E7E9</color>
+
+    <!-- Nửa trên màn Login: gần như trắng, phớt hồng rất nhạt. -->
+    <color name="loginTop">#FFFFFF</color>
+    <color name="loginTopTint">#FDF1F2</color>
 
     <!-- Chữ -->
     <color name="textDark">#0A091B</color>

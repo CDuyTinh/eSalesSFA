@@ -1,96 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Bố cục theo login.xml của bản eSales gốc: nền sáng, tấm đỏ có hoạ tiết dán sát
+  đáy, logo ở trên, thẻ trắng chứa form nằm giữa và đè lên ranh giới sáng/đỏ,
+  hai dòng phiên bản ở chân màn hình.
+
+  Dùng FrameLayout xếp lớp thay vì ConstraintLayout vì ba lớp này chỉ cần
+  layout_gravity, không có ràng buộc nào giữa chúng.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@drawable/bg_login_top">
 
+    <!-- Tấm đỏ + hoạ tiết: bọc trong FrameLayout để hoạ tiết bị bo góc theo tấm
+         nền. Vẽ RibbonPatternView thẳng vào đây thì các đường tràn ra ngoài hai
+         góc bo. -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/login_panel_height"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_login_bottom"
+        android:clipToOutline="true">
+
+        <com.tinhcd.esalessfa.core.ui.RibbonPatternView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <!-- Logo và chữ nằm cùng một LinearLayout để chữ tự trôi theo logo, không
+         phải canh bằng một margin cố định như 176dp. -->
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="@dimen/login_logo_margin_top"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/logo_size"
+            android:layout_height="@dimen/logo_size"
+            android:src="@drawable/ic_logo_mark_dark"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Sfa.Text.Brand"
+                android:text="@string/brand_name_prefix"
+                android:textColor="@color/brandRed" />
+
+            <TextView
+                style="@style/Sfa.Text.Brand"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="@string/brand_name_suffix"
+                android:textColor="@color/brandNavy" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Cuộn được để trên máy màn hình ngắn, khi bàn phím bật lên, nút Đăng nhập
+         vẫn tới được. -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:clipToPadding="false">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_lg"
+            app:cardCornerRadius="@dimen/space_md"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/space_lg">
+
+                <TextView
+                    style="@style/Sfa.Text.Title"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginBottom="@dimen/space_lg"
+                    android:text="@string/login_title"
+                    android:textColor="@color/brandRed"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/emailLayout"
+                    style="@style/Sfa.Input.Login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:startIconDrawable="@drawable/ic_person">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/emailInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/login_email"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:paddingVertical="@dimen/space_lg"
+                        android:textColorHint="@color/textGray"
+                        android:autofillHints="emailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/passwordLayout"
+                    style="@style/Sfa.Input.Login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/passwordInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/login_password"
+                        android:inputType="textPassword"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:paddingVertical="@dimen/space_lg"
+                        android:textColorHint="@color/textGray"
+                        android:autofillHints="password" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/errorText"
+                    style="@style/Sfa.Text.Small"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:textColor="@color/brandRed"
+                    android:visibility="gone"
+                    tools:text="Email hoặc mật khẩu không đúng"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/loginButton"
+                    style="@style/Sfa.Button"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/login_submit" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/splash_footer_margin_bottom"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="48dp">
+        android:gravity="center_horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold" />
+            android:id="@+id/versionBuildText"
+            style="@style/Sfa.Text.Small"
+            android:textColor="@color/white"
+            tools:text="Phiên bản ngày 20260730_0842" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/login_subtitle"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:imeOptions="actionNext"
-                android:maxLines="1"
-                android:autofillHints="emailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/login_password"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:imeOptions="actionDone"
-                android:maxLines="1"
-                android:autofillHints="password" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/errorText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorError"
-            android:visibility="gone"
-            tools:text="Email hoặc mật khẩu không đúng"
-            xmlns:tools="http://schemas.android.com/tools" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/loginButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:paddingVertical="14dp"
-            android:text="@string/login_submit" />
-
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:indeterminate="true"
-            android:visibility="gone" />
+            android:id="@+id/versionProductText"
+            style="@style/Sfa.Text.Small"
+            android:layout_marginTop="@dimen/space_sm"
+            android:textColor="@color/white"
+            tools:text="Phiên bản eSales 1.0" />
     </LinearLayout>
-</ScrollView>
+</FrameLayout>

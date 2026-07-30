@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nền đỏ của màn Splash.
+
+  Gradient toả tròn lệch về trái, giống bản gốc: sáng nhất ở khoảng giữa thân
+  màn hình rồi tối dần ra bốn góc, nhờ đó logo trắng ở tâm nổi lên rõ.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <gradient
+        android:type="radial"
+        android:centerX="0.38"
+        android:centerY="0.46"
+        android:gradientRadius="95%p"
+        android:startColor="@color/brandRedGradientStart"
+        android:endColor="@color/brandRedGradientEnd" />
+</shape>

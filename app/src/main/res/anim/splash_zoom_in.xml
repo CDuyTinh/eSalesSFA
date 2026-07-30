@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Logo phóng to từ 0 lên 1 khi mở app, đúng như anim của bản eSales gốc. Thêm
+  fade-in để lúc còn rất nhỏ hình không hiện ra như một điểm đen.
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <scale
+        android:duration="500"
+        android:fromXScale="0"
+        android:fromYScale="0"
+        android:toXScale="1"
+        android:toYScale="1"
+        android:pivotX="50%"
+        android:pivotY="50%" />
+
+    <alpha
+        android:duration="350"
+        android:fromAlpha="0"
+        android:toAlpha="1" />
+</set>

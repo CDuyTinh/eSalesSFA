@@ -1,5 +1,7 @@
 package com.tinhcd.esalessfa.feature.auth
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
@@ -9,10 +11,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.tinhcd.esalessfa.BuildConfig
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -22,6 +28,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentLoginBinding.bind(view)
+
+        binding.versionBuildText.text = getString(R.string.login_version_build, buildStamp())
+        binding.versionProductText.text =
+            getString(R.string.login_version_product, BuildConfig.VERSION_NAME)
 
         binding.emailInput.doAfterTextChanged { viewModel.onEmailChanged(it?.toString().orEmpty()) }
         binding.passwordInput.doAfterTextChanged { viewModel.onPasswordChanged(it?.toString().orEmpty()) }
@@ -50,5 +60,24 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         }
+    }
+
+    /**
+     * Mốc thời gian bản đang chạy, hiển thị ở chân màn hình như bản gốc.
+     *
+     * Lấy thời điểm cài/cập nhật app thay vì nhét thời điểm build qua
+     * `buildConfigField`: giá trị đổi mỗi lần build sẽ làm hỏng configuration
+     * cache của Gradle và buộc biên dịch lại BuildConfig sau mọi lần sửa code.
+     */
+    private fun buildStamp(): String {
+        val pm = requireContext().packageManager
+        val name = requireContext().packageName
+        val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pm.getPackageInfo(name, PackageManager.PackageInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            pm.getPackageInfo(name, 0)
+        }
+        return SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date(info.lastUpdateTime))
     }
 }

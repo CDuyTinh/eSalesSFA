@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Logo dùng trên nền đỏ (màn Splash): đĩa trắng bị ba cánh xoắn khoét vào, để lộ
+  nền đỏ phía sau.
+
+  Vẽ dạng vector chứ không xuất PNG ba mật độ như bản gốc. Và đây là hình tự dựng
+  theo cùng ngôn ngữ thị giác (khẩu độ ống kính, đối xứng bậc ba) chứ không phải
+  logo của công ty trong project gốc — project cá nhân thì không mang nhận diện
+  của họ theo.
+
+  Ba cánh giống nhau, chỉ khác góc quay 120°, nên dùng <group android:rotation>
+  thay vì chép ba pathData lệch nhau — sửa hình chỉ phải sửa một chỗ. Đỉnh cánh
+  nằm ngoài bán kính đĩa (46 so với 42) để nó cắt hẳn qua vành, tạo hình khẩu độ
+  thay vì một bông hoa nằm gọn bên trong.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M8,50 A42,42 0 1,1 92,50 A42,42 0 1,1 8,50 Z" />
+
+    <group android:name="blade1">
+        <path
+            android:fillColor="@color/brandRed"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+
+    <group
+        android:name="blade2"
+        android:pivotX="50"
+        android:pivotY="50"
+        android:rotation="120">
+        <path
+            android:fillColor="@color/brandRed"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+
+    <group
+        android:name="blade3"
+        android:pivotX="50"
+        android:pivotY="50"
+        android:rotation="240">
+        <path
+            android:fillColor="@color/brandRed"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+</vector>

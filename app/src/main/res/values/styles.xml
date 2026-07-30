@@ -111,4 +111,35 @@
         <item name="boxCornerRadiusBottomStart">@dimen/card_radius</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/card_radius</item>
     </style>
+
+    <!--
+      Ô nhập ở màn Login: viền bo tròn liền mạch, icon bên trái, chữ gợi ý nằm
+      ngay trong khung.
+
+      hintEnabled=false là điểm chính: bật lên thì Material khoét một khe ở viền
+      trên để nhồi nhãn nổi vào, còn bản gốc dùng placeholder nằm trong khung nên
+      viền phải liền. Nhãn vì vậy khai bằng android:hint trên EditText.
+
+      Viền giữ nguyên 1dp cả khi focus, nếu không lúc gõ viền dày lên 2dp và ô bị
+      giật một nhịp.
+    -->
+    <style name="Sfa.Input.Login" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="hintEnabled">false</item>
+        <item name="boxCornerRadiusTopStart">@dimen/login_input_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/login_input_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/login_input_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/login_input_radius</item>
+        <item name="boxStrokeColor">@color/lineGray</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="startIconTint">@color/textGray</item>
+        <item name="endIconTint">@color/textGray</item>
+    </style>
+
+    <!-- ── Logo ─────────────────────────────────────────────────────────── -->
+    <style name="Sfa.Text.Brand" parent="Sfa.Text">
+        <item name="android:textSize">@dimen/text_brand</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
 </resources>

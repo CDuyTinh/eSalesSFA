@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bản đảo màu của @drawable/ic_logo_mark_light, dùng trên nền sáng (màn Login):
+  đĩa đỏ, ba cánh xoắn màu trắng.
+
+  Tách thành hai file thay vì một file rồi tint: tint đổi màu toàn bộ hình nên
+  không thể đặt hai màu khác nhau cho đĩa và cánh.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Không vẽ vầng hồng quanh đĩa như bản gốc: cánh xoắn nhô ra tới bán kính
+         46 nên sẽ trổ những vệt trắng ngay trên vầng hồng đó. -->
+    <path
+        android:fillColor="@color/brandRed"
+        android:pathData="M8,50 A42,42 0 1,1 92,50 A42,42 0 1,1 8,50 Z" />
+
+    <group android:name="blade1">
+        <path
+            android:fillColor="@color/white"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+
+    <group
+        android:name="blade2"
+        android:pivotX="50"
+        android:pivotY="50"
+        android:rotation="120">
+        <path
+            android:fillColor="@color/white"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+
+    <group
+        android:name="blade3"
+        android:pivotX="50"
+        android:pivotY="50"
+        android:rotation="240">
+        <path
+            android:fillColor="@color/white"
+            android:pathData="M50,50 C50,26 62,12 82,16 C88,34 80,50 62,54 C54,55 50,54 50,50 Z" />
+    </group>
+</vector>

@@ -6,11 +6,21 @@
     <string name="glyph_pin" translatable="false">◉</string>
     <string name="glyph_phone" translatable="false">✆</string>
 
+    <!-- Logo: hai nửa tách rời để tô hai màu như bộ nhận diện gốc. -->
+    <string name="brand_name_prefix" translatable="false">eSales</string>
+    <string name="brand_name_suffix" translatable="false">SFA</string>
+    <string name="brand_name" translatable="false">eSales SFA</string>
+
+    <!-- Splash -->
+    <string name="splash_footer" translatable="false">github.com/CDuyTinh/eSalesSFA</string>
+
     <!-- Login -->
-    <string name="login_subtitle">Đăng nhập để bắt đầu ngày làm việc</string>
+    <string name="login_title">Đăng Nhập</string>
     <string name="login_email">Email</string>
     <string name="login_password">Mật khẩu</string>
-    <string name="login_submit">Đăng nhập</string>
+    <string name="login_submit">Đăng Nhập</string>
+    <string name="login_version_build">Phiên bản ngày %1$s</string>
+    <string name="login_version_product">Phiên bản eSales %1$s</string>
 
     <!-- Sync -->
     <string name="sync_preparing">Đang chuẩn bị…</string>
