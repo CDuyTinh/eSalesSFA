@@ -30,12 +30,23 @@ data class ActiveVisit(
 sealed interface VisitGate {
 
     /**
-     * Chỉ được check-in khi CHƯA có lượt ghé nào đang mở.
+     * Chỉ được TẠO lượt ghé mới khi chưa có lượt nào đang mở.
      *
      * Đang ghé chính cửa hàng này cũng phải chặn — nếu không sẽ sinh lượt ghé
      * thứ hai và không lượt nào có giờ ra đúng.
      */
     fun canCheckIn(): Boolean = this is CanCheckIn
+
+    /**
+     * Có mở được màn viếng thăm không.
+     *
+     * Khác [canCheckIn]: màn đó dùng cho CẢ check-in và check-out, nên đang ghé
+     * chính cửa hàng này vẫn phải vào được — đó là đường duy nhất để check-out.
+     */
+    fun canOpenVisitScreen(): Boolean = this !is BlockedByOther
+
+    /** Chỉ cần toạ độ khách hàng khi sắp check-in; check-out thì không. */
+    fun requiresCustomerLocation(): Boolean = this is CanCheckIn
 
     /** Kiểm kê, khảo sát, đặt hàng chỉ mở khi đang ghé chính cửa hàng này. */
     fun canDoBusiness(): Boolean = this is CheckedInHere

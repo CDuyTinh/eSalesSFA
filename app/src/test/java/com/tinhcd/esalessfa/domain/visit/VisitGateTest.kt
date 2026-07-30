@@ -32,6 +32,8 @@ class VisitGateTest {
 
         assertThat(gate).isEqualTo(VisitGate.CanCheckIn)
         assertThat(gate.canCheckIn()).isTrue()
+        assertThat(gate.canOpenVisitScreen()).isTrue()
+        assertThat(gate.requiresCustomerLocation()).isTrue()
         assertThat(gate.canDoBusiness()).isFalse()
     }
 
@@ -46,11 +48,23 @@ class VisitGateTest {
     }
 
     @Test
-    fun `dang ghe cua hang khac thi chan tat ca ke ca check-in`() {
+    fun `dang ghe chinh cua hang nay VAN phai vao duoc man vieng tham de check-out`() {
+        val gate = gateFor(visit(here))
+
+        // Lỗi từng gặp: khoá cửa vào màn viếng thăm khi đang ghé, khiến không
+        // còn đường nào để check-out.
+        assertThat(gate.canOpenVisitScreen()).isTrue()
+        // Check-out không xác thực bán kính nên không đòi toạ độ khách hàng.
+        assertThat(gate.requiresCustomerLocation()).isFalse()
+    }
+
+    @Test
+    fun `dang ghe cua hang khac thi chan tat ca ke ca vao man vieng tham`() {
         val gate = gateFor(visit(elsewhere))
 
         assertThat(gate).isInstanceOf(VisitGate.BlockedByOther::class.java)
         assertThat(gate.canCheckIn()).isFalse()
+        assertThat(gate.canOpenVisitScreen()).isFalse()
         assertThat(gate.canDoBusiness()).isFalse()
     }
 

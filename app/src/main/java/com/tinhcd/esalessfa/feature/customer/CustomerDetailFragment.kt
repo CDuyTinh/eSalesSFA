@@ -175,11 +175,20 @@ class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {
                     binding.surveyButton.isEnabled = canAct
                     binding.orderButton.isEnabled = canAct
 
-                    // Chỉ mở check-in khi CHƯA ghé đâu cả: đang ghé chính đây thì
-                    // phải check-out, đang ghé nơi khác thì phải đi giải quyết ở đó.
-                    // Ngoài ra khách hàng phải có toạ độ mới xác thực được.
-                    binding.checkInButton.isEnabled =
-                        gate.canCheckIn() && (customer?.canValidateCheckIn ?: false)
+                    // Nút này là CỬA VÀO màn viếng thăm, dùng cho cả check-in và
+                    // check-out. Chỉ khoá khi đang ghé cửa hàng khác; đang ghé
+                    // chính đây thì phải vào được, vì đó là đường duy nhất để
+                    // check-out.
+                    //
+                    // Toạ độ chỉ cần cho check-in — check-out không xác thực bán
+                    // kính nên khách hàng thiếu toạ độ vẫn phải đóng được lượt ghé.
+                    binding.checkInButton.isEnabled = gate.canOpenVisitScreen() &&
+                        (!gate.requiresCustomerLocation() || customer?.canValidateCheckIn == true)
+
+                    binding.checkInButton.setText(
+                        if (gate.canDoBusiness()) R.string.action_check_out
+                        else R.string.action_check_in
+                    )
 
                     when (gate) {
                         is VisitGate.CheckedInHere -> {
