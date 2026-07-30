@@ -1,222 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Khung chứa tab, theo home.xml của bản eSales gốc: một FrameLayout đổi nội dung
+  theo tab và một BottomNavigationView dán đáy.
+
+  Không dùng NavHostFragment lồng bên trong cho các tab. Lồng NavHost sẽ tạo ra
+  NavController thứ hai, và mọi màn đi sâu từ tab (chi tiết khách hàng, đặt hàng,
+  kiểm kê) sẽ mở BÊN TRONG vùng tab, nằm trên thanh tab — trong khi chúng phải
+  chiếm cả màn hình. Đổi fragment bằng FragmentManager thì các màn đó vẫn đi qua
+  NavController duy nhất ở MainActivity.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <ScrollView
+    <FrameLayout
+        android:id="@+id/tabContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/space_lg"
-        android:fillViewport="true">
+        android:layout_weight="1" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Dải màu thương hiệu mang lời chào và thời điểm đồng bộ, giống cách
-                 bản gốc dùng vùng màu đỏ làm phần đầu màn hình. Đặt BÊN TRONG
-                 ScrollView vì thẻ bên dưới dùng margin âm để nhô lên đè vào nó —
-                 để ngoài thì ScrollView cắt mất phần nhô ra. -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/brandRed"
-                android:paddingHorizontal="@dimen/space_lg"
-                android:paddingTop="@dimen/space_lg"
-                android:paddingBottom="@dimen/space_xl">
-
-                <TextView
-                    android:id="@+id/greetingText"
-                    style="@style/Sfa.Text.Title"
-                    android:textColor="@color/white"
-                    tools:text="Xin chào, Nguyễn Văn Sales" />
-
-                <TextView
-                    android:id="@+id/lastSyncText"
-                    style="@style/Sfa.Text.Tiny"
-                    android:layout_marginTop="2dp"
-                    android:textColor="@color/white"
-                    android:alpha="0.85"
-                    tools:text="Đồng bộ lần cuối: 29/07/2026 17:38" />
-            </LinearLayout>
-
-            <!-- Thẻ nhô lên đè vào dải đỏ để tạo chiều sâu cho phần đầu. -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false"
-                    android:padding="@dimen/space_lg">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <TextView
-                            android:id="@+id/customerCount"
-                            style="@style/Sfa.Text.Number"
-                            tools:text="200" />
-                        <TextView
-                            style="@style/Sfa.Text.Tiny"
-                            android:text="@string/home_customers" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/lineGray" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <TextView
-                            android:id="@+id/productCount"
-                            style="@style/Sfa.Text.Number"
-                            tools:text="300" />
-                        <TextView
-                            style="@style/Sfa.Text.Tiny"
-                            android:text="@string/home_products" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/lineGray" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <TextView
-                            android:id="@+id/promotionCount"
-                            style="@style/Sfa.Text.Number"
-                            tools:text="15" />
-                        <TextView
-                            style="@style/Sfa.Text.Tiny"
-                            android:text="@string/home_promotions" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Tuyến hôm nay -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            style="@style/Sfa.Text.Body"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:textStyle="bold"
-                            android:text="@string/home_route_today" />
-
-                        <TextView
-                            android:id="@+id/routeCount"
-                            style="@style/Sfa.Text.Number"
-                            tools:text="34" />
-                    </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/routeButton"
-                        style="@style/Sfa.Button"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:text="@string/home_view_route" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/allCustomersButton"
-                        style="@style/Sfa.Button.Outlined"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:text="@string/home_view_all_customers" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Đồng bộ -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            style="@style/Sfa.Text.Body"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/home_pending" />
-
-                        <TextView
-                            android:id="@+id/pendingCount"
-                            style="@style/Sfa.Text.Number"
-                            tools:text="0" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/syncWarning"
-                        style="@style/Sfa.Text.Tiny"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:padding="@dimen/space_sm"
-                        android:background="@drawable/bg_chip_red"
-                        android:textColor="@color/brandRed"
-                        android:visibility="gone"
-                        tools:text="Chưa đồng bộ được: còn đang check-in tại Cửa hàng Minh Anh 12." />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/dashboardButton"
-                        style="@style/Sfa.Button.Outlined"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:text="@string/dashboard_open" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/syncButton"
-                        style="@style/Sfa.Button"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:text="@string/home_sync_again" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </ScrollView>
+    <!-- itemActiveIndicatorStyle=@null: Material 3 vẽ một viên thuốc bo tròn sau
+         icon đang chọn, bản gốc không có. Chỉ đổi màu icon và chữ. -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:elevation="8dp"
+        app:itemIconTint="@color/bottom_nav_item"
+        app:itemTextColor="@color/bottom_nav_item"
+        app:itemActiveIndicatorStyle="@null"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/home_bottom_nav" />
 </LinearLayout>

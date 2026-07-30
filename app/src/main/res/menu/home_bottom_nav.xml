@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bốn tab theo home_bottom_navigation.xml của bản gốc, bỏ tab "Others" vì các
+  chức năng trong đó đã nằm gọn ở tab Công việc.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tab_dashboard"
+        android:icon="@drawable/ic_tab_dashboard"
+        android:title="@string/tab_dashboard" />
+
+    <item
+        android:id="@+id/tab_checkin"
+        android:icon="@drawable/ic_tab_checkin"
+        android:title="@string/tab_checkin" />
+
+    <item
+        android:id="@+id/tab_report"
+        android:icon="@drawable/ic_tab_report"
+        android:title="@string/tab_report" />
+
+    <item
+        android:id="@+id/tab_work"
+        android:icon="@drawable/ic_tab_work"
+        android:title="@string/tab_work" />
+</menu>

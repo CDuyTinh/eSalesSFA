@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
+import com.tinhcd.esalessfa.core.ui.isEmbedded
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentOrderReportBinding
 import com.tinhcd.esalessfa.databinding.ItemOrderReportBinding
@@ -134,7 +135,9 @@ class OrderReportFragment : Fragment(R.layout.fragment_order_report) {
         binding.orderList.layoutManager = LinearLayoutManager(requireContext())
         binding.orderList.adapter = adapter
 
-        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+        // Làm tab thì không có gì để quay lại — navigateUp() sẽ pop cả màn Home.
+        if (isEmbedded) binding.toolbar.navigationIcon = null
+        else binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         binding.rangeButton.setOnClickListener { showRangePicker() }
         binding.exportButton.setOnClickListener { exportCsv(viewModel.orders.value) }
 

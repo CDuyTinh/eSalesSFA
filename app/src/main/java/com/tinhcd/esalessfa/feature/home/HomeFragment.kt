@@ -2,179 +2,101 @@ package com.tinhcd.esalessfa.feature.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.commit
 import com.tinhcd.esalessfa.R
-import com.google.android.material.snackbar.Snackbar
+import com.tinhcd.esalessfa.core.ui.asTab
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
-import com.tinhcd.esalessfa.domain.repository.CatalogRepository
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
-import com.tinhcd.esalessfa.domain.repository.SyncRepository
-import com.tinhcd.esalessfa.domain.repository.VisitRepository
+import com.tinhcd.esalessfa.feature.customer.CustomerListFragment
 import com.tinhcd.esalessfa.feature.customer.CustomerListMode
 import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
-import com.tinhcd.esalessfa.feature.sync.SyncMode
-import com.tinhcd.esalessfa.feature.sync.SyncViewModel
+import com.tinhcd.esalessfa.feature.report.DashboardFragment
+import com.tinhcd.esalessfa.feature.report.OrderReportFragment
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 
-data class HomeUiState(
-    val salespersonName: String = "",
-    val customerCount: Int = 0,
-    val productCount: Int = 0,
-    val promotionCount: Int = 0,
-    val routeCustomerCount: Int = 0,
-    val lastSyncedAt: Long? = null,
-    val pendingCount: Int = 0,
-)
-
-@OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class HomeViewModel @Inject constructor(
-    customerRepository: CustomerRepository,
-    catalogRepository: CatalogRepository,
-    salespersonRepository: SalespersonRepository,
-    syncRepository: SyncRepository,
-    visitRepository: VisitRepository,
-) : ViewModel() {
-
-    // combine chỉ có overload giữ nguyên kiểu tới 5 luồng; nhiều hơn sẽ rơi vào
-    // bản vararg trả về Array<Any?> và mất hết type safety. Gộp theo hai nhóm.
-    private val counts = combine(
-        customerRepository.observeCustomerCount(),
-        catalogRepository.observeProductCount(),
-        catalogRepository.observeActivePromotionCount(),
-    ) { customers, products, promotions -> Triple(customers, products, promotions) }
-
-    private val syncInfo = combine(
-        syncRepository.observeLastSyncedAt(),
-        syncRepository.observePendingCount(),
-    ) { lastSync, pending -> lastSync to pending }
-
-    /**
-     * Mỗi nguồn là Flow từ Room nên khi sync ghi dữ liệu mới, màn hình tự cập
-     * nhật — không cần gọi refresh thủ công sau khi đồng bộ xong.
-     */
-    val uiState: StateFlow<HomeUiState> = combine(
-        salespersonRepository.observeCurrent().map { it?.fullName.orEmpty() },
-        counts,
-        syncInfo,
-    ) { name, (customers, products, promotions), (lastSync, pending) ->
-        HomeUiState(
-            salespersonName = name,
-            customerCount = customers,
-            productCount = products,
-            promotionCount = promotions,
-            lastSyncedAt = lastSync,
-            pendingCount = pending,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
-
-    /**
-     * Tên cửa hàng đang chặn đồng bộ, null nếu không có.
-     *
-     * Hiện lý do thay vì để nút bấm không phản hồi — nhân viên sẽ tưởng app hỏng.
-     */
-    val blockingCustomer: StateFlow<String?> = visitRepository.observeActiveVisit()
-        .map { it?.customerName }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
-
-    val routeCount: StateFlow<Int> = customerRepository
-        .routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query = "")
-        .map { it.size }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
-}
-
+/**
+ * Khung chứa bốn tab, theo HomeActivity của bản eSales gốc.
+ *
+ * Chỉ giữ thanh tab và vùng nội dung; mỗi tab là một fragment độc lập với
+ * ViewModel riêng.
+ */
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private val viewModel: HomeViewModel by viewModels()
+    private var binding: FragmentHomeBinding? = null
+
+    /**
+     * Tab đang hiện, để không dựng lại tab đã có.
+     *
+     * Cần thiết vì đoạn khởi tạo bên dưới có thể gọi showTab hai lần cho cùng một
+     * tab. commit() chạy bất đồng bộ nên lần gọi thứ hai sẽ không tìm thấy
+     * fragment của lần đầu qua findFragmentByTag và sẽ thêm một bản thứ hai.
+     */
+    private var currentTabId = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentHomeBinding.bind(view)
-        val timeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val binding = FragmentHomeBinding.bind(view).also { this.binding = it }
 
-        binding.syncButton.setOnClickListener {
-            val blocking = viewModel.blockingCustomer.value
-            if (blocking != null) {
-                Snackbar.make(
-                    view,
-                    getString(R.string.sync_blocked_by_visit, blocking),
-                    Snackbar.LENGTH_LONG,
-                ).show()
-            } else {
-                // Mở màn Sync thay vì tự enqueue: người dùng cần thấy tiến trình
-                // và lỗi. Việc khởi động do SyncViewModel làm.
-                findNavController().navigate(
-                    R.id.action_home_to_sync,
-                    bundleOf(SyncViewModel.ARG_MODE to SyncMode.MANUAL.name),
-                )
-            }
-        }
-        binding.routeButton.setOnClickListener { openCustomerList(CustomerListMode.ROUTE_TODAY) }
-        binding.allCustomersButton.setOnClickListener { openCustomerList(CustomerListMode.ALL) }
-        binding.dashboardButton.setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_dashboard)
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            showTab(item.itemId)
+            true
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState.collect { state ->
-                        binding.greetingText.text =
-                            getString(R.string.home_greeting, state.salespersonName)
-                        binding.customerCount.text = state.customerCount.toString()
-                        binding.productCount.text = state.productCount.toString()
-                        binding.promotionCount.text = state.promotionCount.toString()
-                        binding.pendingCount.text = state.pendingCount.toString()
-                        binding.lastSyncText.text = state.lastSyncedAt?.let {
-                            getString(R.string.home_last_sync, timeFormat.format(Date(it)))
-                        } ?: getString(R.string.home_never_synced)
-                    }
-                }
-                launch {
-                    viewModel.routeCount.collect { binding.routeCount.text = it.toString() }
-                }
-                launch {
-                    viewModel.blockingCustomer.collect { name ->
-                        binding.syncWarning.visibility =
-                            if (name == null) View.GONE else View.VISIBLE
-                        if (name != null) {
-                            binding.syncWarning.text =
-                                getString(R.string.sync_blocked_by_visit, name)
-                        }
-                    }
-                }
-            }
+        // Chỉ chọn tab mặc định ở lần dựng đầu. Khi xoay máy, FragmentManager đã
+        // khôi phục sẵn các tab cùng trạng thái ẩn/hiện, còn BottomNavigationView
+        // tự khôi phục tab đang chọn — đặt lại sẽ ném người dùng về tab đầu.
+        if (savedInstanceState == null) {
+            binding.bottomNav.selectedItemId = R.id.tab_dashboard
+            // Gọi thẳng thêm một lần: tab_dashboard là item đầu tiên của menu nên
+            // BottomNavigationView coi như đã chọn sẵn, gán selectedItemId đúng
+            // giá trị đó có thể không phát ra sự kiện nào và màn hình sẽ trắng.
+            showTab(R.id.tab_dashboard)
         }
     }
 
-    private fun openCustomerList(mode: CustomerListMode) {
-        findNavController().navigate(
-            R.id.action_home_to_customerList,
-            bundleOf(CustomerListViewModel.ARG_MODE to mode.name),
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
+
+    /** Cho tab khác chuyển tab, ví dụ nút "Xem tuyến hôm nay" ở tab Công việc. */
+    fun selectTab(itemId: Int) {
+        binding?.bottomNav?.selectedItemId = itemId
+    }
+
+    /**
+     * Dùng add/hide/show chứ không replace.
+     *
+     * replace sẽ huỷ view của tab cũ, nên quay lại tab đó là mất vị trí cuộn, ô
+     * tìm kiếm đang gõ và khoảng thời gian đang chọn ở báo cáo. Bản gốc cũng giữ
+     * lại instance của từng tab đúng vì lý do này.
+     */
+    private fun showTab(itemId: Int) {
+        if (itemId == currentTabId) return
+        currentTabId = itemId
+
+        val tag = itemId.toString()
+        val fm = childFragmentManager
+
+        fm.commit {
+            setReorderingAllowed(true)
+            fm.fragments.forEach { hide(it) }
+
+            val existing = fm.findFragmentByTag(tag)
+            if (existing == null) add(R.id.tabContainer, newTab(itemId), tag) else show(existing)
+        }
+    }
+
+    private fun newTab(itemId: Int): Fragment = when (itemId) {
+        R.id.tab_dashboard -> DashboardFragment().asTab()
+
+        // Tab Check-in chính là tuyến hôm nay: danh sách các cửa hàng phải ghé.
+        R.id.tab_checkin -> CustomerListFragment().asTab(
+            CustomerListViewModel.ARG_MODE to CustomerListMode.ROUTE_TODAY.name
         )
+
+        R.id.tab_report -> OrderReportFragment().asTab()
+        else -> WorkFragment().asTab()
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Màu icon và chữ của tab: đỏ khi đang chọn, xám khi không — giống
+  text_selector_primary_gray_dark của bản gốc.
+
+  Dùng một ColorStateList cho cả itemIconTint và itemTextColor thay vì hai bộ
+  drawable focus/unfocus như bản gốc: cùng kết quả nhưng khỏi phải xuất tám ảnh.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brandRed" android:state_checked="true" />
+    <item android:color="@color/textGrayDark" />
+</selector>

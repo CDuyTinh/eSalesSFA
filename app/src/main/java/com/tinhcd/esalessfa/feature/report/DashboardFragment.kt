@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import com.tinhcd.esalessfa.core.ui.isEmbedded
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.core.ui.BarEntry
 import com.tinhcd.esalessfa.databinding.FragmentDashboardBinding
@@ -60,9 +61,16 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         val binding = FragmentDashboardBinding.bind(view)
         val money = NumberFormat.getInstance(Locale("vi", "VN"))
 
-        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
-        binding.reportButton.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboard_to_orderReport)
+        // Làm tab thì không có gì để quay lại, và báo cáo đơn hàng đã là tab kế
+        // bên nên không cần nút mở nữa.
+        if (isEmbedded) {
+            binding.toolbar.navigationIcon = null
+            binding.reportButton.visibility = View.GONE
+        } else {
+            binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            binding.reportButton.setOnClickListener {
+                findNavController().navigate(R.id.action_dashboard_to_orderReport)
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

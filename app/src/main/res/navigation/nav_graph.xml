@@ -68,9 +68,6 @@
             android:id="@+id/action_home_to_customerList"
             app:destination="@id/customerListFragment" />
         <action
-            android:id="@+id/action_home_to_dashboard"
-            app:destination="@id/dashboardFragment" />
-        <action
             android:id="@+id/action_home_to_sync"
             app:destination="@id/syncFragment" />
     </fragment>
@@ -83,9 +80,6 @@
             android:name="mode"
             app:argType="string"
             android:defaultValue="ROUTE_TODAY" />
-        <action
-            android:id="@+id/action_customerList_to_customerDetail"
-            app:destination="@id/customerDetailFragment" />
     </fragment>
 
     <fragment

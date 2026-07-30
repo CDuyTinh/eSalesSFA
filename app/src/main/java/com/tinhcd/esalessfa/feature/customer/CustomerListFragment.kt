@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
+import com.tinhcd.esalessfa.core.ui.isEmbedded
 import com.tinhcd.esalessfa.databinding.FragmentCustomerListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,14 +26,21 @@ class CustomerListFragment : Fragment(R.layout.fragment_customer_list) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCustomerListBinding.bind(view)
 
+        // Điều hướng theo ID ĐÍCH thay vì ID action: fragment này chạy ở hai chỗ —
+        // vừa là tab Check-in trong màn Home, vừa là đích riêng cho "Tất cả khách
+        // hàng". Action chỉ hợp lệ khi đang đứng đúng đích khai nó, nên ở trong
+        // tab thì action của customerListFragment không giải được.
         val openDetail: (String) -> Unit = { customerId ->
             findNavController().navigate(
-                R.id.action_customerList_to_customerDetail,
+                R.id.customerDetailFragment,
                 bundleOf(CustomerDetailFragment.ARG_CUSTOMER_ID to customerId),
             )
         }
 
-        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+        // Làm tab thì không có gì để quay lại — navigateUp() sẽ pop cả màn Home.
+        if (isEmbedded) binding.toolbar.navigationIcon = null
+        else binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+
         binding.toolbar.setTitle(
             if (viewModel.mode == CustomerListMode.ROUTE_TODAY) R.string.home_route_today
             else R.string.customer_all

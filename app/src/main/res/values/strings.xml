@@ -31,8 +31,15 @@
     <string name="sync_progress">Trang %1$d · %2$d dòng</string>
     <string name="sync_summary">%1$d dòng · %2$d lượt tải</string>
 
+    <!-- Bốn tab ở đáy màn Home -->
+    <string name="tab_dashboard">Tổng quan</string>
+    <string name="tab_checkin">Check-in</string>
+    <string name="tab_report">Báo cáo</string>
+    <string name="tab_work">Công việc</string>
+
     <!-- Home -->
     <string name="home_greeting">Xin chào, %1$s</string>
+    <string name="home_go_checkin_tab">Mở tuyến để check-in</string>
     <string name="home_last_sync">Đồng bộ lần cuối: %1$s</string>
     <string name="home_never_synced">Chưa đồng bộ lần nào</string>
     <string name="home_customers">Khách hàng</string>
@@ -42,7 +49,6 @@
     <string name="home_pending">Chờ đồng bộ lên</string>
     <string name="home_sync_again">Đồng bộ lại</string>
     <string name="sync_blocked_by_visit">Chưa đồng bộ được: còn đang check-in tại %1$s. Hãy check-out trước.</string>
-    <string name="home_view_route">Xem tuyến hôm nay</string>
     <string name="home_view_all_customers">Tất cả khách hàng</string>
 
     <!-- Customer list -->
