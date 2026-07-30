@@ -12,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.sync.SyncManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
 import com.tinhcd.esalessfa.domain.repository.CatalogRepository
@@ -22,6 +21,8 @@ import com.tinhcd.esalessfa.domain.repository.SyncRepository
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import com.tinhcd.esalessfa.feature.customer.CustomerListMode
 import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
+import com.tinhcd.esalessfa.feature.sync.SyncMode
+import com.tinhcd.esalessfa.feature.sync.SyncViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,7 +56,6 @@ class HomeViewModel @Inject constructor(
     catalogRepository: CatalogRepository,
     salespersonRepository: SalespersonRepository,
     syncRepository: SyncRepository,
-    private val syncManager: SyncManager,
     visitRepository: VisitRepository,
 ) : ViewModel() {
 
@@ -104,9 +104,6 @@ class HomeViewModel @Inject constructor(
         .routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query = "")
         .map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
-
-    /** Gửi outbox lên trước rồi mới tải xuống — xem SyncManager.startFullSync. */
-    fun syncAgain() = syncManager.startFullSync()
 }
 
 @AndroidEntryPoint
@@ -128,7 +125,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     Snackbar.LENGTH_LONG,
                 ).show()
             } else {
-                viewModel.syncAgain()
+                // Mở màn Sync thay vì tự enqueue: người dùng cần thấy tiến trình
+                // và lỗi. Việc khởi động do SyncViewModel làm.
+                findNavController().navigate(
+                    R.id.action_home_to_sync,
+                    bundleOf(SyncViewModel.ARG_MODE to SyncMode.MANUAL.name),
+                )
             }
         }
         binding.routeButton.setOnClickListener { openCustomerList(CustomerListMode.ROUTE_TODAY) }

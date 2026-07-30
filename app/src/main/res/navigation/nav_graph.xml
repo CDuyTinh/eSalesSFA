@@ -46,6 +46,12 @@
         android:id="@+id/syncFragment"
         android:name="com.tinhcd.esalessfa.feature.sync.SyncFragment"
         android:label="Đồng bộ dữ liệu">
+        <!-- FIRST_RUN: vào từ Splash/Login, chỉ tải xuống rồi đi tiếp vào Home.
+             MANUAL: vào từ Home, gửi lên rồi tải xuống, xong thì quay lại. -->
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="FIRST_RUN" />
         <action
             android:id="@+id/action_sync_to_home"
             app:destination="@id/homeFragment"
@@ -64,6 +70,9 @@
         <action
             android:id="@+id/action_home_to_dashboard"
             app:destination="@id/dashboardFragment" />
+        <action
+            android:id="@+id/action_home_to_sync"
+            app:destination="@id/syncFragment" />
     </fragment>
 
     <fragment

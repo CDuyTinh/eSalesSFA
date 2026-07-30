@@ -22,8 +22,8 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentSyncBinding.bind(view)
 
-        // KEEP policy nên gọi lại lúc xoay máy cũng không tạo thêm lượt sync nào.
-        viewModel.startSync()
+        // KEEP policy nên gọi lại lúc xoay máy cũng không tạo thêm lượt nào.
+        viewModel.start()
 
         binding.retryButton.setOnClickListener { viewModel.retry() }
 
@@ -63,8 +63,16 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.hasNavigated.collect { navigated ->
-                    if (navigated) findNavController().navigate(R.id.action_sync_to_home)
+                viewModel.finished.collect { finished ->
+                    if (!finished) return@collect
+                    // Lượt đầu sau đăng nhập thì đi tiếp vào Home; lượt do người
+                    // dùng chủ động thì quay lại chỗ họ vừa đứng.
+                    when (viewModel.mode) {
+                        SyncMode.FIRST_RUN ->
+                            findNavController().navigate(R.id.action_sync_to_home)
+
+                        SyncMode.MANUAL -> findNavController().navigateUp()
+                    }
                 }
             }
         }

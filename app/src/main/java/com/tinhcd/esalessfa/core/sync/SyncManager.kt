@@ -8,12 +8,17 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/** Id của hai việc trong một lượt đồng bộ đầy đủ, dùng để theo dõi riêng lượt đó. */
+data class FullSyncHandle(val uploadId: UUID, val downloadId: UUID)
 
 /**
  * Điểm vào duy nhất để khởi động sync.
@@ -83,13 +88,29 @@ class SyncManager @Inject constructor(
      * Thứ tự này quan trọng. Tải xuống trước có thể ghi đè master data mà đơn
      * hàng đang chờ gửi tham chiếu tới (giá, chương trình khuyến mãi), khiến
      * server đối chiếu giá và từ chối đơn vốn hoàn toàn hợp lệ lúc tạo.
+     *
+     * APPEND_OR_REPLACE thay vì KEEP vì lượt này do user chủ động bấm: nó phải
+     * chạy chứ không được bỏ qua. Đang có lượt khác thì xếp sau, vẫn không có
+     * hai lượt chạy song song.
+     *
+     * Trả về id của hai việc để UI theo dõi ĐÚNG lượt vừa xếp. Quan sát theo tên
+     * unique thì sẽ thấy luôn cả kết quả SUCCEEDED của lượt trước còn lưu lại, và
+     * màn hình báo "xong" ngay khi vừa mở.
      */
-    fun startFullSync() {
+    fun startFullSync(): FullSyncHandle {
+        val upload = uploadRequest()
+        val download = downloadRequest()
         workManager
-            .beginUniqueWork(WORK_FULL, ExistingWorkPolicy.KEEP, uploadRequest())
-            .then(downloadRequest())
+            .beginUniqueWork(WORK_FULL, ExistingWorkPolicy.APPEND_OR_REPLACE, upload)
+            .then(download)
             .enqueue()
+        return FullSyncHandle(uploadId = upload.id, downloadId = download.id)
     }
+
+    fun observeFullSync(handle: FullSyncHandle): Flow<List<WorkInfo>> =
+        workManager.getWorkInfosFlow(
+            WorkQuery.fromIds(listOf(handle.uploadId, handle.downloadId))
+        )
 
     fun observeUpload(): Flow<WorkInfo?> =
         workManager.getWorkInfosForUniqueWorkFlow(WORK_UPLOAD)
