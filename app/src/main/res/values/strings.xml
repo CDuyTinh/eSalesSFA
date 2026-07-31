@@ -139,17 +139,39 @@
     <!-- Dashboard -->
     <string name="dashboard_title">Báo cáo &amp; KPI</string>
     <string name="dashboard_open">Xem báo cáo</string>
-    <string name="dashboard_today">Doanh số hôm nay</string>
+    <string name="dashboard_today">Tổng kết ngày</string>
     <string name="dashboard_orders">Đơn hàng</string>
-    <string name="dashboard_visits">Đã ghé</string>
-    <string name="dashboard_chart_title">Doanh số 14 ngày gần nhất</string>
+    <string name="dashboard_visits">Viếng thăm</string>
+    <string name="dashboard_sku_per_order">SKU/Đơn hàng</string>
     <string name="dashboard_month">Tháng này</string>
-    <string name="dashboard_month_revenue">Doanh số</string>
-    <string name="dashboard_month_orders">Số đơn</string>
-    <string name="dashboard_avg_order">Giá trị đơn trung bình</string>
     <string name="dashboard_top_products">Top sản phẩm 30 ngày</string>
     <string name="dashboard_top_customers">Top khách hàng 30 ngày</string>
     <string name="dashboard_open_report">Báo cáo đơn hàng chi tiết</string>
+
+    <!-- Chỉ số KPI tháng -->
+    <string name="dashboard_kpi_title">Chỉ số KPI trong tháng</string>
+    <string name="dashboard_kpi_visit_coverage">Ghé tuyến</string>
+    <string name="dashboard_kpi_productive_call">PC — Đơn/Ghé</string>
+    <string name="dashboard_kpi_customer_coverage">Độ phủ khách hàng</string>
+    <string name="dashboard_kpi_sku_per_order">SKU/Đơn hàng</string>
+    <string name="dashboard_kpi_month_revenue">Doanh số tháng này</string>
+
+    <!-- Biểu đồ doanh số -->
+    <string name="dashboard_revenue_title">Doanh số bán hàng</string>
+    <string name="dashboard_range_this_week">Tuần này</string>
+    <string name="dashboard_range_last_week">Tuần trước</string>
+    <string name="dashboard_range_this_month">Tháng này</string>
+    <string name="dashboard_revenue_legend">Doanh số</string>
+    <string name="dashboard_revenue_unit">(Triệu)</string>
+    <!-- Ví dụ: 27/07/2026 - 02/08/2026 -->
+    <string name="dashboard_range_dates">%1$s - %2$s</string>
+
+    <!-- Ví dụ: 4/32 -->
+    <string name="dashboard_metric_target">%1$s/%2$d</string>
+
+    <!-- Dòng phụ của bảng xếp hạng. Ví dụ: "SL: 320" và "5 đơn" -->
+    <string name="dashboard_rank_qty">SL: %1$s</string>
+    <string name="dashboard_rank_orders">%1$s đơn</string>
     <string name="report_no_data">Chưa có dữ liệu</string>
 
     <!-- Order report -->

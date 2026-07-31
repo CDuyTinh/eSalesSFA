@@ -19,6 +19,18 @@
 
     <dimen name="thumb_size">56dp</dimen>
 
+    <!-- ── Dashboard ───────────────────────────────────────────────────────
+         Vòng tròn KPI cỡ 44dp: đủ để đọc phần trăm bên trong mà một dòng vẫn
+         gọn, xếp được 4 dòng KPI trong tầm nhìn đầu tiên. -->
+    <dimen name="donut_size">46dp</dimen>
+    <dimen name="donut_stroke">4dp</dimen>
+    <dimen name="donut_text">11sp</dimen>
+    <dimen name="dashboard_chart_height">160dp</dimen>
+    <dimen name="rank_badge_size">22dp</dimen>
+    <!-- Bo góc nút chọn kỳ: vuông vắn hơn dáng viên thuốc mặc định của Material 3. -->
+    <dimen name="segment_radius">8dp</dimen>
+    <dimen name="text_number_hero">30sp</dimen>
+
     <!-- ── Splash &amp; Login ─────────────────────────────────────────────────
          Số đo lấy đúng theo bản eSales gốc để bố cục cân giống bản gốc. -->
     <dimen name="login_panel_height">340dp</dimen>

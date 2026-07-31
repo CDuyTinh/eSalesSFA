@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền nút: đỏ đặc khi đang chọn, trong suốt khi không — bản gốc dùng đúng
+     cặp này cho ba nút Tuần này / Tuần trước / Tháng này. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brandRed" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>

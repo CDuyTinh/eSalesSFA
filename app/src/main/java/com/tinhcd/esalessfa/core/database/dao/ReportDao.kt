@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 data class DailyRevenueRow(val orderDate: String, val amount: Long, val orderCount: Int)
 
+/** Số khách phải ghé của một thứ trong tuần, theo tuyến đã phân. */
+data class RouteDayPlanRow(val dayOfWeek: Int, val customerCount: Int)
+
 data class TopItemRow(val id: String, val name: String, val amount: Long, val qty: Double)
 
 data class OrderReportRow(
@@ -110,6 +113,122 @@ interface ReportDao {
 
     @Query("SELECT COUNT(*) FROM visits WHERE visitDate = :date AND checkOutAt IS NOT NULL")
     fun observeVisitedCountOn(date: String): Flow<Int>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM visits
+        WHERE visitDate LIKE :yearMonth || '%' AND checkOutAt IS NOT NULL
+        """
+    )
+    fun observeVisitedCountInMonth(yearMonth: String): Flow<Int>
+
+    /**
+     * Số lượt ghé CÓ phát sinh đơn — tử số của chỉ số PC (Productive Call).
+     *
+     * Đếm lượt ghé chứ không đếm đơn: ghé một lần mà viết hai đơn vẫn chỉ là một
+     * lượt ghé hiệu quả, tính theo đơn sẽ đẩy PC vượt 100%.
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM visits v
+        WHERE v.visitDate LIKE :yearMonth || '%' AND v.checkOutAt IS NOT NULL
+          AND EXISTS (
+              SELECT 1 FROM orders o
+              WHERE o.customerId = v.customerId AND o.orderDate = v.visitDate
+                AND o.status <> 'CANCELLED'
+          )
+        """
+    )
+    fun observeProductiveVisitCountInMonth(yearMonth: String): Flow<Int>
+
+    /**
+     * Số cặp (đơn, SKU) — chia cho số đơn ra chỉ số SKU/Đơn hàng.
+     *
+     * Đếm theo cặp chứ không đếm dòng: một sản phẩm đặt hai đơn vị (Thùng và Lẻ)
+     * nằm trên hai dòng nhưng vẫn chỉ là MỘT mặt hàng trong giỏ. Hàng tặng bị
+     * loại vì nhân viên không chủ động bán chúng.
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM (
+            SELECT od.orderId, od.productId
+            FROM order_details od
+            INNER JOIN orders o ON o.id = od.orderId
+            WHERE o.orderDate = :date AND o.status <> 'CANCELLED' AND od.isFreeItem = 0
+            GROUP BY od.orderId, od.productId
+        )
+        """
+    )
+    fun observeSkuLinesOn(date: String): Flow<Int>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM (
+            SELECT od.orderId, od.productId
+            FROM order_details od
+            INNER JOIN orders o ON o.id = od.orderId
+            WHERE o.orderDate LIKE :yearMonth || '%' AND o.status <> 'CANCELLED'
+              AND od.isFreeItem = 0
+            GROUP BY od.orderId, od.productId
+        )
+        """
+    )
+    fun observeSkuLinesInMonth(yearMonth: String): Flow<Int>
+
+    /** Số khách hàng KHÁC NHAU đã mua trong tháng — tử số của độ phủ. */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT customerId) FROM orders
+        WHERE orderDate LIKE :yearMonth || '%' AND status <> 'CANCELLED'
+        """
+    )
+    fun observeBuyingCustomerCountInMonth(yearMonth: String): Flow<Int>
+
+    /** Số khách phải ghé hôm nay: chỉ tiêu của đơn hàng và viếng thăm trong ngày. */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT d.customerId)
+        FROM sales_route_details d
+        INNER JOIN sales_routes r ON r.id = d.routeId
+        WHERE r.dayOfWeek = :dayOfWeek
+        """
+    )
+    fun observeRoutePlanOn(dayOfWeek: Int): Flow<Int>
+
+    /**
+     * Kế hoạch ghé theo từng thứ trong tuần.
+     *
+     * Nhân với số lần thứ đó đã trôi qua trong tháng sẽ ra chỉ tiêu ghé của cả
+     * tháng — phép nhân đó làm ở tầng domain vì nó phụ thuộc "hôm nay là ngày
+     * mấy", thứ mà SQL không nên tự quyết.
+     */
+    @Query(
+        """
+        SELECT r.dayOfWeek AS dayOfWeek, COUNT(DISTINCT d.customerId) AS customerCount
+        FROM sales_route_details d
+        INNER JOIN sales_routes r ON r.id = d.routeId
+        GROUP BY r.dayOfWeek
+        """
+    )
+    fun observeRoutePlanByWeekday(): Flow<List<RouteDayPlanRow>>
+
+    /** Tổng số khách được phân tuyến — mẫu số của độ phủ khách hàng. */
+    @Query("SELECT COUNT(DISTINCT customerId) FROM sales_route_details")
+    fun observeRouteCustomerCount(): Flow<Int>
+
+    /** Doanh số từng ngày trong một khoảng — dùng cho biểu đồ tuần/tháng. */
+    @Query(
+        """
+        SELECT orderDate AS orderDate,
+               SUM(totalAmount) AS amount,
+               COUNT(*) AS orderCount
+        FROM orders
+        WHERE orderDate BETWEEN :fromDate AND :toDate AND status <> 'CANCELLED'
+        GROUP BY orderDate
+        ORDER BY orderDate
+        """
+    )
+    fun observeRevenueBetween(fromDate: String, toDate: String): Flow<List<DailyRevenueRow>>
 
     /**
      * Danh sách đơn cho màn báo cáo.

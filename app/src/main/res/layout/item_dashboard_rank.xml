@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Một dòng xếp hạng kiểu bảng vàng: số hạng trong chip tròn, tên và sản lượng,
+  doanh số bên phải, và thanh so với hạng nhất chạy dưới cùng.
+
+  Số hạng tách thành chip thay vì viết "1." vào tên: ba hạng đầu được tô màu nên
+  mắt bắt ngay thứ tự mà không phải đọc chữ.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="@dimen/space_sm">
+
+    <TextView
+        android:id="@+id/rankBadge"
+        android:layout_width="@dimen/rank_badge_size"
+        android:layout_height="@dimen/rank_badge_size"
+        android:background="@drawable/bg_rank_badge"
+        android:gravity="center"
+        android:textSize="@dimen/text_tiny"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        tools:text="1" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/space_md"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="true">
+
+            <TextView
+                android:id="@+id/rankName"
+                style="@style/Sfa.Text.Small"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/textDark"
+                tools:text="Nước giải khát loại 275" />
+
+            <TextView
+                android:id="@+id/rankAmount"
+                style="@style/Sfa.Text.Small"
+                android:layout_marginStart="@dimen/space_sm"
+                android:textStyle="bold"
+                android:textColor="@color/textDark"
+                tools:text="81.226.691" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/rankQty"
+            style="@style/Sfa.Text.Tiny"
+            android:layout_marginTop="1dp"
+            tools:text="SL: 320" />
+
+        <!-- trackStopIndicatorSize=0: Material 3 vẽ một chấm ở cuối thanh để
+             đánh dấu mốc 100%, ở bảng xếp hạng thì cái chấm đó chỉ gây nhiễu. -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/rankBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:max="100"
+            app:trackColor="@color/brandRedFaint"
+            app:trackCornerRadius="2dp"
+            app:trackStopIndicatorSize="0dp"
+            app:trackThickness="4dp"
+            tools:progress="100" />
+    </LinearLayout>
+</LinearLayout>

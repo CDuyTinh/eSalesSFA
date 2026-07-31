@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bố cục theo màn Tổng quan của bản eSales gốc, từ trên xuống:
+  thẻ "Tổng kết ngày" (doanh số lớn + ba ô đạt/chỉ tiêu), danh sách KPI tháng
+  dạng vòng tròn phần trăm, biểu đồ doanh số có bộ lọc tuần/tháng, rồi hai bảng
+  xếp hạng dạng thanh tiến độ.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,8 +33,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Doanh số hôm nay: con số lớn nhất màn hình vì đây là chỉ số
-                 nhân viên nhìn nhiều lần trong ngày. -->
+            <!-- ── Tổng kết ngày ─────────────────────────────────────────── -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Sfa.Card"
                 android:layout_width="match_parent"
@@ -41,62 +46,165 @@
                     android:padding="@dimen/space_lg">
 
                     <TextView
-                        style="@style/Sfa.Text.Tiny"
+                        style="@style/Sfa.Text.Small"
+                        android:layout_gravity="center_horizontal"
                         android:text="@string/dashboard_today" />
 
                     <TextView
                         android:id="@+id/todayRevenue"
                         style="@style/Sfa.Text.Number"
-                        android:layout_marginTop="2dp"
-                        android:textSize="28sp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textSize="@dimen/text_number_hero"
                         tools:text="12.480.000" />
 
+                    <!-- Ba ô nền màu nhạt: mỗi chỉ số một màu để phân biệt ngay,
+                         giống dải ô của bản gốc. -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_md"
+                        android:layout_marginTop="@dimen/space_lg"
                         android:orientation="horizontal"
                         android:baselineAligned="false">
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <TextView
-                                android:id="@+id/todayOrders"
-                                style="@style/Sfa.Text.Title"
-                                tools:text="4" />
+                            style="@style/Sfa.DayTile"
+                            android:background="@drawable/bg_tile_green">
+
                             <TextView
                                 style="@style/Sfa.Text.Tiny"
                                 android:text="@string/dashboard_orders" />
+
+                            <TextView
+                                android:id="@+id/todayOrders"
+                                style="@style/Sfa.Text.Body"
+                                android:layout_marginTop="@dimen/space_xs"
+                                android:textStyle="bold"
+                                android:textColor="@color/stateGreen"
+                                tools:text="4/32" />
                         </LinearLayout>
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/lineGray" />
+                        <LinearLayout
+                            style="@style/Sfa.DayTile"
+                            android:layout_marginHorizontal="@dimen/space_sm"
+                            android:background="@drawable/bg_tile_orange">
+
+                            <TextView
+                                style="@style/Sfa.Text.Tiny"
+                                android:text="@string/dashboard_sku_per_order" />
+
+                            <TextView
+                                android:id="@+id/todaySkuPerOrder"
+                                style="@style/Sfa.Text.Body"
+                                android:layout_marginTop="@dimen/space_xs"
+                                android:textStyle="bold"
+                                android:textColor="@color/stateOrange"
+                                tools:text="3,5" />
+                        </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <TextView
-                                android:id="@+id/todayVisits"
-                                style="@style/Sfa.Text.Title"
-                                tools:text="3" />
+                            style="@style/Sfa.DayTile"
+                            android:background="@drawable/bg_tile_blue">
+
                             <TextView
                                 style="@style/Sfa.Text.Tiny"
                                 android:text="@string/dashboard_visits" />
+
+                            <TextView
+                                android:id="@+id/todayVisits"
+                                style="@style/Sfa.Text.Body"
+                                android:layout_marginTop="@dimen/space_xs"
+                                android:textStyle="bold"
+                                android:textColor="@color/stateBlue"
+                                tools:text="3/32" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Biểu đồ -->
+            <!-- ── KPI tháng ─────────────────────────────────────────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginHorizontal="@dimen/space_md">
+
+                <TextView
+                    style="@style/Sfa.Text.Title"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/dashboard_kpi_title" />
+
+                <!-- Doanh số tháng đứng cạnh tiêu đề: nó là con số tổng của cả
+                     nhóm KPI bên dưới, nhưng phải có nhãn, nếu không người đọc
+                     không biết số đó là của kỳ nào. -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="end">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/dashboard_kpi_month_revenue" />
+
+                    <TextView
+                        android:id="@+id/monthRevenue"
+                        style="@style/Sfa.Text.Body"
+                        android:textStyle="bold"
+                        android:textColor="@color/brandRed"
+                        tools:text="128.400.000" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Các dòng KPI nạp bằng code: số lượng chỉ số còn đổi theo dữ liệu
+                 công ty giao, khai cứng trong layout sẽ phải sửa cả hai nơi. -->
+            <LinearLayout
+                android:id="@+id/kpiContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:orientation="vertical" />
+
+            <!-- ── Doanh số bán hàng ─────────────────────────────────────── -->
+            <TextView
+                style="@style/Sfa.Text.Title"
+                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginHorizontal="@dimen/space_md"
+                android:text="@string/dashboard_revenue_title" />
+
+            <!-- spacing: ba nút rời nhau, mỗi nút giữ viền bo riêng như bản gốc.
+                 Để 0 thì MaterialButtonToggleGroup dán chúng thành một dải liền
+                 và chỉ bo hai đầu. -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/rangeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:layout_marginHorizontal="@dimen/space_md"
+                android:spacing="@dimen/space_sm"
+                app:innerCornerSize="@dimen/segment_radius"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rangeThisWeek"
+                    style="@style/Sfa.Segment"
+                    android:text="@string/dashboard_range_this_week" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rangeLastWeek"
+                    style="@style/Sfa.Segment"
+                    android:text="@string/dashboard_range_last_week" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rangeThisMonth"
+                    style="@style/Sfa.Segment"
+                    android:text="@string/dashboard_range_this_month" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <com.google.android.material.card.MaterialCardView
                 style="@style/Sfa.Card"
                 android:layout_width="match_parent"
@@ -108,92 +216,50 @@
                     android:orientation="vertical"
                     android:padding="@dimen/space_lg">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:background="@drawable/bg_dot_red" />
+
+                        <TextView
+                            style="@style/Sfa.Text.Tiny"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:text="@string/dashboard_revenue_legend" />
+
+                        <TextView
+                            android:id="@+id/rangeDates"
+                            style="@style/Sfa.Text.Tiny"
+                            tools:text="27/07/2026 - 02/08/2026" />
+                    </LinearLayout>
+
                     <TextView
-                        style="@style/Sfa.Text.Body"
-                        android:textStyle="bold"
-                        android:text="@string/dashboard_chart_title" />
+                        android:id="@+id/rangeTotal"
+                        style="@style/Sfa.Text.Number"
+                        android:layout_marginTop="@dimen/space_sm"
+                        tools:text="42.500.000" />
 
                     <com.tinhcd.esalessfa.feature.common.BarChartView
                         android:id="@+id/chart"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:layout_marginTop="@dimen/space_md" />
+                        android:layout_height="@dimen/dashboard_chart_height"
+                        android:layout_marginTop="@dimen/space_sm" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- KPI tháng -->
+            <!-- ── Xếp hạng ──────────────────────────────────────────────── -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Sfa.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
-
-                    <TextView
-                        style="@style/Sfa.Text.Body"
-                        android:textStyle="bold"
-                        android:text="@string/dashboard_month" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/dashboard_month_revenue" />
-                        <TextView
-                            android:id="@+id/monthRevenue"
-                            style="@style/Sfa.Text.Body"
-                            android:textStyle="bold"
-                            tools:text="128.400.000" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/dashboard_month_orders" />
-                        <TextView
-                            android:id="@+id/monthOrders"
-                            style="@style/Sfa.Text.Body"
-                            tools:text="42" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/dashboard_avg_order" />
-                        <TextView
-                            android:id="@+id/avgOrderValue"
-                            style="@style/Sfa.Text.Body"
-                            tools:text="3.057.000" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Xếp hạng -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,12 +272,12 @@
                         android:textStyle="bold"
                         android:text="@string/dashboard_top_products" />
 
-                    <TextView
-                        android:id="@+id/topProducts"
-                        style="@style/Sfa.Text.Small"
+                    <LinearLayout
+                        android:id="@+id/topProductsContainer"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:lineSpacingExtra="5dp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:orientation="vertical" />
 
                     <View
                         android:layout_width="match_parent"
@@ -224,12 +290,12 @@
                         android:textStyle="bold"
                         android:text="@string/dashboard_top_customers" />
 
-                    <TextView
-                        android:id="@+id/topCustomers"
-                        style="@style/Sfa.Text.Small"
+                    <LinearLayout
+                        android:id="@+id/topCustomersContainer"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:lineSpacingExtra="5dp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:orientation="vertical" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

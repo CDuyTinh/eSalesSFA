@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Một dòng KPI tháng: vòng tròn phần trăm bên trái, tên và số đạt/chỉ tiêu bên
+  phải — đúng bố cục dashboard_kpi_month_group của bản eSales gốc.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/space_md">
+
+        <com.tinhcd.esalessfa.feature.common.DonutProgressView
+            android:id="@+id/donut"
+            android:layout_width="@dimen/donut_size"
+            android:layout_height="@dimen/donut_size" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_md"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/kpiTitle"
+                style="@style/Sfa.Text.Small"
+                tools:text="Ghé tuyến" />
+
+            <TextView
+                android:id="@+id/kpiValue"
+                style="@style/Sfa.Text.Body"
+                android:layout_marginTop="2dp"
+                android:textStyle="bold"
+                tools:text="18/32" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
