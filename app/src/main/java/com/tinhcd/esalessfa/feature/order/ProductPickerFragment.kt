@@ -6,55 +6,15 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentProductPickerBinding
-import com.tinhcd.esalessfa.domain.model.Product
-import com.tinhcd.esalessfa.domain.repository.ProductRepository
-import com.tinhcd.esalessfa.domain.util.SearchText
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-@HiltViewModel
-class ProductPickerViewModel @Inject constructor(
-    repository: ProductRepository,
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-
-    private val query = MutableStateFlow("")
-
-    val products: StateFlow<List<Product>> = query
-        .debounce(300)
-        .map { SearchText.normalize(it) }
-        .distinctUntilChanged()
-        .flatMapLatest { repository.search(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
-    fun onQueryChanged(value: String) {
-        query.value = value
-    }
-
-}
 
 @AndroidEntryPoint
 class ProductPickerFragment : Fragment(R.layout.fragment_product_picker) {

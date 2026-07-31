@@ -3,19 +3,18 @@ package com.tinhcd.esalessfa.feature.order
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.core.sync.SyncManager
 import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.promotion.OrderCalculator
 import com.tinhcd.esalessfa.domain.promotion.OrderTotals
-import com.tinhcd.esalessfa.domain.promotion.PromotionEngine
-import com.tinhcd.esalessfa.domain.promotion.model.FreeItem
 import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
 import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
 import com.tinhcd.esalessfa.domain.promotion.model.PromotionResult
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.OrderRepository
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import com.tinhcd.esalessfa.domain.repository.PromotionRepository
+import com.tinhcd.esalessfa.domain.usecase.BuildOrderLineResult
+import com.tinhcd.esalessfa.domain.usecase.BuildOrderLineUseCase
+import com.tinhcd.esalessfa.domain.usecase.CalculateOrderUseCase
+import com.tinhcd.esalessfa.domain.usecase.ConfirmOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,8 +60,9 @@ class OrderEditViewModel @Inject constructor(
     private val customerRepository: CustomerRepository,
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
-    private val orderRepository: OrderRepository,
-    private val syncManager: SyncManager,
+    private val buildOrderLine: BuildOrderLineUseCase,
+    private val calculateOrder: CalculateOrderUseCase,
+    private val confirmOrder: ConfirmOrderUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -90,38 +90,44 @@ class OrderEditViewModel @Inject constructor(
     fun addLine(productId: String, uomCode: String, qty: Double) {
         viewModelScope.launch {
             val customer = _uiState.value.customer ?: return@launch
-            val product = productRepository.getById(productId) ?: return@launch
-            val uom = product.uoms.firstOrNull { it.code == uomCode } ?: return@launch
 
-            val price = productRepository.getPrice(customer.priceGroupId, productId, uomCode)
-            if (price == null) {
-                _events.send(OrderEvent.Error("Sản phẩm chưa có giá cho nhóm giá của khách hàng này"))
-                return@launch
-            }
+            val built = buildOrderLine(
+                lineNo = nextLineNo(),
+                productId = productId,
+                uomCode = uomCode,
+                qty = qty,
+                priceGroupId = customer.priceGroupId,
+            )
 
-            // Cùng sản phẩm + cùng đơn vị thì cộng dồn thay vì tạo dòng thứ hai —
-            // hai dòng trùng làm điều kiện khuyến mãi khó đọc và dễ nhập nhầm.
-            val existing = cart.indexOfFirst {
-                it.line.productId == productId && it.line.uomCode == uomCode
-            }
+            when (built) {
+                BuildOrderLineResult.ProductNotFound -> return@launch
 
-            if (existing >= 0) {
-                val old = cart[existing]
-                cart[existing] = old.copy(line = old.line.copy(qty = old.line.qty + qty))
-            } else {
-                cart += CartLine(
-                    line = OrderLine(
-                        lineNo = nextLineNo(),
-                        productId = productId,
-                        uomCode = uomCode,
-                        qty = qty,
-                        conversionRate = uom.conversionRate,
-                        unitPrice = price,
-                        vatRate = product.vatRate,
-                    ),
-                    productName = product.name,
-                    productCode = product.code,
-                )
+                BuildOrderLineResult.NoPrice -> {
+                    _events.send(
+                        OrderEvent.Error("Sản phẩm chưa có giá cho nhóm giá của khách hàng này")
+                    )
+                    return@launch
+                }
+
+                is BuildOrderLineResult.Built -> {
+                    // Cùng sản phẩm + cùng đơn vị thì cộng dồn thay vì tạo dòng
+                    // thứ hai — hai dòng trùng làm điều kiện khuyến mãi khó đọc
+                    // và dễ nhập nhầm.
+                    val existing = cart.indexOfFirst {
+                        it.line.productId == productId && it.line.uomCode == uomCode
+                    }
+
+                    if (existing >= 0) {
+                        val old = cart[existing]
+                        cart[existing] = old.copy(line = old.line.copy(qty = old.line.qty + qty))
+                    } else {
+                        cart += CartLine(
+                            line = built.line,
+                            productName = built.productName,
+                            productCode = built.productCode,
+                        )
+                    }
+                }
             }
             recalculate()
         }
@@ -157,7 +163,7 @@ class OrderEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             runCatching {
-                orderRepository.confirmOrder(
+                confirmOrder(
                     customerId = customerId,
                     lines = cart.map { it.line },
                     result = currentResult(),
@@ -165,10 +171,6 @@ class OrderEditViewModel @Inject constructor(
                 )
             }.onSuccess { orderNo ->
                 _uiState.update { it.copy(isSaving = false) }
-                // Đẩy lên ngay. Có mạng thì đơn lên trong vài giây; không mạng
-                // thì WorkManager giữ lại và tự chạy khi kết nối trở lại — nhân
-                // viên không phải nhớ bấm đồng bộ.
-                syncManager.startUpload()
                 _events.send(OrderEvent.Saved(orderNo))
             }.onFailure { e ->
                 _uiState.update { it.copy(isSaving = false, errorMessage = e.message) }
@@ -178,7 +180,7 @@ class OrderEditViewModel @Inject constructor(
     }
 
     private fun currentResult(): PromotionResult =
-        PromotionEngine.default(manualDiscount).calculate(cart.map { it.line }, programs)
+        calculateOrder(cart.map { it.line }, programs, manualDiscount).promotion
 
     /**
      * Chạy lại TOÀN BỘ pipeline khuyến mãi sau mỗi thay đổi.
@@ -190,7 +192,8 @@ class OrderEditViewModel @Inject constructor(
      */
     private fun recalculate() {
         val lines = cart.map { it.line }
-        val result = currentResult()
+        val calculation = calculateOrder(lines, programs, manualDiscount)
+        val result = calculation.promotion
 
         val decorated = cart.map { cartLine ->
             cartLine.copy(discount = result.discountForLine(cartLine.line.lineNo))
@@ -212,7 +215,7 @@ class OrderEditViewModel @Inject constructor(
                     lines = decorated,
                     freeItems = freeUi,
                     appliedPromotions = result.appliedProgramCodes,
-                    totals = OrderCalculator.totals(lines, result),
+                    totals = calculation.totals,
                     manualDiscount = manualDiscount,
                 )
             }

@@ -3,12 +3,16 @@ package com.tinhcd.esalessfa.core.sync
 import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
+import com.tinhcd.esalessfa.domain.repository.SyncScheduler
+import com.tinhcd.esalessfa.domain.sync.SyncRun
+import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,18 +22,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** Id của hai việc trong một lượt đồng bộ đầy đủ, dùng để theo dõi riêng lượt đó. */
-data class FullSyncHandle(val uploadId: UUID, val downloadId: UUID)
+private data class FullSyncHandle(val uploadId: UUID, val downloadId: UUID)
 
 /**
- * Điểm vào duy nhất để khởi động sync.
+ * Hiện thực [SyncScheduler] bằng WorkManager — điểm vào duy nhất để khởi động sync.
  *
- * Mọi nơi trong app đều gọi qua đây, không tự enqueue work — nhờ vậy chính sách
- * chống trùng và retry chỉ tồn tại ở một chỗ.
+ * Mọi nơi trong app đều gọi qua đây, không tự enqueue work: nhờ vậy chính sách
+ * chống trùng và retry chỉ tồn tại ở một chỗ. Việc dịch WorkInfo sang [SyncRun]
+ * cũng nằm ở đây, để androidx.work không rò lên tầng presentation.
  */
 @Singleton
 class SyncManager @Inject constructor(
     @ApplicationContext context: Context,
-) {
+) : SyncScheduler {
 
     private val workManager = WorkManager.getInstance(context)
 
@@ -44,7 +49,7 @@ class SyncManager @Inject constructor(
      * Truyền [force] = true khi user chủ động bấm đồng bộ và muốn xếp hàng chờ
      * lượt đang chạy xong.
      */
-    fun startDownload(force: Boolean = false) {
+    override fun startDownload(force: Boolean) {
         workManager.enqueueUniqueWork(
             WORK_DOWNLOAD,
             if (force) ExistingWorkPolicy.APPEND_OR_REPLACE else ExistingWorkPolicy.KEEP,
@@ -74,7 +79,7 @@ class SyncManager @Inject constructor(
      * Gọi sau mỗi lần chốt đơn: có mạng thì đơn lên ngay, không mạng thì
      * WorkManager giữ lại và tự chạy khi kết nối trở lại.
      */
-    fun startUpload() {
+    override fun startUpload() {
         workManager.enqueueUniqueWork(
             WORK_UPLOAD,
             ExistingWorkPolicy.APPEND_OR_REPLACE,
@@ -93,35 +98,105 @@ class SyncManager @Inject constructor(
      * chạy chứ không được bỏ qua. Đang có lượt khác thì xếp sau, vẫn không có
      * hai lượt chạy song song.
      *
-     * Trả về id của hai việc để UI theo dõi ĐÚNG lượt vừa xếp. Quan sát theo tên
-     * unique thì sẽ thấy luôn cả kết quả SUCCEEDED của lượt trước còn lưu lại, và
-     * màn hình báo "xong" ngay khi vừa mở.
+     * Luồng trả về gắn với id của hai việc vừa xếp nên chỉ báo tiến trình của
+     * ĐÚNG lượt này. Quan sát theo tên unique thì sẽ thấy luôn cả kết quả
+     * SUCCEEDED của lượt trước còn lưu lại, và màn hình báo "xong" ngay khi mở.
      */
-    fun startFullSync(): FullSyncHandle {
+    override fun startFullSync(): Flow<SyncRun> {
         val upload = uploadRequest()
         val download = downloadRequest()
         workManager
             .beginUniqueWork(WORK_FULL, ExistingWorkPolicy.APPEND_OR_REPLACE, upload)
             .then(download)
             .enqueue()
-        return FullSyncHandle(uploadId = upload.id, downloadId = download.id)
+
+        val handle = FullSyncHandle(uploadId = upload.id, downloadId = download.id)
+        return workManager
+            .getWorkInfosFlow(WorkQuery.fromIds(listOf(handle.uploadId, handle.downloadId)))
+            .map { infos -> infos.toSyncRun(handle) }
     }
 
-    fun observeFullSync(handle: FullSyncHandle): Flow<List<WorkInfo>> =
-        workManager.getWorkInfosFlow(
-            WorkQuery.fromIds(listOf(handle.uploadId, handle.downloadId))
-        )
-
-    fun observeUpload(): Flow<WorkInfo?> =
-        workManager.getWorkInfosForUniqueWorkFlow(WORK_UPLOAD)
-            .map { list -> list.lastOrNull() }
-
-    fun cancelDownload() = workManager.cancelUniqueWork(WORK_DOWNLOAD)
-
-    /** Trạng thái lượt sync hiện tại để UI hiển thị tiến trình. */
-    fun observeDownload(): Flow<WorkInfo?> =
+    /** Trạng thái lượt tải xuống hiện tại để UI hiển thị tiến trình. */
+    override fun observeDownload(): Flow<SyncRun> =
         workManager.getWorkInfosForUniqueWorkFlow(WORK_DOWNLOAD)
-            .map { list -> list.lastOrNull() }
+            .map { list -> list.lastOrNull().toSyncRun() }
+
+    private fun WorkInfo?.toSyncRun(): SyncRun {
+        if (this == null) return SyncRun()
+
+        val (page, rows, table) = SyncDownloadWorker.progressOf(progress)
+
+        return when (state) {
+            WorkInfo.State.RUNNING -> SyncRun(
+                status = SyncRunStatus.RUNNING,
+                page = page,
+                totalRows = rows,
+                currentTable = table,
+            )
+
+            WorkInfo.State.SUCCEEDED -> SyncRun(
+                status = SyncRunStatus.SUCCEEDED,
+                page = outputData.getInt(SyncDownloadWorker.KEY_PAGE, page),
+                totalRows = outputData.getInt(SyncDownloadWorker.KEY_TOTAL_ROWS, rows),
+            )
+
+            WorkInfo.State.FAILED -> SyncRun(
+                status = SyncRunStatus.FAILED,
+                errorMessage = outputData.getString(SyncDownloadWorker.KEY_ERROR),
+            )
+
+            WorkInfo.State.ENQUEUED, WorkInfo.State.BLOCKED ->
+                SyncRun(status = SyncRunStatus.RUNNING)
+
+            WorkInfo.State.CANCELLED -> SyncRun(status = SyncRunStatus.CANCELLED)
+        }
+    }
+
+    /**
+     * Gộp trạng thái của cả chuỗi gửi-lên-rồi-tải-xuống.
+     *
+     * Danh sách chỉ chứa hai việc của đúng lượt này, nhưng WorkManager không hứa
+     * thứ tự nên phải tìm việc tải xuống theo id thay vì lấy phần tử cuối.
+     */
+    private fun List<WorkInfo>.toSyncRun(handle: FullSyncHandle): SyncRun {
+        // Chưa thấy việc nào tức là WorkManager chưa ghi xong — vẫn coi là đang
+        // chạy để màn hình không nhá qua trạng thái rỗng.
+        if (isEmpty()) return SyncRun(status = SyncRunStatus.RUNNING)
+
+        firstOrNull { it.state == WorkInfo.State.FAILED }?.let { failed ->
+            return SyncRun(
+                status = SyncRunStatus.FAILED,
+                errorMessage = failed.outputData.getString(SyncDownloadWorker.KEY_ERROR),
+            )
+        }
+        if (any { it.state == WorkInfo.State.CANCELLED }) {
+            return SyncRun(status = SyncRunStatus.CANCELLED)
+        }
+
+        val download = firstOrNull { it.id == handle.downloadId }
+
+        // Chỉ báo xong khi CẢ HAI việc đã xong. Việc tải xuống chạy sau việc gửi
+        // lên, nên xét từng việc riêng sẽ báo xong quá sớm.
+        if (size == 2 && all { it.state == WorkInfo.State.SUCCEEDED }) {
+            return SyncRun(
+                status = SyncRunStatus.SUCCEEDED,
+                page = download?.outputData?.getInt(SyncDownloadWorker.KEY_PAGE, 0) ?: 0,
+                totalRows = download?.outputData?.getInt(SyncDownloadWorker.KEY_TOTAL_ROWS, 0) ?: 0,
+            )
+        }
+
+        // Số trang/số dòng chỉ có ý nghĩa ở bước tải xuống; bước gửi lên chạy
+        // nhanh nên để trống là đủ.
+        val (page, rows, table) = SyncDownloadWorker.progressOf(
+            download?.progress ?: Data.EMPTY
+        )
+        return SyncRun(
+            status = SyncRunStatus.RUNNING,
+            page = page,
+            totalRows = rows,
+            currentTable = table,
+        )
+    }
 
     private companion object {
         const val WORK_DOWNLOAD = "sync_download"

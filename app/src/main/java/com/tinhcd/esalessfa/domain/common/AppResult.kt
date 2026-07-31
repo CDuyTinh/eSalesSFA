@@ -1,4 +1,4 @@
-package com.tinhcd.esalessfa.core.common
+package com.tinhcd.esalessfa.domain.common
 
 /**
  * Kết quả của một thao tác có thể thất bại.

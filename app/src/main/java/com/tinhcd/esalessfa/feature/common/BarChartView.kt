@@ -1,4 +1,4 @@
-package com.tinhcd.esalessfa.core.ui
+package com.tinhcd.esalessfa.feature.common
 
 import android.content.Context
 import android.graphics.Canvas

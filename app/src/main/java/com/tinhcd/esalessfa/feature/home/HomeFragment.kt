@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.ui.asTab
+import com.tinhcd.esalessfa.feature.common.asTab
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
 import com.tinhcd.esalessfa.feature.customer.CustomerListFragment
 import com.tinhcd.esalessfa.feature.customer.CustomerListMode

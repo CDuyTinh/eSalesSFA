@@ -113,7 +113,7 @@
                         android:textStyle="bold"
                         android:text="@string/dashboard_chart_title" />
 
-                    <com.tinhcd.esalessfa.core.ui.BarChartView
+                    <com.tinhcd.esalessfa.feature.common.BarChartView
                         android:id="@+id/chart"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"

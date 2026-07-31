@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.domain.repository
 
-import com.tinhcd.esalessfa.core.common.AppResult
+import com.tinhcd.esalessfa.domain.common.AppResult
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

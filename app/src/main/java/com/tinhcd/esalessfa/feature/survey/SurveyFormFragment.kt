@@ -12,25 +12,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.location.LocationProvider
-import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentSurveyFormBinding
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.survey.SurveyIssue
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
-import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
 
     private val viewModel: SurveyFormViewModel by viewModels()
-
-    @Inject lateinit var locationProvider: LocationProvider
 
     /** Câu hỏi đang chờ ảnh trả về từ màn camera. */
     private var pendingPhotoQuestionId: String? = null
@@ -128,27 +121,11 @@ class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
                     ?.savedStateHandle
                     ?.remove<String>(CameraFragment.RESULT_PHOTO_PATH)
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.addPhoto(questionId, File(path), currentLocation())
-                }
+                // Toạ độ đóng dấu lên ảnh do ViewModel tự lấy: Fragment không giữ
+                // nguồn dữ liệu nào, chỉ báo là có ảnh mới.
+                viewModel.addPhoto(questionId, File(path))
             }
     }
-
-    /**
-     * Lấy vị trí để đóng dấu lên ảnh.
-     *
-     * Chờ tối đa 3 giây rồi thôi: không có toạ độ thì ảnh vẫn phải chụp được,
-     * chỉ là dấu thiếu một dòng. Chặn nhân viên đứng đợi GPS giữa cửa hàng thì
-     * tệ hơn nhiều.
-     */
-    private suspend fun currentLocation(): GeoPoint? =
-        if (!locationProvider.hasPermission()) {
-            null
-        } else {
-            withTimeoutOrNull(3_000) {
-                locationProvider.locationUpdates().firstOrNull()?.point
-            }
-        }
 
     private fun List<com.tinhcd.esalessfa.domain.survey.SurveyQuestion>.toFormRows(
         state: SurveyFormUiState,

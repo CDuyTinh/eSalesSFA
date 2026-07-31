@@ -3,11 +3,10 @@ package com.tinhcd.esalessfa.feature.inventory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.core.sync.SyncManager
 import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.StockCountLine
-import com.tinhcd.esalessfa.domain.repository.StockCountRepository
+import com.tinhcd.esalessfa.domain.usecase.LoadStockCountUseCase
+import com.tinhcd.esalessfa.domain.usecase.SaveStockCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,9 +36,8 @@ sealed interface StockCountEvent {
 
 @HiltViewModel
 class StockCountViewModel @Inject constructor(
-    private val customerRepository: CustomerRepository,
-    private val stockCountRepository: StockCountRepository,
-    private val syncManager: SyncManager,
+    private val loadStockCount: LoadStockCountUseCase,
+    private val saveStockCount: SaveStockCountUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -53,12 +51,9 @@ class StockCountViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val sheet = loadStockCount(customerId)
             _uiState.update {
-                it.copy(
-                    customer = customerRepository.getById(customerId),
-                    lines = stockCountRepository.linesFor(customerId),
-                    isLoading = false,
-                )
+                it.copy(customer = sheet.customer, lines = sheet.lines, isLoading = false)
             }
         }
     }
@@ -86,10 +81,9 @@ class StockCountViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             runCatching {
-                stockCountRepository.save(customerId, state.lines, note)
+                saveStockCount(customerId, state.lines, note)
             }.onSuccess {
                 _uiState.update { it.copy(isSaving = false) }
-                syncManager.startUpload()
                 _events.send(StockCountEvent.Saved)
             }.onFailure { e ->
                 _uiState.update { it.copy(isSaving = false) }

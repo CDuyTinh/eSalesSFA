@@ -9,7 +9,7 @@ import com.tinhcd.esalessfa.core.database.dao.CustomerDao
 import com.tinhcd.esalessfa.core.database.dao.CustomerQueryDao
 import com.tinhcd.esalessfa.core.database.dao.RouteCustomerRow
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
-import com.tinhcd.esalessfa.core.datastore.SessionManager
+import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.data.mapper.toDomain
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.model.RouteCustomer
@@ -97,11 +97,11 @@ class CatalogRepositoryImpl @Inject constructor(
 @Singleton
 class SalespersonRepositoryImpl @Inject constructor(
     private val dao: SalespersonDao,
-    private val sessionManager: SessionManager,
+    private val sessionStore: SessionStore,
 ) : SalespersonRepository {
 
     override fun observeCurrent(): Flow<Salesperson?> =
-        sessionManager.userId.flatMapLatest { userId ->
+        sessionStore.userId.flatMapLatest { userId ->
             if (userId == null) flowOf(null)
             else dao.observeByUserId(userId).map { entity ->
                 entity?.let {

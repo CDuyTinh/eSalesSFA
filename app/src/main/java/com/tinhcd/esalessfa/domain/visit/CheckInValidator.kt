@@ -65,6 +65,19 @@ sealed interface CheckInValidation {
     data object NoCustomerLocation : CheckInValidation
 }
 
+/**
+ * Khoảng cách đã đo trong lúc xác thực, nếu kết quả có mang theo.
+ *
+ * Lượt ghé ghi lại đúng con số này chứ không đo lại: đo lần hai bằng toạ độ mới
+ * sẽ ra số khác với số vừa hiện trên màn hình cho nhân viên.
+ */
+val CheckInValidation.distanceMetersOrNull: Double?
+    get() = when (this) {
+        is CheckInValidation.Valid -> distanceMeters
+        is CheckInValidation.OverDistance -> distanceMeters
+        else -> null
+    }
+
 object CheckInValidator {
 
     fun validate(

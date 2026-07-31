@@ -4,23 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCustomerDetailBinding
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.SurveyRepository
-import com.tinhcd.esalessfa.domain.repository.SurveyTypeInfo
-import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import com.tinhcd.esalessfa.domain.repository.VisitGate
 import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
 import com.tinhcd.esalessfa.feature.order.ProductPickerFragment
@@ -29,62 +21,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tinhcd.esalessfa.feature.inventory.StockCountViewModel
 import com.tinhcd.esalessfa.feature.visit.CheckInViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
-import javax.inject.Inject
-
-@HiltViewModel
-class CustomerDetailViewModel @Inject constructor(
-    private val repository: CustomerRepository,
-    private val surveyRepository: SurveyRepository,
-    private val visitRepository: VisitRepository,
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-
-    private val customerId: String = savedStateHandle[CustomerDetailFragment.ARG_CUSTOMER_ID] ?: ""
-
-    private val _customer = MutableStateFlow<Customer?>(null)
-    val customer: StateFlow<Customer?> = _customer.asStateFlow()
-
-    private val _surveyTypes = MutableStateFlow<List<SurveyTypeInfo>>(emptyList())
-    val surveyTypes: StateFlow<List<SurveyTypeInfo>> = _surveyTypes.asStateFlow()
-
-    /**
-     * Cổng nghiệp vụ tại cửa hàng này.
-     *
-     * Hai quy tắc Sales Step gộp lại: chỉ thao tác được khi đã check-in tại đúng
-     * cửa hàng này, và mỗi thời điểm chỉ ghé được MỘT cửa hàng. Đang dở ở nơi
-     * khác thì ngay cả nút check-in ở đây cũng phải khoá, nếu không nhân viên sẽ
-     * mở hai lượt ghé chồng nhau và không lượt nào có giờ ra đúng.
-     */
-    val gate: StateFlow<VisitGate> = visitRepository.observeActiveVisit()
-        .map { active ->
-            when {
-                active == null -> VisitGate.CanCheckIn
-                active.customerId == customerId -> VisitGate.CheckedInHere(active)
-                else -> VisitGate.BlockedByOther(active)
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), VisitGate.CanCheckIn)
-
-    init {
-        viewModelScope.launch {
-            _customer.value = repository.getById(customerId)
-            _surveyTypes.value = surveyRepository.types()
-        }
-    }
-}
 
 @AndroidEntryPoint
 class CustomerDetailFragment : Fragment(R.layout.fragment_customer_detail) {

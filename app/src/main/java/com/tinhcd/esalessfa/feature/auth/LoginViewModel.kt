@@ -2,8 +2,8 @@ package com.tinhcd.esalessfa.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.core.common.AppError
-import com.tinhcd.esalessfa.core.common.AppResult
+import com.tinhcd.esalessfa.domain.common.AppError
+import com.tinhcd.esalessfa.domain.common.AppResult
 import com.tinhcd.esalessfa.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

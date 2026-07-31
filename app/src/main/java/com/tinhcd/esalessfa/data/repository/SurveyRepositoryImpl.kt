@@ -12,7 +12,6 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyAnswerEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyPhotoEntity
 import com.tinhcd.esalessfa.core.media.ImageProcessor
-import com.tinhcd.esalessfa.core.media.PhotoUploadWorker
 import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.repository.SurveyPhoto
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
@@ -141,10 +140,10 @@ class SurveyRepositoryImpl @Inject constructor(
                 entityType = "SURVEY_PHOTO",
                 entityId = photoId,
                 localPath = processed.file.absolutePath,
-                bucket = PhotoUploadWorker.BUCKET_SURVEY_PHOTOS,
+                bucket = PhotoUploadRepositoryImpl.BUCKET_SURVEY_PHOTOS,
                 remotePath = remotePath,
                 fileSize = processed.sizeBytes.toLong(),
-                status = PhotoUploadWorker.STATUS_PENDING,
+                status = PhotoUploadRepositoryImpl.STATUS_PENDING,
                 createdAt = System.currentTimeMillis(),
             )
         )

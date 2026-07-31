@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.tinhcd.esalessfa.domain.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.repository.LocationSource
 import com.tinhcd.esalessfa.domain.visit.LocationSample
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
@@ -23,7 +24,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Bọc FusedLocationProviderClient thành Flow.
+ * Hiện thực [LocationSource]: bọc FusedLocationProviderClient thành Flow.
  *
  * Callback API buộc phải nhớ gỡ listener; callbackFlow gắn việc gỡ vào vòng đời
  * của coroutine nên không thể quên. Đóng màn hình là listener tự huỷ.
@@ -31,11 +32,11 @@ import javax.inject.Singleton
 @Singleton
 class LocationProvider @Inject constructor(
     @ApplicationContext private val context: Context,
-) {
+) : LocationSource {
 
     private val client = LocationServices.getFusedLocationProviderClient(context)
 
-    fun hasPermission(): Boolean =
+    override fun hasPermission(): Boolean =
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
 
@@ -45,7 +46,7 @@ class LocationProvider @Inject constructor(
      * @param intervalMs chu kỳ mong muốn. Check-in cần dày (1s) để nhanh có toạ
      *   độ tốt; tracking lộ trình thì thưa (vài phút) để đỡ tốn pin.
      */
-    fun locationUpdates(intervalMs: Long = 1_000L): Flow<LocationSample> = callbackFlow {
+    override fun locationUpdates(intervalMs: Long): Flow<LocationSample> = callbackFlow {
         if (!hasPermission()) {
             close()
             return@callbackFlow
@@ -73,7 +74,7 @@ class LocationProvider @Inject constructor(
      * GPS lúc mới bật thường báo accuracy 100m+ rồi mới siết dần. Nếu chỉ lấy
      * mẫu cuối, người dùng bấm nhanh sẽ check-in bằng toạ độ tệ nhất.
      */
-    fun bestLocation(intervalMs: Long = 1_000L): Flow<LocationSample> =
+    override fun bestLocation(intervalMs: Long): Flow<LocationSample> =
         locationUpdates(intervalMs)
             .scan<LocationSample, LocationSample?>(null) { best, next ->
                 if (best == null || next.accuracy < best.accuracy) next else best

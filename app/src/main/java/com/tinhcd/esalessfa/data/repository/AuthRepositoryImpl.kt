@@ -1,10 +1,10 @@
 package com.tinhcd.esalessfa.data.repository
 
-import com.tinhcd.esalessfa.core.common.AppError
-import com.tinhcd.esalessfa.core.common.AppResult
+import com.tinhcd.esalessfa.domain.common.AppError
+import com.tinhcd.esalessfa.domain.common.AppResult
 import com.tinhcd.esalessfa.core.database.SfaDatabase
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
-import com.tinhcd.esalessfa.core.datastore.SessionManager
+import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.domain.repository.AuthRepository
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -21,7 +21,7 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: Auth,
     private val salespersonDao: SalespersonDao,
-    private val sessionManager: SessionManager,
+    private val sessionStore: SessionStore,
     private val db: SfaDatabase,
 ) : AuthRepository {
 
@@ -41,7 +41,7 @@ class AuthRepositoryImpl @Inject constructor(
         if (userId == null) {
             AppResult.Failure(AppError.Unknown())
         } else {
-            sessionManager.saveUserId(userId)
+            sessionStore.saveUserId(userId)
             AppResult.Success(userId)
         }
     } catch (e: RestException) {
@@ -69,11 +69,11 @@ class AuthRepositoryImpl @Inject constructor(
         // Xoá sạch DB: máy có thể được bàn giao cho nhân viên khác, không để lộ
         // khách hàng và giá của người trước.
         db.clearAllTables()
-        sessionManager.clear()
+        sessionStore.clear()
     }
 
     override fun observeCurrentSalespersonId(): Flow<String?> =
-        sessionManager.userId.flatMapLatest { userId ->
+        sessionStore.userId.flatMapLatest { userId ->
             if (userId == null) flowOf(null)
             else salespersonDao.observeByUserId(userId).map { it?.id }
         }

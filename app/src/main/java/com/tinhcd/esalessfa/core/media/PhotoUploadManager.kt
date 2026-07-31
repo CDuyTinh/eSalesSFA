@@ -7,13 +7,14 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.tinhcd.esalessfa.domain.repository.PhotoUploader
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Khởi động hàng đợi upload ảnh.
+ * Hiện thực [PhotoUploader]: hàng đợi upload ảnh chạy bằng WorkManager.
  *
  * Tách khỏi SyncManager vì ràng buộc khác nhau: ảnh nặng nên chỉ upload khi
  * không ở chế độ tiết kiệm pin, còn dữ liệu giao dịch thì phải lên bằng mọi giá.
@@ -21,11 +22,11 @@ import javax.inject.Singleton
 @Singleton
 class PhotoUploadManager @Inject constructor(
     @ApplicationContext context: Context,
-) {
+) : PhotoUploader {
 
     private val workManager = WorkManager.getInstance(context)
 
-    fun start() {
+    override fun start() {
         val request = OneTimeWorkRequestBuilder<PhotoUploadWorker>()
             .setConstraints(
                 Constraints.Builder()

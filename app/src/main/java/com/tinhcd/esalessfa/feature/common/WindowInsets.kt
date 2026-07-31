@@ -1,4 +1,4 @@
-package com.tinhcd.esalessfa.core.ui
+package com.tinhcd.esalessfa.feature.common
 
 import android.view.View
 import androidx.core.view.ViewCompat

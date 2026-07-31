@@ -6,102 +6,22 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.core.ui.padTopForStatusBar
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentWorkBinding
-import com.tinhcd.esalessfa.domain.repository.CatalogRepository
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
-import com.tinhcd.esalessfa.domain.repository.SyncRepository
-import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import com.tinhcd.esalessfa.feature.customer.CustomerListMode
 import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
 import com.tinhcd.esalessfa.feature.sync.SyncMode
 import com.tinhcd.esalessfa.feature.sync.SyncViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import javax.inject.Inject
-
-data class WorkUiState(
-    val salespersonName: String = "",
-    val customerCount: Int = 0,
-    val productCount: Int = 0,
-    val promotionCount: Int = 0,
-    val lastSyncedAt: Long? = null,
-    val pendingCount: Int = 0,
-)
-
-@HiltViewModel
-class WorkViewModel @Inject constructor(
-    customerRepository: CustomerRepository,
-    catalogRepository: CatalogRepository,
-    salespersonRepository: SalespersonRepository,
-    syncRepository: SyncRepository,
-    visitRepository: VisitRepository,
-) : ViewModel() {
-
-    // combine chỉ có overload giữ nguyên kiểu tới 5 luồng; nhiều hơn sẽ rơi vào
-    // bản vararg trả về Array<Any?> và mất hết type safety. Gộp theo hai nhóm.
-    private val counts = combine(
-        customerRepository.observeCustomerCount(),
-        catalogRepository.observeProductCount(),
-        catalogRepository.observeActivePromotionCount(),
-    ) { customers, products, promotions -> Triple(customers, products, promotions) }
-
-    private val syncInfo = combine(
-        syncRepository.observeLastSyncedAt(),
-        syncRepository.observePendingCount(),
-    ) { lastSync, pending -> lastSync to pending }
-
-    /**
-     * Mỗi nguồn là Flow từ Room nên khi sync ghi dữ liệu mới, màn hình tự cập
-     * nhật — không cần gọi refresh thủ công sau khi đồng bộ xong.
-     */
-    val uiState: StateFlow<WorkUiState> = combine(
-        salespersonRepository.observeCurrent().map { it?.fullName.orEmpty() },
-        counts,
-        syncInfo,
-    ) { name, (customers, products, promotions), (lastSync, pending) ->
-        WorkUiState(
-            salespersonName = name,
-            customerCount = customers,
-            productCount = products,
-            promotionCount = promotions,
-            lastSyncedAt = lastSync,
-            pendingCount = pending,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WorkUiState())
-
-    /**
-     * Tên cửa hàng đang chặn đồng bộ, null nếu không có.
-     *
-     * Hiện lý do thay vì để nút bấm không phản hồi — nhân viên sẽ tưởng app hỏng.
-     */
-    val blockingCustomer: StateFlow<String?> = visitRepository.observeActiveVisit()
-        .map { it?.customerName }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
-
-    val routeCount: StateFlow<Int> = customerRepository
-        .routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query = "")
-        .map { it.size }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
-}
 
 /**
  * Tab "Công việc": lời chào, các con số đã tải về, tuyến hôm nay và đồng bộ.

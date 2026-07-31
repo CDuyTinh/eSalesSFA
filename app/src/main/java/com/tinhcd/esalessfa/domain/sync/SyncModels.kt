@@ -70,6 +70,32 @@ sealed interface SyncProgress {
     data class Skipped(val reason: String) : SyncProgress
 }
 
+/**
+ * Trạng thái một lượt sync đang chạy, nhìn từ ngoài vào.
+ *
+ * Khác [SyncProgress] ở góc nhìn: SyncProgress là các mốc worker phát ra trong
+ * lúc chạy, còn SyncRun là ảnh chụp hiện tại của cả lượt để màn hình vẽ lại sau
+ * khi bị huỷ và dựng lại. Cố ý không mang kiểu nào của WorkManager để tầng
+ * presentation không phải biết công việc chạy bằng gì.
+ */
+data class SyncRun(
+    val status: SyncRunStatus = SyncRunStatus.IDLE,
+    val page: Int = 0,
+    val totalRows: Int = 0,
+    val currentTable: String? = null,
+    /** Lời báo lỗi từ server, nếu có. Chữ hiển thị cho người dùng do UI quyết định. */
+    val errorMessage: String? = null,
+)
+
+enum class SyncRunStatus {
+    /** Chưa có lượt nào, hoặc lượt cũ đã bị xoá dấu vết. */
+    IDLE,
+    RUNNING,
+    SUCCEEDED,
+    FAILED,
+    CANCELLED,
+}
+
 /** Kết quả một lượt sync, dùng cho worker quyết định retry hay bỏ. */
 data class SyncOutcome(
     val totalRows: Int,

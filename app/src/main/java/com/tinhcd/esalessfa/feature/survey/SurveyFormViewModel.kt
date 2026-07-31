@@ -3,11 +3,7 @@ package com.tinhcd.esalessfa.feature.survey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.core.media.PhotoUploadManager
-import com.tinhcd.esalessfa.core.sync.SyncManager
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SurveyPhoto
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
 import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
@@ -15,6 +11,10 @@ import com.tinhcd.esalessfa.domain.survey.SurveyIssue
 import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
 import com.tinhcd.esalessfa.domain.survey.SurveyScore
 import com.tinhcd.esalessfa.domain.survey.SurveyScorer
+import com.tinhcd.esalessfa.domain.usecase.AddSurveyPhotoUseCase
+import com.tinhcd.esalessfa.domain.usecase.StartSurveyUseCase
+import com.tinhcd.esalessfa.domain.usecase.SubmitSurveyResult
+import com.tinhcd.esalessfa.domain.usecase.SubmitSurveyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,9 +49,9 @@ sealed interface SurveyFormEvent {
 @HiltViewModel
 class SurveyFormViewModel @Inject constructor(
     private val surveyRepository: SurveyRepository,
-    private val customerRepository: CustomerRepository,
-    private val photoUploadManager: PhotoUploadManager,
-    private val syncManager: SyncManager,
+    private val startSurvey: StartSurveyUseCase,
+    private val addSurveyPhoto: AddSurveyPhotoUseCase,
+    private val submitSurvey: SubmitSurveyUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -69,15 +69,12 @@ class SurveyFormViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val customer = customerRepository.getById(customerId)
-            val questions = surveyRepository.questions(surveyTypeId)
-            passScore = surveyRepository.types()
-                .firstOrNull { it.id == surveyTypeId }?.passScore ?: 0.0
-
-            surveyId = surveyRepository.startDraft(surveyTypeId, customerId)
+            val draft = startSurvey(surveyTypeId = surveyTypeId, customerId = customerId)
+            surveyId = draft.surveyId
+            passScore = draft.passScore
 
             _uiState.update {
-                it.copy(customer = customer, questions = questions, isLoading = false)
+                it.copy(customer = draft.customer, questions = draft.questions, isLoading = false)
             }
 
             surveyRepository.observePhotos(surveyId).collect { photos ->
@@ -103,20 +100,15 @@ class SurveyFormViewModel @Inject constructor(
         }
     }
 
-    fun addPhoto(questionId: String?, file: File, location: GeoPoint?) {
+    fun addPhoto(questionId: String?, file: File) {
         viewModelScope.launch {
             runCatching {
-                surveyRepository.addPhoto(
+                addSurveyPhoto(
                     surveyId = surveyId,
                     questionId = questionId,
                     rawFile = file,
-                    location = location,
                     customerName = _uiState.value.customer?.name.orEmpty(),
                 )
-            }.onSuccess {
-                // Upload ngay: ảnh lên dần trong lúc nhân viên còn trả lời tiếp,
-                // nên lúc bấm hoàn tất thường đã xong hết.
-                photoUploadManager.start()
             }.onFailure { e ->
                 _events.send(SurveyFormEvent.Error(e.message ?: "Không xử lý được ảnh"))
             }
@@ -131,17 +123,10 @@ class SurveyFormViewModel @Inject constructor(
         val state = _uiState.value
         if (state.isSaving) return
 
-        val issues = SurveyScorer.validate(state.questions, state.answers)
-        if (issues.isNotEmpty()) {
-            _uiState.update { it.copy(issues = issues) }
-            viewModelScope.launch { _events.send(SurveyFormEvent.Invalid(issues)) }
-            return
-        }
-
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             runCatching {
-                surveyRepository.submit(
+                submitSurvey(
                     surveyId = surveyId,
                     surveyTypeId = surveyTypeId,
                     customerId = customerId,
@@ -149,10 +134,18 @@ class SurveyFormViewModel @Inject constructor(
                     answers = state.answers,
                     note = note,
                 )
-            }.onSuccess { total ->
+            }.onSuccess { result ->
                 _uiState.update { it.copy(isSaving = false) }
-                syncManager.startUpload()
-                _events.send(SurveyFormEvent.Submitted(total))
+                when (result) {
+                    is SubmitSurveyResult.Submitted ->
+                        _events.send(SurveyFormEvent.Submitted(result.score))
+
+                    // Giữ lại danh sách câu chưa đạt để adapter tô đỏ đúng chỗ.
+                    is SubmitSurveyResult.Invalid -> {
+                        _uiState.update { it.copy(issues = result.issues) }
+                        _events.send(SurveyFormEvent.Invalid(result.issues))
+                    }
+                }
             }.onFailure { e ->
                 _uiState.update { it.copy(isSaving = false) }
                 _events.send(SurveyFormEvent.Error(e.message ?: "Không lưu được bài khảo sát"))
