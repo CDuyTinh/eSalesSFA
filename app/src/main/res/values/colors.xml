@@ -24,6 +24,14 @@
     <!-- Nền &amp; đường kẻ -->
     <color name="surfaceGray">#F7F7F8</color>
     <color name="lineGray">@color/brandRed</color>
+    <!--
+      Đường kẻ xám thật.
+
+      lineGray ở trên tuy tên là "gray" nhưng đang trỏ vào màu đỏ thương hiệu và
+      cả app dùng nó cho viền thẻ, nên không đổi ở đây. Chỗ nào cần một nét xám
+      nhạt đúng nghĩa — viền ảnh cửa hàng chẳng hạn — thì dùng màu này.
+    -->
+    <color name="lineSoft">#E3E3E8</color>
 
     <!-- Nửa trên màn Login: gần như trắng, phớt hồng rất nhạt. -->
     <color name="loginTop">#FFFFFF</color>

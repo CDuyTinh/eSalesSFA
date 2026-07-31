@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ghim mang số thứ tự ghé, theo prepare_map_marker.xml của bản eSales gốc.
+  Layout này không nằm trong màn hình nào: nó được dựng rồi vẽ ra Bitmap để làm
+  icon cho marker.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/pin"
+        android:layout_width="@dimen/map_marker_width"
+        android:layout_height="@dimen/map_marker_height"
+        android:src="@drawable/ic_map_pin"
+        android:importantForAccessibility="no"
+        tools:tint="@color/brandRed" />
+
+    <!-- paddingBottom đẩy số lên phần tròn của giọt nước; canh giữa cả ghim thì
+         số sẽ rơi xuống phần nhọn. -->
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="@dimen/map_marker_width"
+        android:layout_height="@dimen/map_marker_height"
+        android:gravity="center"
+        android:paddingBottom="@dimen/map_marker_number_offset"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_tiny"
+        android:textStyle="bold"
+        tools:text="12" />
+</FrameLayout>

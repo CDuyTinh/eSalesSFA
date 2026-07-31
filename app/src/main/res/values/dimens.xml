@@ -27,6 +27,11 @@
     <dimen name="donut_text">11sp</dimen>
     <dimen name="dashboard_chart_height">160dp</dimen>
     <dimen name="rank_badge_size">22dp</dimen>
+    <dimen name="search_radius">10dp</dimen>
+    <dimen name="search_height">44dp</dimen>
+    <dimen name="map_marker_width">36dp</dimen>
+    <dimen name="map_marker_height">48dp</dimen>
+    <dimen name="map_marker_number_offset">14dp</dimen>
     <!-- Bo góc nút chọn kỳ: vuông vắn hơn dáng viên thuốc mặc định của Material 3. -->
     <dimen name="segment_radius">8dp</dimen>
     <dimen name="text_number_hero">30sp</dimen>

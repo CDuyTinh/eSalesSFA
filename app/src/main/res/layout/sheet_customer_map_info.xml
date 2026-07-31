@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Thông tin khách hàng khi chạm vào ghim, theo prepare_map_marker_infor_dialog
+  của bản gốc: mã trong nhãn màu theo trạng thái ghé, tên, địa chỉ, toạ độ, và
+  nút mở màn chi tiết.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/space_lg">
+
+    <TextView
+        style="@style/Sfa.Text.Title"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/customer_map_sheet_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/sheetCode"
+            style="@style/Sfa.Badge"
+            tools:text="KH0004" />
+
+        <TextView
+            android:id="@+id/sheetName"
+            style="@style/Sfa.Text.Body"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_sm"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            tools:text="Cửa hàng Bình Minh 4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sheetAddressRow"
+        style="@style/Sfa.CustomerRow"
+        android:layout_marginTop="@dimen/space_md">
+
+        <TextView
+            style="@style/Sfa.Text.Tiny"
+            android:text="@string/glyph_pin" />
+
+        <TextView
+            android:id="@+id/sheetAddress"
+            style="@style/Sfa.CustomerRow.Text"
+            tools:text="4 Đường số 5, Quận 5, TP.HCM" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Sfa.CustomerRow"
+        android:layout_marginTop="@dimen/space_sm">
+
+        <TextView
+            style="@style/Sfa.Text.Tiny"
+            android:text="@string/glyph_target" />
+
+        <TextView
+            android:id="@+id/sheetCoordinates"
+            style="@style/Sfa.CustomerRow.Text"
+            tools:text="10,776500, 106,700800" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sheetOpenButton"
+        style="@style/Sfa.Button"
+        android:layout_marginTop="@dimen/space_lg"
+        android:text="@string/customer_map_sheet_open" />
+</LinearLayout>

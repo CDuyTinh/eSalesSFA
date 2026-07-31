@@ -36,6 +36,13 @@ android {
             "String", "SUPABASE_PUBLISHABLE_KEY",
             "\"${props.getProperty("SUPABASE_PUBLISHABLE_KEY") ?: System.getenv("SUPABASE_PUBLISHABLE_KEY") ?: ""}\""
         )
+
+        // Khoá Google Maps đi vào manifest qua placeholder. Thiếu khoá thì SDK chỉ
+        // vẽ ra một ô xám câm lặng, nên đưa thêm cờ vào BuildConfig để màn bản đồ
+        // nói thẳng "chưa cấu hình khoá" thay vì để người dùng ngồi đoán.
+        val mapsKey = props.getProperty("MAPS_API_KEY") ?: System.getenv("MAPS_API_KEY") ?: ""
+        manifestPlaceholders["MAPS_API_KEY"] = mapsKey
+        buildConfigField("boolean", "HAS_MAPS_KEY", "${mapsKey.isNotBlank()}")
     }
 
     buildTypes {
@@ -92,8 +99,9 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.androidx.work.runtime.ktx)
 
-    // ── Vị trí ────────────────────────────────────────────────────────────
+    // ── Vị trí &amp; bản đồ ───────────────────────────────────────────────────
     implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
 
     // ── Camera ────────────────────────────────────────────────────────────
     implementation(libs.bundles.camerax)

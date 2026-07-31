@@ -88,6 +88,27 @@
         <item name="android:textSize">@dimen/text_small</item>
     </style>
 
+    <!-- ── Thẻ khách hàng ──────────────────────────────────────────────── -->
+    <!-- Một dòng thông tin phụ: biểu tượng dẫn rồi tới nội dung. -->
+    <style name="Sfa.CustomerRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_xs</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Sfa.CustomerRow.Text" parent="Sfa.Text.Tiny">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">@dimen/space_sm</item>
+    </style>
+
+    <!-- Bo góc ảnh cửa hàng cho khớp khung nền phía sau. -->
+    <style name="Sfa.Thumb" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/card_radius</item>
+    </style>
+
     <!-- ── Dashboard ───────────────────────────────────────────────────── -->
     <!-- Một ô chỉ số trong thẻ "Tổng kết ngày": ba ô chia đều bề ngang. -->
     <style name="Sfa.DayTile" parent="">

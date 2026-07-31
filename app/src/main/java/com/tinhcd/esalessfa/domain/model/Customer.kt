@@ -16,6 +16,8 @@ data class Customer(
     val address: String?,
     val location: GeoPoint?,
     val channelId: String?,
+    /** Tên kênh để hiện trên thẻ; null khi khách chưa gán kênh. */
+    val channelName: String?,
     val priceGroupId: String,
     val creditLimit: Long,
     val debtAmount: Long,

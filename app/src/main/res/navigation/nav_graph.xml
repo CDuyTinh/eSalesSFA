@@ -83,6 +83,11 @@
     </fragment>
 
     <fragment
+        android:id="@+id/customerMapFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.CustomerMapFragment"
+        android:label="Bản đồ tuyến" />
+
+    <fragment
         android:id="@+id/customerDetailFragment"
         android:name="com.tinhcd.esalessfa.feature.customer.CustomerDetailFragment"
         android:label="Chi tiết khách hàng">

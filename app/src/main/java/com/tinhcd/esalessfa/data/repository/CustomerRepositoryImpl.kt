@@ -46,7 +46,7 @@ class CustomerRepositoryImpl @Inject constructor(
                 enablePlaceholders = false,
             ),
             pagingSourceFactory = { queryDao.pagingAll(query, channelId) },
-        ).flow.map { paging -> paging.map { it.toDomain() } }
+        ).flow.map { paging -> paging.map { it.customer.toDomain(it.channelName) } }
 
     override fun routeCustomers(dayOfWeek: Int, query: String): Flow<List<RouteCustomer>> =
         flow {
@@ -67,7 +67,7 @@ class CustomerRepositoryImpl @Inject constructor(
     override fun observeCustomerCount(): Flow<Int> = queryDao.observeCount()
 
     private fun RouteCustomerRow.toRouteCustomer() = RouteCustomer(
-        customer = customer.toDomain(),
+        customer = customer.toDomain(channelName),
         sortOrder = sortOrder,
         visitState = when {
             checkOutAt != null -> VisitState.DONE

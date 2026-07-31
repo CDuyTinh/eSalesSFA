@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Danh sách khách hàng theo bố cục bản eSales gốc: ô tìm kiếm nằm gọn trong dải
+  đỏ ngay dưới toolbar, rồi tới hàng "tên tuyến — số khách", rồi danh sách thẻ.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,49 +18,105 @@
         android:layout_height="?attr/actionBarSize"
         app:navigationIcon="@android:drawable/ic_menu_revert" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    <!--
+      Ô tìm kiếm: nền trắng đặc, bo tròn, đặt đè lên dải đỏ.
+
+      Dùng TextInputLayout không viền (FilledBox bỏ nền + bỏ gạch chân) chứ không
+      phải OutlinedBox: viền mảnh của OutlinedBox chìm nghỉm trên nền đỏ, trong
+      khi bản gốc là một khối trắng rõ ràng.
+    -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginHorizontal="16dp"
-        android:hint="@string/customer_search_hint"
-        app:startIconDrawable="@android:drawable/ic_menu_search">
+        android:layout_marginHorizontal="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
+        app:cardCornerRadius="@dimen/search_radius"
+        app:cardElevation="0dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/space_md">
 
-    <TextView
-        android:id="@+id/countText"
-        android:layout_width="wrap_content"
+            <TextView
+                style="@style/Sfa.Text.Body"
+                android:textColor="@color/textGray"
+                android:text="@string/glyph_search" />
+
+            <EditText
+                android:id="@+id/searchInput"
+                style="@style/Sfa.Text.Small"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/search_height"
+                android:background="@null"
+                android:hint="@string/customer_search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="@dimen/space_sm"
+                android:paddingEnd="0dp"
+                android:textColorHint="@color/textGray" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?android:attr/textColorSecondary" />
+        android:layout_marginHorizontal="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        <TextView
+            android:id="@+id/routeTitle"
+            style="@style/Sfa.Text.Title"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            tools:text="Tuyến bán hàng Thứ 6" />
+
+        <TextView
+            android:id="@+id/countText"
+            style="@style/Sfa.Text.Small"
+            tools:text="29 khách hàng" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="4dp"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp" />
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/emptyText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="32dp"
-        android:text="@string/customer_empty"
-        android:textColor="?android:attr/textColorSecondary"
-        android:visibility="gone" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/space_xs"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_sm" />
+
+        <TextView
+            android:id="@+id/emptyText"
+            style="@style/Sfa.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/space_xl"
+            android:text="@string/customer_empty"
+            android:visibility="gone" />
+
+        <!-- Chỉ hiện ở tuyến hôm nay: danh sách toàn bộ khách hàng có hàng nghìn
+             dòng, đổ hết lên bản đồ vừa nặng vừa không dùng để đi tuyến được. -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mapButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/space_lg"
+            android:contentDescription="@string/customer_map_open"
+            android:src="@drawable/ic_map"
+            app:backgroundTint="@color/brandRed"
+            app:tint="@color/white" />
+    </FrameLayout>
 </LinearLayout>

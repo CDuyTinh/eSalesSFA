@@ -7,9 +7,21 @@ import androidx.room.Query
 import com.tinhcd.esalessfa.core.database.entity.master.CustomerEntity
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Khách hàng kèm tên kênh.
+ *
+ * Kênh nằm ở bảng riêng nhưng thẻ khách hàng nào cũng hiện, nên lấy luôn bằng
+ * LEFT JOIN thay vì để tầng trên tra thêm một lượt cho mỗi dòng.
+ */
+data class CustomerRow(
+    @Embedded val customer: CustomerEntity,
+    val channelName: String?,
+)
+
 /** Khách hàng trong tuyến kèm thông tin lượt ghé hôm nay. */
 data class RouteCustomerRow(
     @Embedded val customer: CustomerEntity,
+    val channelName: String?,
     val sortOrder: Int,
     val checkInAt: Long?,
     val checkOutAt: Long?,
@@ -26,14 +38,17 @@ interface CustomerQueryDao {
      */
     @Query(
         """
-        SELECT * FROM customers
-        WHERE isActive = 1
-          AND (:query = '' OR nameSearch LIKE '%' || :query || '%' OR code LIKE '%' || :query || '%')
-          AND (:channelId IS NULL OR channelId = :channelId)
-        ORDER BY name
+        SELECT c.*, ch.name AS channelName
+        FROM customers c
+        LEFT JOIN channels ch ON ch.id = c.channelId
+        WHERE c.isActive = 1
+          AND (:query = '' OR c.nameSearch LIKE '%' || :query || '%'
+               OR c.code LIKE '%' || :query || '%')
+          AND (:channelId IS NULL OR c.channelId = :channelId)
+        ORDER BY c.name
         """
     )
-    fun pagingAll(query: String, channelId: String?): PagingSource<Int, CustomerEntity>
+    fun pagingAll(query: String, channelId: String?): PagingSource<Int, CustomerRow>
 
     /**
      * Tuyến của một thứ trong tuần.
@@ -43,10 +58,12 @@ interface CustomerQueryDao {
      */
     @Query(
         """
-        SELECT c.*, d.sortOrder AS sortOrder, v.checkInAt AS checkInAt, v.checkOutAt AS checkOutAt
+        SELECT c.*, ch.name AS channelName, d.sortOrder AS sortOrder,
+               v.checkInAt AS checkInAt, v.checkOutAt AS checkOutAt
         FROM sales_route_details d
         INNER JOIN sales_routes r ON r.id = d.routeId
         INNER JOIN customers c    ON c.id = d.customerId
+        LEFT  JOIN channels ch    ON ch.id = c.channelId
         LEFT  JOIN visits v       ON v.customerId = c.id AND v.visitDate = :today
         WHERE r.salespersonId = :salespersonId
           AND r.dayOfWeek = :dayOfWeek

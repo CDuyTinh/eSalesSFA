@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ghim bản đồ dạng giọt nước, có viền trắng để nổi trên nền bản đồ nhiều màu.
+  Màu thân ghim do code tô theo trạng thái ghé nên ở đây để trắng.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="48dp"
+    android:viewportWidth="36"
+    android:viewportHeight="48">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,0.5C8.6,0.5 1,8.1 1,17.5c0,12.4 17,30 17,30s17,-17.6 17,-30C35,8.1 27.4,0.5 18,0.5z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,2.5C9.7,2.5 3,9.2 3,17.5c0,10.9 15,27 15,27s15,-16.1 15,-27C33,9.2 26.3,2.5 18,2.5z" />
+</vector>

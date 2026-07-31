@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bản đồ tuyến hôm nay: mỗi khách hàng một ghim, màu ghim theo trạng thái ghé.
+  Theo PrepareMapFragment của bản eSales gốc.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/img">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Sfa.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:title="@string/customer_map_title" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/mapContainer"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Hiện khi thiếu khoá Maps hoặc cả tuyến chưa khách nào có toạ độ: bản
+             đồ trống trơn không nói được vì sao nó trống. -->
+        <TextView
+            android:id="@+id/messageText"
+            style="@style/Sfa.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/space_xl"
+            android:background="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Chưa cấu hình khoá Google Maps" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/legend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/space_md"
+            app:cardCornerRadius="@dimen/card_radius">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_sm">
+
+                <TextView
+                    android:id="@+id/legendCount"
+                    style="@style/Sfa.Text.Tiny"
+                    android:textColor="@color/textDark"
+                    android:textStyle="bold"
+                    tools:text="29 điểm" />
+
+                <TextView
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/customer_map_legend" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+</LinearLayout>

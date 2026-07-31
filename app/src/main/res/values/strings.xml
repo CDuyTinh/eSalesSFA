@@ -5,6 +5,21 @@
          nhất trên mọi máy, không phụ thuộc font được cài. -->
     <string name="glyph_pin" translatable="false">◉</string>
     <string name="glyph_phone" translatable="false">✆</string>
+    <string name="glyph_store" translatable="false">▤</string>
+    <string name="glyph_clock" translatable="false">◷</string>
+    <string name="glyph_search" translatable="false">⌕</string>
+    <string name="glyph_target" translatable="false">⌖</string>
+
+    <!-- Thứ trong tuần, theo Calendar.DAY_OF_WEEK: 1 = Chủ nhật. -->
+    <string-array name="weekday_names">
+        <item>Chủ nhật</item>
+        <item>Thứ 2</item>
+        <item>Thứ 3</item>
+        <item>Thứ 4</item>
+        <item>Thứ 5</item>
+        <item>Thứ 6</item>
+        <item>Thứ 7</item>
+    </string-array>
 
     <!-- Logo: hai nửa tách rời để tô hai màu như bộ nhận diện gốc. -->
     <string name="brand_name_prefix" translatable="false">eSales</string>
@@ -53,8 +68,24 @@
 
     <!-- Customer list -->
     <string name="customer_all">Tất cả khách hàng</string>
-    <string name="customer_search_hint">Tìm theo tên hoặc mã</string>
+    <string name="customer_search_hint">Tìm theo mã, tên, địa chỉ, số điện thoại…</string>
     <string name="customer_empty">Không tìm thấy khách hàng nào</string>
+    <!-- Ví dụ: Tuyến bán hàng Thứ 6 -->
+    <string name="customer_route_title">Tuyến bán hàng %1$s</string>
+    <string name="customer_count">%1$d khách hàng</string>
+    <string name="customer_visit_order">Thứ tự viếng thăm: %1$d</string>
+    <string name="customer_map_title">Bản đồ tuyến</string>
+    <string name="customer_map_open">Xem bản đồ tuyến</string>
+    <string name="customer_map_legend">Đỏ: chưa ghé · Xanh dương: đang ghé · Xanh lá: đã ghé</string>
+    <string name="customer_map_count">%1$d điểm</string>
+    <string name="customer_map_no_location">Chưa khách hàng nào trong tuyến có toạ độ để hiện lên bản đồ</string>
+    <string name="customer_map_no_key">Chưa cấu hình khoá Google Maps.\nĐiền MAPS_API_KEY trong local.properties rồi build lại.</string>
+    <string name="customer_map_sheet_title">Thông tin khách hàng</string>
+    <string name="customer_map_sheet_open">Xem chi tiết khách hàng</string>
+    <!-- Ví dụ: KH0004 - Cửa hàng Bình Minh 4 -->
+    <string name="customer_map_info_title">%1$s - %2$s</string>
+    <string name="customer_map_no_coordinates">Khách hàng chưa có toạ độ</string>
+    <string name="customer_assignee">Viếng thăm bởi %1$s</string>
     <string name="customer_count_format">%1$d khách hàng</string>
     <string name="customer_count_loaded">Đã tải %1$d khách hàng</string>
     <string name="visit_not_yet">Chưa ghé</string>

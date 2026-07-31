@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Chú thích nổi trên ghim: mã + tên khách ở dòng đầu, địa chỉ ở dòng dưới —
+  đúng nội dung PrepareMapMarkerInfoAdapter của bản gốc.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/space_sm">
+
+    <TextView
+        android:id="@+id/infoTitle"
+        style="@style/Sfa.Text.Small"
+        android:layout_width="match_parent"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        android:textColor="@color/brandRed"
+        tools:text="KH0004 - Cửa hàng Bình Minh 4" />
+
+    <TextView
+        android:id="@+id/infoAddress"
+        style="@style/Sfa.Text.Tiny"
+        android:layout_width="match_parent"
+        android:layout_marginTop="2dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        tools:text="4 Đường số 5, Quận 5, TP.HCM" />
+</LinearLayout>

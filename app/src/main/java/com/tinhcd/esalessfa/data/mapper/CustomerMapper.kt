@@ -10,7 +10,7 @@ import com.tinhcd.esalessfa.domain.model.Customer
  * Toạ độ gộp thành [GeoPoint] thay vì hai Double rời: chỉ có toạ độ khi CẢ hai
  * cùng khác null, nên kiểu dữ liệu tự loại bỏ trường hợp nửa vời.
  */
-fun CustomerEntity.toDomain() = Customer(
+fun CustomerEntity.toDomain(channelName: String? = null) = Customer(
     id = id,
     code = code,
     name = name,
@@ -22,6 +22,7 @@ fun CustomerEntity.toDomain() = Customer(
         null
     },
     channelId = channelId,
+    channelName = channelName,
     priceGroupId = priceGroupId,
     creditLimit = creditLimit,
     debtAmount = debtAmount,

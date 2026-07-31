@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.tinhcd.esalessfa.domain.model.RouteCustomer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
+import com.tinhcd.esalessfa.domain.usecase.ObserveTodayRouteUseCase
+import com.tinhcd.esalessfa.domain.usecase.TodayRoute
 import com.tinhcd.esalessfa.domain.util.SearchText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +31,7 @@ enum class CustomerListMode { ROUTE_TODAY, ALL }
 @HiltViewModel
 class CustomerListViewModel @Inject constructor(
     private val repository: CustomerRepository,
+    private val observeTodayRoute: ObserveTodayRouteUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -60,11 +62,12 @@ class CustomerListViewModel @Inject constructor(
             .flatMapLatest { (query, channel) -> repository.pagedCustomers(query, channel) }
             .cachedIn(viewModelScope)
 
-    val routeCustomers: StateFlow<List<RouteCustomer>> = debouncedQuery
-        .flatMapLatest { query ->
-            repository.routeCustomers(Calendar.getInstance().get(Calendar.DAY_OF_WEEK), query)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    /** Thứ trong tuần theo Calendar; thẻ tiêu đề dùng để ghi "Tuyến bán hàng ...". */
+    val dayOfWeek: Int = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+
+    val todayRoute: StateFlow<TodayRoute> = debouncedQuery
+        .flatMapLatest { query -> observeTodayRoute(dayOfWeek, query) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayRoute())
 
     fun onQueryChanged(value: String) {
         queryInput.value = value
