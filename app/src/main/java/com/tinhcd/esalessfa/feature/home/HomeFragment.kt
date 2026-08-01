@@ -43,16 +43,34 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             true
         }
 
-        // Chỉ chọn tab mặc định ở lần dựng đầu. Khi xoay máy, FragmentManager đã
-        // khôi phục sẵn các tab cùng trạng thái ẩn/hiện, còn BottomNavigationView
-        // tự khôi phục tab đang chọn — đặt lại sẽ ném người dùng về tab đầu.
-        if (savedInstanceState == null) {
+        // Chỉ chọn tab mặc định khi CHƯA có tab nào, tức màn hình thật sự mới.
+        //
+        // Không dùng savedInstanceState để nhận biết điều đó. Đi từ tab vào màn
+        // chi tiết rồi bấm Back, fragment này vẫn là instance cũ nằm trong back
+        // stack: chỉ view bị huỷ rồi dựng lại nên savedInstanceState là null,
+        // trong khi các tab con vẫn còn nguyên. Ép chọn tab đầu lúc đó là lý do
+        // màn hình nhảy về Tổng quan còn thanh tab vẫn sáng ở tab cũ.
+        if (childFragmentManager.fragments.isEmpty()) {
             binding.bottomNav.selectedItemId = R.id.tab_dashboard
             // Gọi thẳng thêm một lần: tab_dashboard là item đầu tiên của menu nên
             // BottomNavigationView coi như đã chọn sẵn, gán selectedItemId đúng
             // giá trị đó có thể không phát ra sự kiện nào và màn hình sẽ trắng.
             showTab(R.id.tab_dashboard)
         }
+    }
+
+    /**
+     * Kéo nội dung về khớp với thanh tab sau khi view được khôi phục.
+     *
+     * BottomNavigationView tự khôi phục tab đang chọn ở bước NÀY, tức sau
+     * onViewCreated, và nó khôi phục lặng lẽ chứ không phát sự kiện chọn tab.
+     * Ai đặt tab ở onViewCreated cũng sẽ bị nó ghi đè, và đó chính là cảnh thanh
+     * tab chỉ một đằng còn màn hình hiện một nẻo. Lấy luôn tab của thanh tab làm
+     * chuẩn thì hai bên không thể lệch nhau nữa.
+     */
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        binding?.let { showTab(it.bottomNav.selectedItemId) }
     }
 
     override fun onDestroyView() {
