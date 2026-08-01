@@ -1,9 +1,12 @@
 package com.tinhcd.esalessfa.domain.usecase
 
+import com.tinhcd.esalessfa.domain.repository.CustomerReportItem
 import com.tinhcd.esalessfa.domain.repository.DailyRevenue
 import com.tinhcd.esalessfa.domain.repository.DashboardKpi
 import com.tinhcd.esalessfa.domain.repository.MonthStats
+import com.tinhcd.esalessfa.domain.repository.OrderDetail
 import com.tinhcd.esalessfa.domain.repository.OrderSummary
+import com.tinhcd.esalessfa.domain.repository.ProductReportItem
 import com.tinhcd.esalessfa.domain.repository.RankedItem
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
 import com.tinhcd.esalessfa.domain.repository.TodayStats
@@ -61,4 +64,16 @@ class FakeReportRepository(
         toDate: String,
         customerId: String?,
     ): Flow<List<OrderSummary>> = flowOf(emptyList())
+
+    override fun observeProductReport(
+        fromDate: String,
+        toDate: String,
+    ): Flow<List<ProductReportItem>> = flowOf(emptyList())
+
+    override fun observeCustomerReport(
+        fromDate: String,
+        toDate: String,
+    ): Flow<List<CustomerReportItem>> = flowOf(emptyList())
+
+    override fun observeOrderDetail(orderId: String): Flow<OrderDetail?> = flowOf(null)
 }
