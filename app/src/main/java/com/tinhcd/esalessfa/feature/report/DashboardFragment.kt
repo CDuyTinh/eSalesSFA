@@ -204,16 +204,6 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         else -> R.color.textGray
     }
 
-    /** Sản lượng thường là số tròn; chỉ hiện phần lẻ khi thật sự có. */
-    private fun formatQty(qty: Double): String {
-        val vn = Locale("vi", "VN")
-        return if (qty % 1.0 == 0.0) {
-            String.format(vn, "%,.0f", qty)
-        } else {
-            String.format(vn, "%,.1f", qty)
-        }
-    }
-
     @StringRes
     private fun MonthKpiType.title(): Int = when (this) {
         MonthKpiType.VISIT_COVERAGE -> R.string.dashboard_kpi_visit_coverage

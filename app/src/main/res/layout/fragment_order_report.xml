@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Màn báo cáo theo ReportOrderTabFragment của bản eSales gốc: nút chọn kỳ nằm
+  trong dải đỏ đầu màn, dưới là ba tab Đơn hàng / Sản phẩm / Khách hàng, và cả
+  ba tab cùng đọc một khoảng ngày.
+
+  Ba tab là chip rời nhau chứ không phải TabLayout + ViewPager, giống màn chi
+  tiết khách hàng: nội dung tab do FragmentManager nạp vào container.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,53 +15,65 @@
     android:orientation="vertical"
     android:background="@drawable/img">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Sfa.Toolbar"
+    <!--
+      Phần đầu tự vẽ nền đỏ chứ không dựa vào dải đỏ của img.png: dải đó chỉ cao
+      18% màn hình, vừa đủ toolbar và ô tìm kiếm, nên hàng chip nằm dưới sẽ rơi
+      ra vùng xám và chìm hẳn — chip trắng trên nền xám thì không còn thấy đâu là
+      tab đang chọn.
+    -->
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@android:drawable/ic_menu_revert"
-        app:title="@string/report_title" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_header_red"
+        android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/rangeButton"
-        style="@style/Sfa.Button.Outlined"
-        android:layout_marginHorizontal="@dimen/space_md"
-        android:layout_marginTop="@dimen/space_sm"
-        tools:text="30/06/2026 → 29/07/2026" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Sfa.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="@string/report_title" />
 
-    <TextView
-        android:id="@+id/summaryText"
-        style="@style/Sfa.Text.Small"
-        android:layout_width="match_parent"
-        android:paddingHorizontal="@dimen/space_lg"
-        android:paddingVertical="@dimen/space_sm"
-        tools:text="42 đơn · 128.400.000" />
+        <!-- Nút chọn kỳ: khối trắng đặc trên nền đỏ, cùng dáng với ô tìm kiếm ở
+             màn danh sách khách hàng. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rangeButton"
+            style="@style/Sfa.RangePill"
+            tools:text="01/08/2026 → 31/08/2026" />
+
+        <LinearLayout
+            android:id="@+id/tabRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_md"
+            android:paddingVertical="@dimen/space_md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabOrder"
+                style="@style/Sfa.TabChip"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:text="@string/report_tab_order" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabProduct"
+                style="@style/Sfa.TabChip"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:text="@string/report_tab_product" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabCustomer"
+                style="@style/Sfa.TabChip"
+                android:text="@string/report_tab_customer" />
+        </LinearLayout>
+    </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/tabContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/orderList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:id="@+id/emptyText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:padding="32dp"
-            android:text="@string/report_empty"
-            android:textColor="?android:attr/textColorSecondary"
-            android:visibility="gone" />
-    </FrameLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/exportButton"
-        style="@style/Sfa.Button"
-        android:layout_margin="@dimen/space_md"
-        android:text="@string/report_export" />
+        android:layout_weight="1" />
 </LinearLayout>

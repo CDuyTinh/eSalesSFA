@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dải đỏ đầu màn, dùng khi phần đầu cao hơn dải đỏ sẵn có của ảnh nền img.png.
+
+  Ảnh nền chỉ đỏ ở 18% chiều cao trên cùng, đủ cho toolbar và ô tìm kiếm. Màn
+  nào có thêm hàng chip bên dưới thì chip rơi ra vùng xám và chìm mất, nên phần
+  đầu tự vẽ nền của mình. Hai đầu gradient lấy đúng màu ảnh nền để hai màn đặt
+  cạnh nhau không thấy vênh.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="270"
+        android:startColor="#BE151D"
+        android:endColor="@color/brandRed" />
+</shape>

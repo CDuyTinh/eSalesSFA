@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tab "Đơn hàng": thẻ tổng ở trên (kỳ đang xem, doanh số, số đơn), rồi danh sách
+  đơn của kỳ đó — đúng bố cục report_order_list của bản eSales gốc.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Sfa.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/space_lg">
+
+            <TextView
+                android:id="@+id/rangeTitle"
+                style="@style/Sfa.Text.Small"
+                android:layout_gravity="center_horizontal"
+                tools:text="01/08/2026 → 31/08/2026" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    style="@style/Sfa.DayTile"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:background="@drawable/bg_tile_red">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/report_total_amount" />
+
+                    <TextView
+                        android:id="@+id/totalAmount"
+                        style="@style/Sfa.Text.Body"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textStyle="bold"
+                        android:textColor="@color/brandRed"
+                        tools:text="128.400.000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/Sfa.DayTile"
+                    android:background="@drawable/bg_tile_green">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/report_total_order" />
+
+                    <TextView
+                        android:id="@+id/totalCount"
+                        style="@style/Sfa.Text.Body"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textStyle="bold"
+                        android:textColor="@color/stateGreen"
+                        tools:text="42" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                style="@style/Sfa.Separator"
+                android:layout_marginTop="@dimen/space_md" />
+
+            <!-- Hàng chân thẻ: số đơn còn nằm lại trong máy, và nút xuất file.
+                 Đặt ở đây vì cả hai đều nói về CHÍNH danh sách đơn bên dưới. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/pendingText"
+                    style="@style/Sfa.Text.Small"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    tools:text="3 đơn chờ đồng bộ" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/exportButton"
+                    style="@style/Sfa.Button.Compact"
+                    android:text="@string/report_export" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orderList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_sm" />
+
+        <TextView
+            android:id="@+id/emptyText"
+            style="@style/Sfa.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/space_xl"
+            android:text="@string/report_empty"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+</LinearLayout>

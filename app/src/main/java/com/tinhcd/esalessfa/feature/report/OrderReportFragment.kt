@@ -2,112 +2,72 @@ package com.tinhcd.esalessfa.feature.report
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import com.tinhcd.esalessfa.feature.common.isEmbedded
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentOrderReportBinding
-import com.tinhcd.esalessfa.databinding.ItemOrderReportBinding
-import com.tinhcd.esalessfa.domain.repository.OrderSummary
+import com.tinhcd.esalessfa.feature.common.isEmbedded
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
-import java.text.NumberFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.Locale
 
-private class OrderReportAdapter :
-    ListAdapter<OrderSummary, OrderReportAdapter.ViewHolder>(DIFF) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
-        ItemOrderReportBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    )
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(getItem(position))
-
-    class ViewHolder(private val binding: ItemOrderReportBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        private val money = NumberFormat.getInstance(Locale("vi", "VN"))
-
-        fun bind(item: OrderSummary) {
-            binding.orderNo.text = item.orderNo
-            binding.orderDate.text = item.orderDate
-            binding.customerName.text = item.customerName
-            binding.lineCount.text = binding.root.context
-                .getString(R.string.report_line_count, item.lineCount)
-            binding.totalAmount.text = money.format(item.totalAmount)
-
-            binding.syncBadge.visibility = if (item.isSynced) View.GONE else View.VISIBLE
-        }
-    }
-
-    companion object {
-        val DIFF = object : DiffUtil.ItemCallback<OrderSummary>() {
-            override fun areItemsTheSame(old: OrderSummary, new: OrderSummary) = old.id == new.id
-            override fun areContentsTheSame(old: OrderSummary, new: OrderSummary) = old == new
-        }
-    }
-}
-
+/**
+ * Màn báo cáo, theo ReportOrderTabFragment của bản eSales gốc: chọn kỳ ở đầu
+ * màn rồi xem cùng kỳ đó dưới ba góc — Đơn hàng, Sản phẩm, Khách hàng.
+ *
+ * Màn này chỉ giữ phần khung: kỳ đang xem, hàng chip, và việc chia sẻ file đã
+ * xuất. Số liệu của từng tab do fragment con đọc từ ViewModel dùng chung.
+ */
 @AndroidEntryPoint
 class OrderReportFragment : Fragment(R.layout.fragment_order_report) {
 
     private val viewModel: OrderReportViewModel by viewModels()
 
+    private enum class Tab { ORDER, PRODUCT, CUSTOMER }
+
+    /** Tab đang xem, để dựng lại đúng chỗ cũ sau khi view bị tạo lại. */
+    private var currentTab: Tab = Tab.ORDER
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentOrderReportBinding.bind(view)
-        val money = NumberFormat.getInstance(Locale("vi", "VN"))
-        val adapter = OrderReportAdapter()
 
-        view.padTopForStatusBar()
-
-        binding.orderList.layoutManager = LinearLayoutManager(requireContext())
-        binding.orderList.adapter = adapter
+        // Đệm ở khối đầu chứ không ở view gốc: nền đỏ nhờ vậy trải lên sau status
+        // bar, còn toolbar vẫn nằm dưới đồng hồ.
+        binding.header.padTopForStatusBar()
 
         // Làm tab thì không có gì để quay lại — navigateUp() sẽ pop cả màn Home.
         if (isEmbedded) binding.toolbar.navigationIcon = null
         else binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+
         binding.rangeButton.setOnClickListener { showRangePicker() }
-        binding.exportButton.setOnClickListener { viewModel.exportCsv() }
+
+        // Đặt lại trạng thái sau khi bấm: MaterialButton tự lật checked mỗi lần
+        // chạm, bấm lại chip đang chọn sẽ làm cả ba chip cùng tắt.
+        binding.chips().forEach { (tab, chip) ->
+            chip.setOnClickListener { selectTab(binding, tab) }
+        }
+        selectTab(binding, currentTab)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.orders.collect { orders ->
-                        adapter.submitList(orders)
-                        binding.summaryText.text = getString(
-                            R.string.report_summary,
-                            orders.size,
-                            money.format(orders.sumOf { it.totalAmount }),
-                        )
-                        binding.emptyText.visibility =
-                            if (orders.isEmpty()) View.VISIBLE else View.GONE
-                        binding.exportButton.isEnabled = orders.isNotEmpty()
-                    }
-                }
-                launch {
                     viewModel.currentRange.collect { range ->
-                        binding.rangeButton.text =
-                            getString(R.string.report_range, range.from, range.to)
+                        binding.rangeButton.text = range.label(requireContext())
                     }
                 }
                 launch {
@@ -125,6 +85,36 @@ class OrderReportFragment : Fragment(R.layout.fragment_order_report) {
                 }
             }
         }
+    }
+
+    private fun selectTab(binding: FragmentOrderReportBinding, tab: Tab) {
+        currentTab = tab
+        binding.chips().forEach { (chipTab, chip) -> chip.isChecked = chipTab == tab }
+        showTab(tab)
+    }
+
+    /** Ba chip theo đúng thứ tự bày trên màn hình. */
+    private fun FragmentOrderReportBinding.chips(): List<Pair<Tab, MaterialButton>> =
+        listOf(Tab.ORDER to tabOrder, Tab.PRODUCT to tabProduct, Tab.CUSTOMER to tabCustomer)
+
+    /**
+     * Thay nội dung tab bằng FragmentManager, không dùng ViewPager — giống màn
+     * chi tiết khách hàng, để hai màn có tab trong app đọc giống nhau.
+     */
+    private fun showTab(tab: Tab) {
+        val tag = tab.name
+        if (childFragmentManager.findFragmentByTag(tag)?.isVisible == true) return
+
+        childFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.tabContainer, fragmentFor(tab), tag)
+        }
+    }
+
+    private fun fragmentFor(tab: Tab): Fragment = when (tab) {
+        Tab.ORDER -> ReportOrderTabFragment()
+        Tab.PRODUCT -> ReportProductTabFragment()
+        Tab.CUSTOMER -> ReportCustomerTabFragment()
     }
 
     private fun showRangePicker() {

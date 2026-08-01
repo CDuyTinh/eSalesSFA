@@ -17,6 +17,62 @@ data class OrderSummary(
     val lineCount: Int,
 )
 
+/** Một dòng hàng trong đơn. [isFreeItem] là hàng tặng nên không tính tiền. */
+data class OrderDetailLine(
+    val id: String,
+    val productCode: String,
+    val productName: String,
+    val uomCode: String,
+    val qty: Double,
+    val price: Long,
+    val discountAmount: Long,
+    val lineAmount: Long,
+    val isFreeItem: Boolean,
+)
+
+/**
+ * Toàn bộ một đơn hàng để xem lại: phần đầu và các dòng hàng.
+ *
+ * [discountAmount] gộp chiết khấu do khuyến mãi và phần nhân viên tự nhập —
+ * người xem chỉ quan tâm đơn được giảm bao nhiêu, không quan tâm giảm từ đâu.
+ */
+data class OrderDetail(
+    val orderNo: String,
+    val orderDate: String,
+    val deliveryDate: String?,
+    val status: String,
+    val isSynced: Boolean,
+    val customerCode: String,
+    val customerName: String,
+    val customerAddress: String?,
+    val subTotal: Long,
+    val discountAmount: Long,
+    val vatAmount: Long,
+    val totalAmount: Long,
+    val note: String?,
+    val lines: List<OrderDetailLine>,
+)
+
+/** Một sản phẩm trong báo cáo kỳ: [qty] tính theo đơn vị nhỏ nhất của sản phẩm. */
+data class ProductReportItem(
+    val id: String,
+    val code: String,
+    val name: String,
+    val amount: Long,
+    val qty: Double,
+    val orderCount: Int,
+)
+
+/** Một khách hàng trong báo cáo kỳ. */
+data class CustomerReportItem(
+    val id: String,
+    val code: String,
+    val name: String,
+    val amount: Long,
+    val orderCount: Int,
+    val skuCount: Int,
+)
+
 data class DashboardKpi(
     val todayRevenue: Long = 0,
     val todayOrderCount: Int = 0,
@@ -84,4 +140,13 @@ interface ReportRepository {
         toDate: String,
         customerId: String? = null,
     ): Flow<List<OrderSummary>>
+
+    /** Doanh số theo sản phẩm trong một khoảng đóng, đã xếp giảm dần theo tiền. */
+    fun observeProductReport(fromDate: String, toDate: String): Flow<List<ProductReportItem>>
+
+    /** Doanh số theo khách hàng trong một khoảng đóng, đã xếp giảm dần theo tiền. */
+    fun observeCustomerReport(fromDate: String, toDate: String): Flow<List<CustomerReportItem>>
+
+    /** Một đơn kèm đủ dòng hàng; null khi không còn đơn nào mang id đó. */
+    fun observeOrderDetail(orderId: String): Flow<OrderDetail?>
 }

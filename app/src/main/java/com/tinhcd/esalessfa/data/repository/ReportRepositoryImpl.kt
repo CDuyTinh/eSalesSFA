@@ -1,9 +1,13 @@
 package com.tinhcd.esalessfa.data.repository
 
 import com.tinhcd.esalessfa.core.database.dao.ReportDao
+import com.tinhcd.esalessfa.domain.repository.CustomerReportItem
 import com.tinhcd.esalessfa.domain.repository.DailyRevenue
 import com.tinhcd.esalessfa.domain.repository.DashboardKpi
 import com.tinhcd.esalessfa.domain.repository.MonthStats
+import com.tinhcd.esalessfa.domain.repository.OrderDetail
+import com.tinhcd.esalessfa.domain.repository.OrderDetailLine
+import com.tinhcd.esalessfa.domain.repository.ProductReportItem
 import com.tinhcd.esalessfa.domain.repository.OrderSummary
 import com.tinhcd.esalessfa.domain.repository.RankedItem
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
@@ -173,16 +177,88 @@ class ReportRepositoryImpl @Inject constructor(
                     customerName = row.customerName,
                     totalAmount = row.totalAmount,
                     status = row.status,
-                    isSynced = row.syncStatus == "SYNCED",
+                    isSynced = row.syncStatus == SYNCED,
                     lineCount = row.lineCount,
                 )
             }
         }
+
+    override fun observeProductReport(
+        fromDate: String,
+        toDate: String,
+    ): Flow<List<ProductReportItem>> =
+        dao.observeProductReport(fromDate, toDate).map { rows ->
+            rows.map {
+                ProductReportItem(
+                    id = it.id,
+                    code = it.code,
+                    name = it.name,
+                    amount = it.amount,
+                    qty = it.qty,
+                    orderCount = it.orderCount,
+                )
+            }
+        }
+
+    override fun observeCustomerReport(
+        fromDate: String,
+        toDate: String,
+    ): Flow<List<CustomerReportItem>> =
+        dao.observeCustomerReport(fromDate, toDate).map { rows ->
+            rows.map {
+                CustomerReportItem(
+                    id = it.id,
+                    code = it.code,
+                    name = it.name,
+                    amount = it.amount,
+                    orderCount = it.orderCount,
+                    skuCount = it.skuCount,
+                )
+            }
+        }
+
+    override fun observeOrderDetail(orderId: String): Flow<OrderDetail?> = combine(
+        dao.observeOrderHeader(orderId),
+        dao.observeOrderLines(orderId),
+    ) { header, lines ->
+        header ?: return@combine null
+
+        OrderDetail(
+            orderNo = header.orderNo,
+            orderDate = header.orderDate,
+            deliveryDate = header.deliveryDate,
+            status = header.status,
+            isSynced = header.syncStatus == SYNCED,
+            customerCode = header.customerCode,
+            customerName = header.customerName,
+            customerAddress = header.customerAddress,
+            subTotal = header.subTotal,
+            // Hai khoản giảm nằm ở hai cột nhưng người xem chỉ cần một dòng.
+            discountAmount = header.discountAmount + header.manualDiscount,
+            vatAmount = header.vatAmount,
+            totalAmount = header.totalAmount,
+            note = header.note,
+            lines = lines.map {
+                OrderDetailLine(
+                    id = it.id,
+                    productCode = it.productCode,
+                    productName = it.productName,
+                    uomCode = it.uomCode,
+                    qty = it.qty,
+                    price = it.price,
+                    discountAmount = it.discountAmount,
+                    lineAmount = it.lineAmount,
+                    isFreeItem = it.isFreeItem,
+                )
+            },
+        )
+    }
 
     private fun fromDate(days: Int): String =
         LocalDate.now().minusDays(days.toLong()).format(ISO)
 
     private companion object {
         val ISO: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+        const val SYNCED = "SYNCED"
     }
 }

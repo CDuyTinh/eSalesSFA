@@ -148,6 +148,19 @@
         android:name="com.tinhcd.esalessfa.feature.report.OrderReportFragment"
         android:label="Báo cáo đơn hàng" />
 
+    <!-- Mở từ tab "Đơn hàng" của màn báo cáo. Điều hướng theo ID ĐÍCH chứ không
+         theo action: màn báo cáo còn chạy trong tab của Home, lúc đó đích hiện
+         tại là homeFragment nên action khai ở orderReportFragment không giải
+         được. -->
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.tinhcd.esalessfa.feature.report.OrderDetailFragment"
+        android:label="Chi tiết đơn hàng">
+        <argument
+            android:name="orderId"
+            app:argType="string" />
+    </fragment>
+
     <fragment
         android:id="@+id/surveyFormFragment"
         android:name="com.tinhcd.esalessfa.feature.survey.SurveyFormFragment"

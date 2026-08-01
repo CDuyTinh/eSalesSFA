@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tab "Khách hàng": ô tìm kiếm ở trên cùng như report_customer của bản gốc, rồi
+  thẻ tổng, rồi danh sách khách xếp theo doanh số giảm dần.
+
+  Ô tìm kiếm nằm TRONG tab chứ không phải trên đầu màn: hai tab kia không lọc
+  theo tên, để chung ở ngoài thì nó hiện lên cả lúc vô dụng.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/space_md"
+        app:cardCornerRadius="@dimen/search_radius"
+        app:cardElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_md">
+
+            <TextView
+                style="@style/Sfa.Text.Body"
+                android:textColor="@color/textGray"
+                android:text="@string/glyph_search" />
+
+            <EditText
+                android:id="@+id/searchInput"
+                style="@style/Sfa.Text.Small"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/search_height"
+                android:background="@null"
+                android:hint="@string/report_customer_search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="@dimen/space_sm"
+                android:paddingEnd="0dp"
+                android:textColorHint="@color/textGray" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Sfa.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/space_lg">
+
+            <TextView
+                android:id="@+id/rangeTitle"
+                style="@style/Sfa.Text.Small"
+                android:layout_gravity="center_horizontal"
+                tools:text="01/08/2026 → 31/08/2026" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    style="@style/Sfa.DayTile"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:background="@drawable/bg_tile_red">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/report_total_amount" />
+
+                    <TextView
+                        android:id="@+id/totalAmount"
+                        style="@style/Sfa.Text.Body"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textStyle="bold"
+                        android:textColor="@color/brandRed"
+                        tools:text="128.400.000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/Sfa.DayTile"
+                    android:background="@drawable/bg_tile_green">
+
+                    <TextView
+                        style="@style/Sfa.Text.Tiny"
+                        android:text="@string/report_total_customer" />
+
+                    <TextView
+                        android:id="@+id/totalCount"
+                        style="@style/Sfa.Text.Body"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textStyle="bold"
+                        android:textColor="@color/stateGreen"
+                        tools:text="18" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customerList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_sm" />
+
+        <TextView
+            android:id="@+id/emptyText"
+            style="@style/Sfa.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/space_xl"
+            android:text="@string/report_customer_empty"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+</LinearLayout>

@@ -22,6 +22,57 @@ data class OrderReportRow(
     val lineCount: Int,
 )
 
+/** Phần đầu của màn chi tiết đơn: đơn nào, của ai, tiền nong ra sao. */
+data class OrderDetailHeaderRow(
+    val orderNo: String,
+    val orderDate: String,
+    val deliveryDate: String?,
+    val status: String,
+    val syncStatus: String,
+    val customerCode: String,
+    val customerName: String,
+    val customerAddress: String?,
+    val subTotal: Long,
+    val discountAmount: Long,
+    val manualDiscount: Long,
+    val vatAmount: Long,
+    val totalAmount: Long,
+    val note: String?,
+)
+
+/** Một dòng hàng trong đơn, đã ghép sẵn mã và tên sản phẩm. */
+data class OrderDetailLineRow(
+    val id: String,
+    val productCode: String,
+    val productName: String,
+    val uomCode: String,
+    val qty: Double,
+    val price: Long,
+    val discountAmount: Long,
+    val lineAmount: Long,
+    val isFreeItem: Boolean,
+)
+
+/** Một dòng của tab "Sản phẩm": bán được bao nhiêu tiền, bao nhiêu đơn vị cơ sở. */
+data class ProductReportRow(
+    val id: String,
+    val code: String,
+    val name: String,
+    val amount: Long,
+    val qty: Double,
+    val orderCount: Int,
+)
+
+/** Một dòng của tab "Khách hàng": mua bao nhiêu tiền, mấy đơn, mấy mặt hàng. */
+data class CustomerReportRow(
+    val id: String,
+    val code: String,
+    val name: String,
+    val amount: Long,
+    val orderCount: Int,
+    val skuCount: Int,
+)
+
 /**
  * Truy vấn tổng hợp cho dashboard và báo cáo.
  *
@@ -254,4 +305,86 @@ interface ReportDao {
         toDate: String,
         customerId: String?,
     ): Flow<List<OrderReportRow>>
+
+    /**
+     * Doanh số theo sản phẩm trong khoảng ngày — tab "Sản phẩm" của màn báo cáo.
+     *
+     * Giống observeTopProducts nhưng không cắt LIMIT và nhận cả hai đầu ngày:
+     * màn báo cáo cho chọn kỳ nên phải xem được trọn danh sách, không chỉ top 5.
+     */
+    @Query(
+        """
+        SELECT p.id AS id, p.code AS code, p.name AS name,
+               COALESCE(SUM(od.netAmount), 0) AS amount,
+               COALESCE(SUM(od.baseQty), 0) AS qty,
+               COUNT(DISTINCT od.orderId) AS orderCount
+        FROM order_details od
+        INNER JOIN orders o   ON o.id = od.orderId
+        INNER JOIN products p ON p.id = od.productId
+        WHERE o.orderDate BETWEEN :fromDate AND :toDate
+          AND o.status <> 'CANCELLED' AND od.isFreeItem = 0
+        GROUP BY p.id
+        ORDER BY amount DESC
+        """
+    )
+    fun observeProductReport(fromDate: String, toDate: String): Flow<List<ProductReportRow>>
+
+    /**
+     * Doanh số theo khách hàng trong khoảng ngày — tab "Khách hàng".
+     *
+     * skuCount đếm mặt hàng KHÁC NHAU khách đã mua, không phải số dòng: cùng một
+     * sản phẩm đặt hai đơn vị nằm trên hai dòng nhưng vẫn là một mặt hàng.
+     */
+    @Query(
+        """
+        SELECT c.id AS id, c.code AS code, c.name AS name,
+               COALESCE(SUM(o.totalAmount), 0) AS amount,
+               COUNT(*) AS orderCount,
+               (
+                   SELECT COUNT(DISTINCT d.productId)
+                   FROM order_details d
+                   INNER JOIN orders o2 ON o2.id = d.orderId
+                   WHERE o2.customerId = c.id
+                     AND o2.orderDate BETWEEN :fromDate AND :toDate
+                     AND o2.status <> 'CANCELLED' AND d.isFreeItem = 0
+               ) AS skuCount
+        FROM orders o
+        INNER JOIN customers c ON c.id = o.customerId
+        WHERE o.orderDate BETWEEN :fromDate AND :toDate AND o.status <> 'CANCELLED'
+        GROUP BY c.id
+        ORDER BY amount DESC
+        """
+    )
+    fun observeCustomerReport(fromDate: String, toDate: String): Flow<List<CustomerReportRow>>
+
+    /** Phần đầu của một đơn; trả null khi đơn đã bị xoá khỏi máy. */
+    @Query(
+        """
+        SELECT o.orderNo AS orderNo, o.orderDate AS orderDate, o.deliveryDate AS deliveryDate,
+               o.status AS status, o.syncStatus AS syncStatus,
+               c.code AS customerCode, c.name AS customerName, c.address AS customerAddress,
+               o.subTotal AS subTotal, o.discountAmount AS discountAmount,
+               o.manualDiscount AS manualDiscount, o.vatAmount AS vatAmount,
+               o.totalAmount AS totalAmount, o.note AS note
+        FROM orders o
+        INNER JOIN customers c ON c.id = o.customerId
+        WHERE o.id = :orderId
+        """
+    )
+    fun observeOrderHeader(orderId: String): Flow<OrderDetailHeaderRow?>
+
+    /** Các dòng hàng của một đơn, giữ nguyên thứ tự lúc nhân viên nhập. */
+    @Query(
+        """
+        SELECT d.id AS id, p.code AS productCode, p.name AS productName,
+               d.uomCode AS uomCode, d.qty AS qty, d.price AS price,
+               d.discountAmount AS discountAmount, d.lineAmount AS lineAmount,
+               d.isFreeItem AS isFreeItem
+        FROM order_details d
+        INNER JOIN products p ON p.id = d.productId
+        WHERE d.orderId = :orderId
+        ORDER BY d.lineNo
+        """
+    )
+    fun observeOrderLines(orderId: String): Flow<List<OrderDetailLineRow>>
 }

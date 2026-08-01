@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Chi tiết một đơn đã đặt, theo report_order_details của bản eSales gốc: thẻ đầu
+  là khách hàng và tình trạng đơn, rồi bảng tiền, rồi từng dòng hàng.
+
+  Các dòng hàng do code nạp vào linesContainer chứ không phải RecyclerView: một
+  đơn chỉ vài chục dòng và cả màn đã nằm trong ScrollView, lồng thêm danh sách
+  cuộn được vào trong sẽ làm cuộn giật.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/img">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Sfa.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/order_detail_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ── Đơn và khách hàng ────────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/orderNo"
+                            style="@style/Sfa.Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textStyle="bold"
+                            tools:text="NV00120260729001" />
+
+                        <TextView
+                            android:id="@+id/statusChip"
+                            style="@style/Sfa.Text.Tiny"
+                            android:paddingHorizontal="@dimen/space_sm"
+                            android:paddingVertical="2dp"
+                            tools:text="Đã xác nhận"
+                            tools:background="@drawable/bg_chip_green" />
+
+                        <TextView
+                            android:id="@+id/syncBadge"
+                            style="@style/Sfa.Badge"
+                            android:layout_marginStart="@dimen/space_sm"
+                            android:background="@drawable/bg_badge_orange"
+                            android:text="@string/report_pending_badge"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/customerName"
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:textColor="@color/textDark"
+                        tools:text="Cửa hàng Phương Nam 5" />
+
+                    <TextView
+                        android:id="@+id/customerAddress"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="2dp"
+                        tools:text="KH0005 · 5 Đường số 6, Quận 6, TP.HCM" />
+
+                    <LinearLayout style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_detail_date" />
+
+                        <TextView
+                            android:id="@+id/orderDate"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="29/07/2026" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/deliveryRow"
+                        style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_detail_delivery" />
+
+                        <TextView
+                            android:id="@+id/deliveryDate"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="30/07/2026" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/note"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:visibility="gone"
+                        tools:text="Giao buổi sáng"
+                        tools:visibility="visible" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Tiền ─────────────────────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout style="@style/Sfa.InfoRow" android:layout_marginTop="0dp">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_subtotal" />
+
+                        <TextView
+                            android:id="@+id/subTotal"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="3.400.000" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_discount" />
+
+                        <TextView
+                            android:id="@+id/discount"
+                            style="@style/Sfa.InfoRow.Value"
+                            android:textColor="@color/stateGreen"
+                            tools:text="−160.000" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_vat" />
+
+                        <TextView
+                            android:id="@+id/vat"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="324.000" />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Sfa.Separator"
+                        android:layout_marginTop="@dimen/space_md" />
+
+                    <LinearLayout style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/order_total" />
+
+                        <TextView
+                            android:id="@+id/total"
+                            style="@style/Sfa.Text.Body"
+                            android:gravity="end"
+                            android:textStyle="bold"
+                            android:textColor="@color/brandRed"
+                            tools:text="3.564.000" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Dòng hàng ────────────────────────────────────────────── -->
+            <TextView
+                android:id="@+id/linesTitle"
+                style="@style/Sfa.Text.Title"
+                android:layout_marginHorizontal="@dimen/space_md"
+                android:layout_marginTop="@dimen/space_lg"
+                tools:text="Hàng hoá (5)" />
+
+            <LinearLayout
+                android:id="@+id/linesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

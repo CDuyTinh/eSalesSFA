@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Một dòng hàng trong đơn đã đặt. Giống item_order_line của màn đặt hàng nhưng
+  bỏ nút xoá: màn này chỉ để xem lại.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Sfa.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_md">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/productName"
+                style="@style/Sfa.Text.Body"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                tools:text="Nước giải khát loại 12" />
+
+            <TextView
+                android:id="@+id/giftBadge"
+                style="@style/Sfa.Badge"
+                android:layout_marginStart="@dimen/space_sm"
+                android:background="@drawable/bg_badge_green"
+                android:text="@string/order_gift_badge"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/productCode"
+            style="@style/Sfa.Text.Tiny"
+            android:layout_marginTop="2dp"
+            tools:text="SP0012" />
+
+        <TextView
+            android:id="@+id/qtyPrice"
+            style="@style/Sfa.Text.Tiny"
+            android:layout_marginTop="2dp"
+            tools:text="5 THUNG × 240.000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/discount"
+                style="@style/Sfa.Text.Tiny"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="@dimen/space_sm"
+                android:paddingVertical="2dp"
+                android:background="@drawable/bg_chip_green"
+                android:textColor="@color/stateGreen"
+                android:visibility="gone"
+                tools:text="KM −60.000"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/lineTotal"
+                style="@style/Sfa.Text.Body"
+                android:layout_marginStart="@dimen/space_sm"
+                android:textStyle="bold"
+                tools:text="1.140.000" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -212,7 +212,7 @@
     <string name="report_no_data">Chưa có dữ liệu</string>
 
     <!-- Order report -->
-    <string name="report_title">Báo cáo đơn hàng</string>
+    <string name="report_title">Báo cáo</string>
     <string name="report_range">%1$s → %2$s</string>
     <string name="report_pick_range">Chọn khoảng ngày</string>
     <string name="report_summary">%1$d đơn · %2$s</string>
@@ -222,6 +222,38 @@
     <string name="report_export">Xuất CSV</string>
     <string name="report_share">Chia sẻ báo cáo</string>
     <string name="report_export_failed">Không xuất được file báo cáo</string>
+
+    <!-- Ba tab của màn báo cáo -->
+    <string name="report_tab_order">Đơn hàng</string>
+    <string name="report_tab_product">Sản phẩm</string>
+    <string name="report_tab_customer">Khách hàng</string>
+
+    <!-- Hai ô tổng trên đầu mỗi tab -->
+    <string name="report_total_amount">Doanh số</string>
+    <string name="report_total_order">Số đơn</string>
+    <string name="report_total_sku">Mặt hàng</string>
+    <string name="report_total_customer">Khách mua</string>
+
+    <string name="report_pending_count">%1$d đơn chờ đồng bộ</string>
+    <string name="report_all_synced">Đã đồng bộ đủ</string>
+    <string name="report_product_qty">SL: %1$s</string>
+    <string name="report_product_orders">%1$d đơn</string>
+    <string name="report_customer_sku">%1$d mặt hàng</string>
+    <string name="report_product_empty">Không có sản phẩm nào bán ra trong khoảng ngày này</string>
+    <string name="report_customer_empty">Không có khách hàng nào mua trong khoảng ngày này</string>
+    <string name="report_customer_search_hint">Tìm theo mã hoặc tên khách hàng…</string>
+
+    <!-- Chi tiết đơn hàng -->
+    <string name="order_detail_title">Chi tiết đơn hàng</string>
+    <string name="order_detail_date">Ngày đặt</string>
+    <string name="order_detail_delivery">Ngày giao</string>
+    <string name="order_detail_customer">%1$s · %2$s</string>
+    <string name="order_detail_note">Ghi chú: %1$s</string>
+    <string name="order_detail_lines">Hàng hoá (%1$d)</string>
+    <string name="order_detail_discount">−%1$s</string>
+    <string name="order_status_new">Mới tạo</string>
+    <string name="order_status_confirmed">Đã xác nhận</string>
+    <string name="order_status_cancelled">Đã huỷ</string>
 
     <!-- Survey -->
     <string name="survey_title">Khảo sát trưng bày</string>

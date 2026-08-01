@@ -148,6 +148,32 @@
         <item name="elevation">0dp</item>
     </style>
 
+    <!--
+      Nút chọn kỳ ở đầu màn báo cáo: khối trắng đặc nằm trên dải đỏ, cùng dáng
+      với ô tìm kiếm của màn danh sách khách hàng nên hai màn nhìn liền một bộ.
+    -->
+    <style name="Sfa.RangePill" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/search_height</item>
+        <item name="android:layout_marginHorizontal">@dimen/space_md</item>
+        <item name="android:layout_marginTop">@dimen/space_sm</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/textDark</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/search_radius</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="rippleColor">@color/brandRedFaint</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <!-- Đường kẻ ngang mảnh ngăn hai khối trong cùng một thẻ. -->
+    <style name="Sfa.Separator" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/lineSoft</item>
+    </style>
+
     <!-- ── Dashboard ───────────────────────────────────────────────────── -->
     <!-- Một ô chỉ số trong thẻ "Tổng kết ngày": ba ô chia đều bề ngang. -->
     <style name="Sfa.DayTile" parent="">
