@@ -55,6 +55,14 @@ interface CustomerQueryDao {
      *
      * LEFT JOIN sang visits để biết đã ghé chưa mà không cần truy vấn thứ hai —
      * danh sách 30-40 dòng nếu mỗi dòng tự hỏi trạng thái sẽ thành N+1 query.
+     *
+     * Nối theo ID của lượt ghé MỚI NHẤT chứ không nối theo customerId: một khách
+     * có thể được ghé nhiều lần trong ngày (ghé xong, check-out, rồi quay lại),
+     * nối theo customerId sẽ cho ra mỗi lượt ghé một dòng và khách hàng đó xuất
+     * hiện trùng trong danh sách, trên bản đồ, lẫn trong số đếm khách của tuyến.
+     *
+     * Lấy lượt mới nhất là đúng nghiệp vụ: đang ghé lại lần hai thì thẻ phải báo
+     * "đang ghé", không phải "đã ghé xong" của lần trước.
      */
     @Query(
         """
@@ -64,7 +72,11 @@ interface CustomerQueryDao {
         INNER JOIN sales_routes r ON r.id = d.routeId
         INNER JOIN customers c    ON c.id = d.customerId
         LEFT  JOIN channels ch    ON ch.id = c.channelId
-        LEFT  JOIN visits v       ON v.customerId = c.id AND v.visitDate = :today
+        LEFT  JOIN visits v       ON v.id = (
+                  SELECT v2.id FROM visits v2
+                  WHERE v2.customerId = c.id AND v2.visitDate = :today
+                  ORDER BY v2.checkInAt DESC LIMIT 1
+              )
         WHERE r.salespersonId = :salespersonId
           AND r.dayOfWeek = :dayOfWeek
           AND (:query = '' OR c.nameSearch LIKE '%' || :query || '%' OR c.code LIKE '%' || :query || '%')
