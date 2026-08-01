@@ -34,6 +34,7 @@ class CheckInUseCase @Inject constructor(
         sample: LocationSample?,
         validation: CheckInValidation,
         reasonCode: String?,
+        note: String?,
         batteryPct: Int?,
     ): CheckInOutcome {
         val allowed = validation is CheckInValidation.Valid ||
@@ -49,6 +50,7 @@ class CheckInUseCase @Inject constructor(
             sample = sample,
             distanceMeters = validation.distanceMetersOrNull,
             reasonCode = reasonCode,
+            note = note,
             batteryPct = batteryPct,
         )
 

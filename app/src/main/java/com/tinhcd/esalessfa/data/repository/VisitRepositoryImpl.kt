@@ -73,6 +73,7 @@ class VisitRepositoryImpl @Inject constructor(
         sample: LocationSample?,
         distanceMeters: Double?,
         reasonCode: String?,
+        note: String?,
         batteryPct: Int?,
     ): VisitRepository.CheckInResult {
         val salesperson = requireNotNull(salespersonDao.getCurrent()) {
@@ -115,7 +116,7 @@ class VisitRepositoryImpl @Inject constructor(
                 checkOutDistance = null,
                 durationMinutes = null,
                 reasonCode = reasonCode,
-                note = null,
+                note = note,
                 isMockLocation = sample?.isMock ?: false,
                 batteryPct = batteryPct,
                 deviceId = null,

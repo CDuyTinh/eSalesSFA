@@ -145,12 +145,19 @@
     <string name="checkin_waiting_gps">Đang chờ GPS ổn định…</string>
     <string name="checkin_over_distance">Ngoài bán kính cho phép</string>
     <string name="checkin_blocked">Không thể check-in</string>
-    <string name="checkin_accuracy">Độ chính xác: %1$d m</string>
-    <string name="checkin_distance">Cách cửa hàng: %1$d m</string>
     <string name="checkin_over_distance_detail">Bạn đang cách cửa hàng %1$d m, vượt quá %2$d m cho phép. Chọn lý do để tiếp tục.</string>
     <string name="checkin_accuracy_too_low">GPS đang lệch %1$d m, cần dưới %2$d m. Ra chỗ thoáng và chờ thêm.</string>
     <string name="checkin_mock_location">Phát hiện ứng dụng giả lập vị trí. Tắt ứng dụng đó rồi thử lại.</string>
     <string name="checkin_no_customer_location">Khách hàng chưa có toạ độ nên không xác thực được khoảng cách.</string>
+    <!-- Nhãn của các dòng trong thẻ vị trí; giá trị nằm ở cột bên phải. -->
+    <string name="checkin_distance_label">Khoảng cách</string>
+    <string name="checkin_accuracy_label">Độ chính xác</string>
+    <string name="checkin_status_label">Trạng thái</string>
+    <string name="checkin_meters">%1$d m</string>
+    <string name="checkin_refresh_location">Lấy lại vị trí</string>
+    <string name="checkin_location_title">Vị trí</string>
+    <string name="checkin_note">Ghi chú</string>
+    <string name="checkin_note_hint">Ghi chú cho lượt ghé (không bắt buộc)</string>
     <string name="checkin_reason">Lý do</string>
     <string name="checkin_reason_required">Chọn lý do trước khi check-in</string>
     <string name="checkin_visit_info">Đã check-in lúc %1$s</string>

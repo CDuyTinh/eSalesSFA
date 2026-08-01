@@ -129,7 +129,26 @@ class CheckInViewModel @Inject constructor(
         locationJob = null
     }
 
-    fun checkIn(reasonCode: String?, batteryPct: Int?) {
+    /**
+     * Bỏ mẫu vị trí đang có rồi đo lại từ đầu.
+     *
+     * bestLocation() giữ mẫu tốt nhất nó từng thấy, nên đứng sai chỗ lúc mở màn
+     * là con số cứ bám theo mẫu cũ; người dùng đi tới đúng cửa hàng rồi vẫn thấy
+     * "ngoài bán kính". Nút này cắt luồng cũ để bắt đầu một vòng đo mới.
+     */
+    fun refreshLocation() {
+        stopLocation()
+        _uiState.update {
+            it.copy(
+                sample = null,
+                validation = CheckInValidation.NoLocation,
+                isWaitingLocation = true,
+            )
+        }
+        startLocation()
+    }
+
+    fun checkIn(reasonCode: String?, note: String?, batteryPct: Int?) {
         val state = _uiState.value
         if (state.isSaving) return
 
@@ -146,6 +165,7 @@ class CheckInViewModel @Inject constructor(
                     sample = state.sample,
                     validation = state.validation,
                     reasonCode = reasonCode,
+                    note = note?.takeIf { it.isNotBlank() },
                     batteryPct = batteryPct,
                 )
             }.onSuccess { outcome ->

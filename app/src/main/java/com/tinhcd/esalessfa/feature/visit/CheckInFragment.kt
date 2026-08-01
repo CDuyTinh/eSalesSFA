@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -62,16 +63,20 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
             selectedReason = viewModel.uiState.value.reasonCodes.getOrNull(position)?.code
         }
 
+        binding.refreshButton.setOnClickListener { viewModel.refreshLocation() }
+
         binding.actionButton.setOnClickListener {
             val state = viewModel.uiState.value
+            val note = binding.noteInput.text?.toString()
+
             if (state.isCheckedIn) {
-                viewModel.checkOut(note = null)
+                viewModel.checkOut(note = note)
             } else {
                 if (state.needsReason && selectedReason == null) {
                     Snackbar.make(view, R.string.checkin_reason_required, Snackbar.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                viewModel.checkIn(selectedReason, batteryPercent())
+                viewModel.checkIn(selectedReason, note, batteryPercent())
             }
         }
 
@@ -84,17 +89,18 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                         binding.customerName.text = state.customer?.name.orEmpty()
                         binding.customerAddress.text = state.customer?.address.orEmpty()
 
-                        binding.locationProgress.visibility =
-                            if (state.isWaitingLocation) View.VISIBLE else View.INVISIBLE
+                        binding.locationProgress.isVisible = state.isWaitingLocation
+                        // Chỉ khoá nút khi ĐANG đo: đo xong mà vẫn khoá thì người
+                        // dùng không còn cách nào đo lại.
+                        binding.refreshButton.isEnabled = !state.isWaitingLocation
 
                         binding.accuracyText.text = state.sample?.let {
-                            getString(R.string.checkin_accuracy, it.accuracy.roundToInt())
-                        }.orEmpty()
+                            getString(R.string.checkin_meters, it.accuracy.roundToInt())
+                        } ?: getString(R.string.value_empty)
 
                         renderValidation(binding, state.validation)
 
-                        binding.reasonLayout.visibility =
-                            if (state.needsReason) View.VISIBLE else View.GONE
+                        binding.reasonLayout.isVisible = state.needsReason
                         if (state.reasonCodes.isNotEmpty()) {
                             binding.reasonInput.setAdapter(
                                 ArrayAdapter(
@@ -105,8 +111,7 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                             )
                         }
 
-                        binding.visitInfo.visibility =
-                            if (state.isCheckedIn) View.VISIBLE else View.GONE
+                        binding.visitInfo.isVisible = state.isCheckedIn
                         state.openVisit?.let { visit ->
                             binding.visitInfo.text = getString(
                                 R.string.checkin_visit_info,
@@ -161,27 +166,32 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
         }
     }
 
+    /**
+     * Khoảng cách là con số to nhất trên màn, còn lời giải thích nằm ở dải cảnh
+     * báo bên dưới — nhìn một cái là biết đứng gần hay xa, đọc thêm mới biết vì
+     * sao chưa check-in được.
+     */
     private fun renderValidation(
         binding: FragmentCheckInBinding,
         validation: CheckInValidation,
     ) {
-        binding.warningText.visibility = View.GONE
-        binding.distanceText.text = ""
+        binding.warningText.isVisible = false
+        binding.distanceText.text = getString(R.string.value_empty)
 
         when (validation) {
             is CheckInValidation.Valid -> {
                 binding.locationStatus.setText(R.string.checkin_ready)
                 validation.distanceMeters?.let {
                     binding.distanceText.text =
-                        getString(R.string.checkin_distance, it.roundToInt())
+                        getString(R.string.checkin_meters, it.roundToInt())
                 }
             }
 
             is CheckInValidation.OverDistance -> {
                 binding.locationStatus.setText(R.string.checkin_over_distance)
                 binding.distanceText.text =
-                    getString(R.string.checkin_distance, validation.distanceMeters.roundToInt())
-                binding.warningText.visibility = View.VISIBLE
+                    getString(R.string.checkin_meters, validation.distanceMeters.roundToInt())
+                binding.warningText.isVisible = true
                 binding.warningText.text = getString(
                     R.string.checkin_over_distance_detail,
                     validation.distanceMeters.roundToInt(),
@@ -191,7 +201,7 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
 
             is CheckInValidation.AccuracyTooLow -> {
                 binding.locationStatus.setText(R.string.checkin_waiting_gps)
-                binding.warningText.visibility = View.VISIBLE
+                binding.warningText.isVisible = true
                 binding.warningText.text = getString(
                     R.string.checkin_accuracy_too_low,
                     validation.accuracy.roundToInt(),
@@ -201,13 +211,13 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
 
             CheckInValidation.MockLocation -> {
                 binding.locationStatus.setText(R.string.checkin_blocked)
-                binding.warningText.visibility = View.VISIBLE
+                binding.warningText.isVisible = true
                 binding.warningText.setText(R.string.checkin_mock_location)
             }
 
             CheckInValidation.NoCustomerLocation -> {
                 binding.locationStatus.setText(R.string.checkin_ready)
-                binding.warningText.visibility = View.VISIBLE
+                binding.warningText.isVisible = true
                 binding.warningText.setText(R.string.checkin_no_customer_location)
             }
 

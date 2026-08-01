@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Màn viếng thăm, dựng theo outside_checking của bản eSales gốc: từng khối là
+  một thẻ, trong thẻ là các dòng "nhãn bên trái — giá trị bên phải" ngăn nhau
+  bằng đường kẻ mảnh, và nút thao tác nằm ghim ở đáy màn.
+
+  Nút "Lấy lại vị trí" đặt ngay cạnh dòng khoảng cách như bản gốc: đứng sai chỗ
+  vài chục mét là chuyện thường, người dùng cần bấm lại đúng nơi họ đang nhìn
+  thấy con số sai.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,122 +27,221 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_md">
 
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="8dp"
-            android:layout_margin="8dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <!-- ── Khách hàng ───────────────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:id="@+id/customerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                    android:textStyle="bold"
-                    tools:text="Cửa hàng Minh Anh 12" />
-
-                <TextView
-                    android:id="@+id/customerAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"
-                    tools:text="12 Đường số 3, Quận 1" />
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <com.google.android.material.progressindicator.CircularProgressIndicator
-                        android:id="@+id/locationProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:indeterminate="true"
-                        app:indicatorSize="24dp"
-                        app:trackThickness="3dp" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
 
                     <TextView
-                        android:id="@+id/locationStatus"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        tools:text="Đang lấy vị trí…" />
+                        android:id="@+id/customerName"
+                        style="@style/Sfa.Text.Title"
+                        android:layout_width="match_parent"
+                        tools:text="Cửa hàng Minh Anh 12" />
+
+                    <TextView
+                        android:id="@+id/customerAddress"
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="2dp"
+                        tools:text="12 Đường số 3, Quận 1, TP.HCM" />
+
+                    <TextView
+                        android:id="@+id/visitInfo"
+                        style="@style/Sfa.Text.Tiny"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:paddingHorizontal="@dimen/space_sm"
+                        android:paddingVertical="2dp"
+                        android:background="@drawable/bg_chip_blue"
+                        android:textColor="@color/stateBlue"
+                        android:visibility="gone"
+                        tools:text="Đã check-in lúc 09:15"
+                        tools:visibility="visible" />
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/accuracyText"
+            <!-- ── Vị trí ───────────────────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    tools:text="Độ chính xác: 8 m" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
 
-                <TextView
-                    android:id="@+id/distanceText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    tools:text="Cách cửa hàng: 42 m" />
-
-                <TextView
-                    android:id="@+id/warningText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?attr/colorError"
-                    android:visibility="gone"
-                    tools:text="Bạn đang cách cửa hàng 820 m, vượt quá 100 m cho phép." />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/reasonLayout"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:hint="@string/checkin_reason"
-                    android:visibility="gone">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/reasonInput"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:baselineAligned="false"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/visitInfo"
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Sfa.Text.Small"
+                                android:text="@string/checkin_distance_label" />
+
+                            <TextView
+                                android:id="@+id/distanceText"
+                                style="@style/Sfa.Text.Number"
+                                android:layout_marginTop="2dp"
+                                tools:text="42 m" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/refreshButton"
+                            style="@style/Sfa.Button.Compact"
+                            android:text="@string/checkin_refresh_location"
+                            app:icon="@drawable/ic_map_pin"
+                            app:iconSize="16dp" />
+                    </LinearLayout>
+
+                    <View
+                        style="@style/Sfa.Separator"
+                        android:layout_marginTop="@dimen/space_md" />
+
+                    <LinearLayout
+                        style="@style/Sfa.InfoRow"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/checkin_status_label" />
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/locationProgress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/space_sm"
+                            android:indeterminate="true"
+                            app:indicatorColor="@color/brandRed"
+                            app:indicatorSize="14dp"
+                            app:trackThickness="2dp" />
+
+                        <TextView
+                            android:id="@+id/locationStatus"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="Sẵn sàng check-in" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Sfa.InfoRow">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/checkin_accuracy_label" />
+
+                        <TextView
+                            android:id="@+id/accuracyText"
+                            style="@style/Sfa.InfoRow.Value"
+                            tools:text="8 m" />
+                    </LinearLayout>
+
+                    <!-- Cảnh báo nền cam: ngoài bán kính, GPS lệch, vị trí giả.
+                         Nền màu để người dùng thấy ngay cả khi lướt nhanh. -->
+                    <TextView
+                        android:id="@+id/warningText"
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:padding="@dimen/space_sm"
+                        android:background="@drawable/bg_chip_orange"
+                        android:textColor="@color/stateOrange"
+                        android:visibility="gone"
+                        tools:text="Bạn đang cách cửa hàng 820 m, vượt quá 100 m cho phép."
+                        tools:visibility="visible" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Lý do &amp; ghi chú ──────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:visibility="gone"
-                    tools:text="Đã check-in lúc 09:15 · 12 phút" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
 
-        </androidx.cardview.widget.CardView>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/reasonLayout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/space_md"
+                        android:hint="@string/checkin_reason"
+                        android:visibility="gone"
+                        app:boxCornerRadiusTopStart="@dimen/card_radius"
+                        app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                        app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                        app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                        tools:visibility="visible">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/reasonInput"
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/noteLayout"
+                        style="@style/Sfa.Input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/checkin_note"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/noteInput"
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:maxLength="200"
+                            android:minLines="2"
+                            android:hint="@string/checkin_note_hint" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/actionButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:paddingVertical="14dp"
+        style="@style/Sfa.Button"
+        android:layout_margin="@dimen/space_md"
         android:text="@string/action_check_in" />
 </LinearLayout>

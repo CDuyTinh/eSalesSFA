@@ -103,6 +103,7 @@ interface VisitRepository {
         sample: LocationSample?,
         distanceMeters: Double?,
         reasonCode: String?,
+        note: String?,
         batteryPct: Int?,
     ): CheckInResult
 
