@@ -1,7 +1,9 @@
 package com.tinhcd.esalessfa.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
+import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.repository.ActiveVisit
+import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
 import com.tinhcd.esalessfa.domain.repository.OpenVisit
 import com.tinhcd.esalessfa.domain.repository.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
@@ -112,11 +114,21 @@ private class RecordingVisitRepository : VisitRepository {
 
     override suspend fun hasOpenVisit(): Boolean = false
 
+    override suspend fun prepareCheckInPhoto(
+        rawPath: String,
+        location: GeoPoint?,
+        customerName: String,
+    ): CheckInPhoto = CheckInPhoto(rawPath, 0)
+
+    override suspend fun discardCheckInPhoto(photo: CheckInPhoto) = Unit
+
     override suspend fun checkIn(
         customerId: String,
         sample: LocationSample?,
         distanceMeters: Double?,
         reasonCode: String?,
+        note: String?,
+        photo: CheckInPhoto?,
         batteryPct: Int?,
     ): VisitRepository.CheckInResult = VisitRepository.CheckInResult.Success("visit-1")
 

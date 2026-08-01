@@ -1,11 +1,20 @@
 package com.tinhcd.esalessfa.domain.repository
 
+import com.tinhcd.esalessfa.domain.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.visit.CheckInConfig
 import com.tinhcd.esalessfa.domain.visit.LocationSample
 import kotlinx.coroutines.flow.Flow
 
 /** Mã lý do bắt buộc chọn khi thao tác vượt quy định. */
 data class ReasonCode(val code: String, val name: String)
+
+/**
+ * Ảnh check-in đã nén và đóng dấu, chờ gắn vào lượt ghé.
+ *
+ * Ảnh được chụp TRƯỚC khi lượt ghé tồn tại nên phải sống tạm ở đây một quãng;
+ * [checkIn] mới là chỗ ghi nó vào bản ghi và xếp hàng đẩy lên Storage.
+ */
+data class CheckInPhoto(val path: String, val sizeBytes: Int)
 
 data class OpenVisit(
     val id: String,
@@ -98,12 +107,34 @@ interface VisitRepository {
         data class AlreadyOpen(val visit: ActiveVisit, val isSameCustomer: Boolean) : CheckInResult
     }
 
+    /**
+     * Nén, đóng dấu rồi cất ảnh vừa chụp; trả về ảnh đã xử lý.
+     *
+     * Xử lý ngay lúc chụp chứ không đợi tới lúc check-in: ảnh thô 3–8 MB nằm
+     * trong cache của camera có thể bị hệ thống thu hồi bất cứ lúc nào, và làm
+     * sớm thì lúc bấm check-in không phải chờ.
+     */
+    suspend fun prepareCheckInPhoto(
+        rawPath: String,
+        location: GeoPoint?,
+        customerName: String,
+    ): CheckInPhoto
+
+    /**
+     * Xoá một ảnh đã xử lý nhưng không dùng tới nữa, ví dụ khi bấm "Chụp lại".
+     *
+     * Ảnh nằm trong cache và chỉ được dọn tự động khi máy hết chỗ, nên chụp lại
+     * năm lần mà không xoá là để lại bốn file rác.
+     */
+    suspend fun discardCheckInPhoto(photo: CheckInPhoto)
+
     suspend fun checkIn(
         customerId: String,
         sample: LocationSample?,
         distanceMeters: Double?,
         reasonCode: String?,
         note: String?,
+        photo: CheckInPhoto?,
         batteryPct: Int?,
     ): CheckInResult
 

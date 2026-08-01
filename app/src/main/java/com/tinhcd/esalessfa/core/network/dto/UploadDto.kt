@@ -90,6 +90,13 @@ data class VisitUploadBody(
     @SerialName("is_mock_location") val isMockLocation: Boolean,
     @SerialName("battery_pct") val batteryPct: Int? = null,
     @SerialName("device_id") val deviceId: String? = null,
+    /**
+     * Đường dẫn ảnh check-in trong bucket visit-photos.
+     *
+     * Chỉ có giá trị khi ảnh đã lên tới Storage; null nghĩa là chưa đẩy xong.
+     * Đường dẫn file trong máy KHÔNG gửi lên — nó chỉ có nghĩa trên thiết bị đó.
+     */
+    @SerialName("check_in_photo_url") val checkInPhotoUrl: String? = null,
     @SerialName("client_created_at") val clientCreatedAt: String,
 )
 

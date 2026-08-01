@@ -111,10 +111,22 @@ interface VisitDao {
     // ── outbox ──
     // Outbox là một QUERY chứ không phải bảng riêng. Ghi trạng thái ngay trên bản
     // ghi nghiệp vụ giúp tránh dual-write (ghi hai nơi rồi lệch nhau).
+    /**
+     * Chỉ lấy lượt ghé đã upload xong ảnh check-in, giống cách bảng surveys chờ
+     * ảnh minh chứng.
+     *
+     * sync-upload dùng `ignoreDuplicates`, nên một lượt ghé lên server rồi thì
+     * gửi lại sẽ bị bỏ qua. Đẩy sớm lúc ảnh còn dở đồng nghĩa cột ảnh trên server
+     * rỗng vĩnh viễn — đúng thứ dùng để đối soát nhân viên có tới cửa hàng.
+     *
+     * Điều kiện đọc là: hoặc lượt ghé không có ảnh, hoặc ảnh đã lên xong (lúc đó
+     * checkInPhotoPath bị xoá và checkInPhotoUrl có giá trị).
+     */
     @Query(
         """
         SELECT * FROM visits
         WHERE syncStatus IN ('PENDING','FAILED') AND syncAttempts < :maxAttempts
+          AND (checkInPhotoPath IS NULL OR checkInPhotoUrl IS NOT NULL)
         ORDER BY clientCreatedAt LIMIT :limit
         """
     )
@@ -131,6 +143,17 @@ interface VisitDao {
 
     @Query("SELECT COUNT(*) FROM visits WHERE syncStatus IN ('PENDING','FAILED')")
     fun observePendingCount(): Flow<Int>
+    /**
+     * Ghi lại đường dẫn ảnh trên Storage sau khi đẩy lên xong.
+     *
+     * Xoá luôn đường dẫn trong máy: file đã bị xoá ngay sau khi upload nên giữ
+     * lại chỉ khiến màn hình cố mở một file không còn tồn tại.
+     *
+     * Xoá checkInPhotoPath cũng chính là tín hiệu cho [getPending] biết lượt ghé
+     * này đã đủ điều kiện đẩy lên server.
+     */
+    @Query("UPDATE visits SET checkInPhotoUrl = :url, checkInPhotoPath = NULL WHERE id = :visitId")
+    suspend fun markPhotoUploaded(visitId: String, url: String)
 }
 
 @Dao

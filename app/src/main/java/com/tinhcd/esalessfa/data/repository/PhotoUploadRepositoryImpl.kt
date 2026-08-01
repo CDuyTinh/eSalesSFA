@@ -3,6 +3,7 @@ package com.tinhcd.esalessfa.data.repository
 import com.tinhcd.esalessfa.core.common.dispatcher.DispatcherProvider
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.SurveyResultDao
+import com.tinhcd.esalessfa.core.database.dao.VisitDao
 import com.tinhcd.esalessfa.domain.repository.PhotoUploadOutcome
 import com.tinhcd.esalessfa.domain.repository.PhotoUploadRepository
 import io.github.jan.supabase.storage.Storage
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class PhotoUploadRepositoryImpl @Inject constructor(
     private val pendingUploadDao: PendingUploadDao,
     private val surveyResultDao: SurveyResultDao,
+    private val visitDao: VisitDao,
     private val storage: Storage,
     private val dispatchers: DispatcherProvider,
 ) : PhotoUploadRepository {
@@ -54,9 +56,14 @@ class PhotoUploadRepositoryImpl @Inject constructor(
 
             if (outcome.isSuccess) {
                 pendingUploadDao.updateStatus(item.id, STATUS_DONE, null)
-                // Ghi storagePath vào bản ghi ảnh: chỉ khi có giá trị này thì
-                // bài khảo sát mới đủ điều kiện đẩy lên server.
-                surveyResultDao.markPhotoUploaded(item.entityId, item.remotePath)
+                // Ghi đường dẫn trên Storage về đúng bản ghi cha. Với khảo sát,
+                // chỉ khi có giá trị này thì bài mới đủ điều kiện đẩy lên server.
+                when (item.entityType) {
+                    VisitRepositoryImpl.ENTITY_VISIT_PHOTO ->
+                        visitDao.markPhotoUploaded(item.entityId, item.remotePath)
+
+                    else -> surveyResultDao.markPhotoUploaded(item.entityId, item.remotePath)
+                }
                 file.delete()
                 uploaded++
             } else {
@@ -76,6 +83,7 @@ class PhotoUploadRepositoryImpl @Inject constructor(
 
     companion object {
         const val BUCKET_SURVEY_PHOTOS = "survey-photos"
+        const val BUCKET_VISIT_PHOTOS = "visit-photos"
 
         const val STATUS_PENDING = "PENDING"
         const val STATUS_UPLOADING = "UPLOADING"

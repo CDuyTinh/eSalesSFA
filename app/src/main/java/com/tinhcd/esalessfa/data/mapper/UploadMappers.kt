@@ -98,6 +98,7 @@ fun VisitEntity.toUploadBody() = VisitUploadBody(
     isMockLocation = isMockLocation,
     batteryPct = batteryPct,
     deviceId = deviceId,
+    checkInPhotoUrl = checkInPhotoUrl,
     clientCreatedAt = clientCreatedAt.toIso(),
 )
 

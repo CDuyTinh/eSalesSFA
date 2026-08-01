@@ -52,6 +52,16 @@ data class VisitEntity(
     val batteryPct: Int?,
     val deviceId: String?,
 
+    /**
+     * Ảnh chụp tại cửa hàng lúc check-in.
+     *
+     * [checkInPhotoPath] là file đã nén và đóng dấu nằm trong máy; nó bị xoá sau
+     * khi đẩy lên Storage thành công, lúc đó [checkInPhotoUrl] mới có giá trị.
+     * Giữ cả hai để biết ảnh đang ở đâu mà không phải dò trong bảng chờ upload.
+     */
+    val checkInPhotoPath: String? = null,
+    val checkInPhotoUrl: String? = null,
+
     // ── sync ──
     val syncStatus: SyncStatus = SyncStatus.DRAFT,
     val syncAttempts: Int = 0,

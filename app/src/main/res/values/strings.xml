@@ -156,6 +156,13 @@
     <string name="checkin_meters">%1$d m</string>
     <string name="checkin_refresh_location">Lấy lại vị trí</string>
     <string name="checkin_location_title">Vị trí</string>
+    <string name="checkin_photo_title">Ảnh tại cửa hàng</string>
+    <string name="checkin_photo_required_badge">BẮT BUỘC</string>
+    <string name="checkin_take_photo">Chụp ảnh</string>
+    <string name="checkin_retake_photo">Chụp lại</string>
+    <string name="checkin_photo_desc">Ảnh chụp tại cửa hàng lúc check-in</string>
+    <string name="checkin_photo_required">Chụp ảnh tại cửa hàng trước khi check-in</string>
+    <string name="checkin_photo_processing">Đang xử lý ảnh…</string>
     <string name="checkin_note">Ghi chú</string>
     <string name="checkin_note_hint">Ghi chú cho lượt ghé (không bắt buộc)</string>
     <string name="checkin_reason">Lý do</string>

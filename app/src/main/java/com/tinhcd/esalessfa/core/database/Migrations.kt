@@ -191,3 +191,20 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         db.execSQL("DELETE FROM `sync_state` WHERE `tableName` IN ('customers', 'products')")
     }
 }
+
+/**
+ * Ảnh chụp lúc check-in.
+ *
+ * Thêm cột chứ không dựng bảng riêng: mỗi lượt ghé chỉ có đúng một ảnh, tách
+ * bảng thì mọi truy vấn lượt ghé đều phải JOIN thêm cho một cột.
+ *
+ * Hai cột đều cho phép NULL nên lượt ghé cũ giữ nguyên giá trị NULL và không
+ * cần điền mặc định.
+ */
+val MIGRATION_3_4 = object : Migration(3, 4) {
+
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `visits` ADD COLUMN `checkInPhotoPath` TEXT")
+        db.execSQL("ALTER TABLE `visits` ADD COLUMN `checkInPhotoUrl` TEXT")
+    }
+}

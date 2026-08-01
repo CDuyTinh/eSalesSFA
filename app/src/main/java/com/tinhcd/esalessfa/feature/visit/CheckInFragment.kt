@@ -16,14 +16,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil3.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCheckInBinding
 import com.tinhcd.esalessfa.domain.visit.CheckInValidation
+import com.tinhcd.esalessfa.feature.survey.CameraFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -65,6 +68,13 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
 
         binding.refreshButton.setOnClickListener { viewModel.refreshLocation() }
 
+        val openCamera = View.OnClickListener {
+            findNavController().navigate(R.id.action_checkIn_to_camera)
+        }
+        binding.photoBox.setOnClickListener(openCamera)
+        binding.retakeButton.setOnClickListener(openCamera)
+        observeCameraResult()
+
         binding.actionButton.setOnClickListener {
             val state = viewModel.uiState.value
             val note = binding.noteInput.text?.toString()
@@ -74,6 +84,10 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
             } else {
                 if (state.needsReason && selectedReason == null) {
                     Snackbar.make(view, R.string.checkin_reason_required, Snackbar.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (state.needsPhoto && state.photo == null) {
+                    Snackbar.make(view, R.string.checkin_photo_required, Snackbar.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 viewModel.checkIn(selectedReason, note, batteryPercent())
@@ -99,6 +113,8 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                         } ?: getString(R.string.value_empty)
 
                         renderValidation(binding, state.validation)
+
+                        bindPhoto(binding, state)
 
                         binding.reasonLayout.isVisible = state.needsReason
                         if (state.reasonCodes.isNotEmpty()) {
@@ -164,6 +180,48 @@ class CheckInFragment : Fragment(R.layout.fragment_check_in) {
                 }
             }
         }
+    }
+
+    /**
+     * Ảnh đã chụp thì chính nó lấp đầy ô, chưa chụp thì ô là một nút lớn.
+     *
+     * Nhãn "BẮT BUỘC" chỉ hiện khi đang đứng trong bán kính: ra ngoài bán kính
+     * thì lượt ghé đi bằng lý do, đòi thêm ảnh lúc đó là bắt người dùng làm việc
+     * thừa. Xem CheckInUseCase để biết vì sao quy tắc chia như vậy.
+     */
+    private fun bindPhoto(binding: FragmentCheckInBinding, state: CheckInUiState) {
+        val photo = state.photo
+
+        binding.photoRequiredBadge.isVisible = state.needsPhoto && photo == null
+        binding.photoPreview.isVisible = photo != null
+        binding.photoPlaceholder.isVisible = photo == null
+        binding.retakeButton.isVisible = photo != null
+
+        binding.photoHint.setText(
+            if (state.isProcessingPhoto) R.string.checkin_photo_processing
+            else R.string.checkin_take_photo
+        )
+
+        if (photo != null) {
+            // File ảnh mang tên duy nhất cho mỗi lần chụp nên không sợ Coil trả
+            // lại ảnh cũ trong cache khi người dùng bấm "Chụp lại".
+            binding.photoPreview.load(File(photo.path))
+        }
+    }
+
+    private fun observeCameraResult() {
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>(CameraFragment.RESULT_PHOTO_PATH)
+            ?.observe(viewLifecycleOwner) { path ->
+                // Xoá ngay sau khi nhận: giữ lại thì mỗi lần quay về màn này
+                // LiveData phát lại giá trị cũ và ảnh bị xử lý thêm một lần nữa.
+                findNavController().currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.remove<String>(CameraFragment.RESULT_PHOTO_PATH)
+
+                viewModel.onPhotoCaptured(path)
+            }
     }
 
     /**

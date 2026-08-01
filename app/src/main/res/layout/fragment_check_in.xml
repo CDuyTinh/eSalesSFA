@@ -180,6 +180,97 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ── Ảnh tại cửa hàng ─────────────────────────────────────
+                 Ô chụp ảnh theo check_in_image của bản gốc: cả khung là nút
+                 chụp, chụp xong thì chính ảnh lấp đầy khung và nút "Chụp lại"
+                 nằm nép ở góc dưới. -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Sfa.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_lg">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Sfa.Text.Small"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/checkin_photo_title" />
+
+                        <TextView
+                            android:id="@+id/photoRequiredBadge"
+                            style="@style/Sfa.Badge"
+                            android:text="@string/checkin_photo_required_badge"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/photoBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/checkin_photo_height"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:background="@drawable/bg_photo_slot"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:id="@+id/photoPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/checkin_photo_desc"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/photoPlaceholder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/task_icon_size"
+                                android:layout_height="@dimen/task_icon_size"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_camera" />
+
+                            <TextView
+                                android:id="@+id/photoHint"
+                                style="@style/Sfa.Text.Small"
+                                android:layout_marginTop="@dimen/space_sm"
+                                android:textColor="@color/brandRed"
+                                android:text="@string/checkin_take_photo" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/retakeButton"
+                            style="@style/Sfa.Button.Compact"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="@dimen/space_sm"
+                            android:text="@string/checkin_retake_photo"
+                            android:visibility="gone"
+                            app:icon="@drawable/ic_camera"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/white"
+                            tools:visibility="visible" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- ── Lý do &amp; ghi chú ──────────────────────────────────── -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Sfa.Card"

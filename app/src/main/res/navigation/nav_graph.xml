@@ -184,5 +184,8 @@
         <argument
             android:name="customerId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_checkIn_to_camera"
+            app:destination="@id/cameraFragment" />
     </fragment>
 </navigation>

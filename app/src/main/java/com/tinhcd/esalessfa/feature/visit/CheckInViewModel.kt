@@ -3,6 +3,7 @@ package com.tinhcd.esalessfa.feature.visit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
 import com.tinhcd.esalessfa.domain.repository.LocationSource
 import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.OpenVisit
@@ -37,7 +38,9 @@ data class CheckInUiState(
     val config: CheckInConfig = CheckInConfig(),
     val openVisit: OpenVisit? = null,
     val reasonCodes: List<ReasonCode> = emptyList(),
+    val photo: CheckInPhoto? = null,
     val isWaitingLocation: Boolean = true,
+    val isProcessingPhoto: Boolean = false,
     val isSaving: Boolean = false,
 ) {
     val isCheckedIn: Boolean get() = openVisit != null
@@ -45,8 +48,11 @@ data class CheckInUiState(
     /** Ngoài bán kính vẫn cho đi tiếp, nhưng phải kèm lý do. */
     val needsReason: Boolean get() = validation is CheckInValidation.OverDistance
 
+    /** Đứng trong bán kính thì ảnh tại cửa hàng là bắt buộc — xem CheckInUseCase. */
+    val needsPhoto: Boolean get() = validation is CheckInValidation.Valid
+
     val canProceed: Boolean
-        get() = !isSaving &&
+        get() = !isSaving && !isProcessingPhoto &&
             (validation is CheckInValidation.Valid || validation is CheckInValidation.OverDistance)
 }
 
@@ -148,6 +154,35 @@ class CheckInViewModel @Inject constructor(
         startLocation()
     }
 
+    /**
+     * Nhận ảnh vừa chụp: nén, đóng dấu rồi giữ lại chờ bấm check-in.
+     *
+     * Toạ độ đóng dấu lấy từ chính mẫu vị trí đang xác thực, nên dấu trên ảnh và
+     * toạ độ ghi vào lượt ghé luôn là một.
+     */
+    fun onPhotoCaptured(rawPath: String) {
+        val state = _uiState.value
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isProcessingPhoto = true) }
+            runCatching {
+                visitRepository.prepareCheckInPhoto(
+                    rawPath = rawPath,
+                    location = state.sample?.point,
+                    customerName = state.customer?.name.orEmpty(),
+                )
+            }.onSuccess { photo ->
+                // Ảnh cũ chỉ bị bỏ SAU khi có ảnh mới: xử lý hỏng giữa chừng thì
+                // người dùng vẫn còn tấm đã chụp, không mất trắng.
+                state.photo?.let { visitRepository.discardCheckInPhoto(it) }
+                _uiState.update { it.copy(photo = photo, isProcessingPhoto = false) }
+            }.onFailure { e ->
+                _uiState.update { it.copy(isProcessingPhoto = false) }
+                _events.send(CheckInEvent.Error(e.message ?: "Không xử lý được ảnh"))
+            }
+        }
+    }
+
     fun checkIn(reasonCode: String?, note: String?, batteryPct: Int?) {
         val state = _uiState.value
         if (state.isSaving) return
@@ -166,6 +201,7 @@ class CheckInViewModel @Inject constructor(
                     validation = state.validation,
                     reasonCode = reasonCode,
                     note = note?.takeIf { it.isNotBlank() },
+                    photo = state.photo,
                     batteryPct = batteryPct,
                 )
             }.onSuccess { outcome ->
