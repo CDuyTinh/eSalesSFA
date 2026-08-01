@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền tối dần từ dưới lên, đặt trên ảnh cửa hàng để chữ trắng luôn đọc được. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="90"
+        android:startColor="#CC979797"
+        android:endColor="@android:color/transparent" />
+</shape>

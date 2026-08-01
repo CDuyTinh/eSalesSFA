@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tab "Công việc": các việc làm được trong lượt ghé đang mở. Tab này chỉ tồn tại
+  khi đang check-in tại chính cửa hàng đang xem, nên ở đây không cần kiểm tra
+  lại điều kiện.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingVertical="@dimen/space_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/visitHint"
+            style="@style/Sfa.Text.Tiny"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/space_md"
+            android:paddingHorizontal="@dimen/space_md"
+            android:paddingVertical="@dimen/space_sm"
+            android:background="@drawable/bg_chip_blue"
+            android:textColor="@color/stateBlue"
+            tools:text="Đang trong lượt ghé từ 09:15. Nhớ check-out khi rời cửa hàng." />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Sfa.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md">
+
+            <!-- Lưới 3 cột như GridView của bản gốc. Dùng GridLayout của nền
+                 tảng chứ không phải RecyclerView: danh sách việc cố định vài ô,
+                 nuôi thêm một adapter chỉ để hiện bốn ô là thừa. -->
+            <GridLayout
+                android:id="@+id/taskGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:paddingVertical="@dimen/space_sm" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

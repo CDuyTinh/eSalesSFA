@@ -94,8 +94,16 @@ interface AppConfigDao {
 @Dao
 interface CustomerDao {
 
-    @Query("SELECT * FROM customers WHERE id = :id")
-    suspend fun getById(id: String): CustomerEntity?
+    /** Kèm tên kênh vì màn chi tiết hiện nó ngay dòng thứ hai của thẻ thông tin. */
+    @Query(
+        """
+        SELECT c.*, ch.name AS channelName
+        FROM customers c
+        LEFT JOIN channels ch ON ch.id = c.channelId
+        WHERE c.id = :id
+        """
+    )
+    suspend fun getById(id: String): CustomerRow?
 
     @Query(
         """

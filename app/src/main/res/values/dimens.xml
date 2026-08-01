@@ -32,6 +32,11 @@
     <dimen name="map_marker_width">36dp</dimen>
     <dimen name="map_marker_height">48dp</dimen>
     <dimen name="map_marker_number_offset">14dp</dimen>
+    <dimen name="customer_photo_height">260dp</dimen>
+    <dimen name="photo_header_radius">20dp</dimen>
+    <dimen name="tab_chip_height">38dp</dimen>
+    <dimen name="task_icon_size">24dp</dimen>
+    <dimen name="task_icon_box">52dp</dimen>
     <!-- Bo góc nút chọn kỳ: vuông vắn hơn dáng viên thuốc mặc định của Material 3. -->
     <dimen name="segment_radius">8dp</dimen>
     <dimen name="text_number_hero">30sp</dimen>

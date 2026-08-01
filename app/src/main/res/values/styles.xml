@@ -88,6 +88,19 @@
         <item name="android:textSize">@dimen/text_small</item>
     </style>
 
+    <!-- Một dòng "nhãn — giá trị" trong thẻ thông tin. -->
+    <style name="Sfa.InfoRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_sm</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Sfa.InfoRow.Value" parent="Sfa.Text.Small">
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">@color/textDark</item>
+    </style>
+
     <!-- ── Thẻ khách hàng ──────────────────────────────────────────────── -->
     <!-- Một dòng thông tin phụ: biểu tượng dẫn rồi tới nội dung. -->
     <style name="Sfa.CustomerRow" parent="">
@@ -107,6 +120,32 @@
     <style name="Sfa.Thumb" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/card_radius</item>
+    </style>
+
+    <!--
+      Chip tab của màn chi tiết khách hàng.
+
+      Nút checkable chứ không phải tab: hàng chip nằm trên nền đỏ nên chip đang
+      chọn phải là mảng trắng, chip còn lại chỉ có viền trắng mờ — đảo lại so
+      với các bộ chọn nền trắng ở nơi khác trong app.
+    -->
+    <style name="Sfa.TabChip" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/tab_chip_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/tab_chip_text</item>
+        <item name="android:paddingHorizontal">@dimen/space_xs</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:checkable">true</item>
+        <item name="cornerRadius">@dimen/segment_radius</item>
+        <item name="backgroundTint">@color/tab_chip_background</item>
+        <item name="strokeColor">@color/tab_chip_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/whiteRipple</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <!-- ── Dashboard ───────────────────────────────────────────────────── -->

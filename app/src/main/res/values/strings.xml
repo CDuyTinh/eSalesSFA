@@ -105,6 +105,12 @@
     <string name="customer_debt">Dư nợ</string>
     <string name="customer_available">Còn được mua</string>
     <string name="customer_actions">Thao tác</string>
+    <string name="customer_channel">Kênh</string>
+    <string name="customer_tab_work">Công việc</string>
+    <string name="customer_tab_info">Thông tin</string>
+    <string name="customer_tab_program">Chương trình</string>
+    <string name="customer_program_empty">Chưa có chương trình nào cho khách hàng này</string>
+    <string name="customer_visit_since">Đang trong lượt ghé từ %1$s. Nhớ check-out khi rời cửa hàng.</string>
     <string name="action_check_in">Check-in</string>
     <string name="action_stock_count">Kiểm kê tồn kho</string>
     <string name="action_take_order">Đặt hàng</string>
@@ -168,7 +174,7 @@
     <string name="stock_saved">Đã lưu phiếu kiểm kê, chờ đồng bộ</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_title">Báo cáo &amp; KPI</string>
+    <string name="dashboard_title">Tổng quan</string>
     <string name="dashboard_open">Xem báo cáo</string>
     <string name="dashboard_today">Tổng kết ngày</string>
     <string name="dashboard_orders">Đơn hàng</string>

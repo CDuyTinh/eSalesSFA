@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chip đang chọn không cần viền vì đã là mảng trắng; chip còn lại chỉ có một
+     nét trắng mờ để thấy được vùng bấm trên nền đỏ. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@android:color/transparent" android:state_checked="true" />
+    <item android:color="@color/whiteLine" />
+</selector>

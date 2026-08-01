@@ -62,7 +62,8 @@ class CustomerRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun getById(id: String): Customer? = customerDao.getById(id)?.toDomain()
+    override suspend fun getById(id: String): Customer? =
+        customerDao.getById(id)?.let { it.customer.toDomain(it.channelName) }
 
     override fun observeCustomerCount(): Flow<Int> = queryDao.observeCount()
 

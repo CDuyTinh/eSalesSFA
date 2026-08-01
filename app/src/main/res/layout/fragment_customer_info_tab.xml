@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tab "Thông tin khách hàng": hồ sơ, công nợ, và cửa vào lượt ghé.
+
+  Nút check-in nằm ở tab này chứ không phải tab Công việc: khi chưa ghé thì tab
+  Công việc còn chưa tồn tại, mà đây lại đúng là lúc cần bấm check-in nhất.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingVertical="@dimen/space_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Sfa.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_lg">
+
+                <TextView
+                    style="@style/Sfa.Text.Body"
+                    android:textStyle="bold"
+                    android:text="@string/customer_info" />
+
+                <LinearLayout
+                    style="@style/Sfa.InfoRow"
+                    android:layout_marginTop="@dimen/space_md">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_code" />
+
+                    <TextView
+                        android:id="@+id/code"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="KH0012" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Sfa.InfoRow">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_channel" />
+
+                    <TextView
+                        android:id="@+id/channel"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="Horeca" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Sfa.InfoRow">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_address" />
+
+                    <TextView
+                        android:id="@+id/address"
+                        style="@style/Sfa.InfoRow.Value"
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        tools:text="12 Đường số 3, Quận 1" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Sfa.InfoRow">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_phone" />
+
+                    <TextView
+                        android:id="@+id/phone"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="0901234567" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Sfa.InfoRow">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_location" />
+
+                    <TextView
+                        android:id="@+id/location"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="10.77690, 106.70090" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Công nợ: "Còn được mua" tô đỏ vì đây là con số quyết định có chốt
+             được đơn hay không. -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Sfa.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_lg">
+
+                <TextView
+                    style="@style/Sfa.Text.Body"
+                    android:textStyle="bold"
+                    android:text="@string/customer_credit" />
+
+                <LinearLayout
+                    style="@style/Sfa.InfoRow"
+                    android:layout_marginTop="@dimen/space_md">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_credit_limit" />
+
+                    <TextView
+                        android:id="@+id/creditLimit"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="50.000.000" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Sfa.InfoRow">
+
+                    <TextView
+                        style="@style/Sfa.Text.Small"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_debt" />
+
+                    <TextView
+                        android:id="@+id/debtAmount"
+                        style="@style/Sfa.InfoRow.Value"
+                        tools:text="1.200.000" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/space_sm"
+                    android:background="@color/lineSoft" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        style="@style/Sfa.Text.Body"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/customer_available" />
+
+                    <TextView
+                        android:id="@+id/availableCredit"
+                        style="@style/Sfa.Text.Body"
+                        android:textStyle="bold"
+                        android:textColor="@color/brandRed"
+                        tools:text="48.800.000" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Sfa.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_lg">
+
+                <TextView
+                    android:id="@+id/stepHint"
+                    style="@style/Sfa.Text.Tiny"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/space_sm"
+                    android:background="@drawable/bg_chip_red"
+                    android:textColor="@color/brandRed"
+                    android:text="@string/step_need_checkin" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/checkInButton"
+                    style="@style/Sfa.Button"
+                    android:layout_marginTop="@dimen/space_md"
+                    android:text="@string/action_check_in" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

@@ -101,7 +101,7 @@ class OrderRepositoryImpl @Inject constructor(
         val salesperson = requireNotNull(salespersonDao.getCurrent()) {
             "Chưa có hồ sơ nhân viên — cần đồng bộ trước khi đặt hàng"
         }
-        val customer = requireNotNull(customerDao.getById(customerId)) {
+        val customer = requireNotNull(customerDao.getById(customerId)?.customer) {
             "Không tìm thấy khách hàng $customerId"
         }
 

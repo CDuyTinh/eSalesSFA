@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tab "Chương trình": chương trình trưng bày, tích luỹ, POSM của khách hàng.
+  Chưa có dữ liệu nào cho phần này nên tạm để trống, nhưng vẫn giữ tab để bố cục
+  không nhảy khi bổ sung sau.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/Sfa.Text.Small"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/space_xl"
+        android:text="@string/customer_program_empty" />
+</FrameLayout>

@@ -1,251 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Màn chi tiết khách hàng theo CustomerInforActivity của bản eSales gốc: ảnh cửa
+  hàng co giãn ở trên, tên và mã nằm trên nền chuyển sắc, toolbar ghim lại khi
+  cuộn, và hàng tab ở đáy phần đầu.
+
+  Tab "Công việc" chỉ có mặt khi đang check-in TẠI cửa hàng này nên số tab thay
+  đổi lúc chạy; vì vậy nội dung tab do code nạp vào container, không khai cứng.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/img">
+    android:background="?android:attr/colorBackground">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Sfa.Toolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@android:drawable/ic_menu_revert" />
+        android:layout_height="wrap_content"
+        android:background="@color/brandRed"
+        app:elevation="0dp">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/space_lg">
-
-        <LinearLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:contentScrim="@color/brandRed"
+            app:titleEnabled="false"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <!-- Thông tin -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
+            <!-- Bo hai góc dưới của khối ảnh, giống RoundedView của bản gốc.
+                 Việc bo do code làm (View.roundBottomCorners): cắt bằng outline
+                 thì ảnh và dải tối bên trong cùng bị cắt theo, còn nền bo sẵn
+                 của MaterialCardView chỉ bo phần nền, để lộ hai góc tối. -->
+            <FrameLayout
+                android:id="@+id/photoHeader"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="@dimen/customer_photo_height"
+                android:background="@color/brandRedLight"
+                app:layout_collapseMode="parallax">
 
+                <!-- Chữ cái đầu tên làm nền: master data nhiều khách chưa có ảnh,
+                     ô trống trơn nhìn như đang tải lỗi. -->
+                <TextView
+                    android:id="@+id/photoInitial"
+                    style="@style/Sfa.Text.Brand"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    tools:text="C" />
+
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:importantForAccessibility="no"
+                    tools:visibility="visible" />
+
+                <!-- Nền tối dần từ dưới lên để chữ trắng đọc được trên mọi ảnh. -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/bg_photo_scrim"
                     android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
+                    android:paddingHorizontal="@dimen/space_lg"
+                    android:paddingTop="@dimen/space_xl"
+                    android:paddingBottom="@dimen/space_md">
 
                     <TextView
-                        style="@style/Sfa.Text.Body"
-                        android:textStyle="bold"
-                        android:text="@string/customer_info" />
-
-                    <LinearLayout
+                        android:id="@+id/name"
+                        style="@style/Sfa.Text.Title"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_code" />
-                        <TextView
-                            android:id="@+id/code"
-                            style="@style/Sfa.Text.Small"
-                            android:textColor="@color/textDark"
-                            tools:text="KH0012" />
-                    </LinearLayout>
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textColor="@color/white"
+                        tools:text="Cửa hàng Bình Minh 4" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_address" />
-                        <TextView
-                            android:id="@+id/address"
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="2"
-                            android:gravity="end"
-                            android:textColor="@color/textDark"
-                            tools:text="12 Đường số 3, Quận 1" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_phone" />
-                        <TextView
-                            android:id="@+id/phone"
-                            style="@style/Sfa.Text.Small"
-                            android:textColor="@color/textDark"
-                            tools:text="0901234567" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_location" />
-                        <TextView
-                            android:id="@+id/location"
-                            style="@style/Sfa.Text.Small"
-                            android:textColor="@color/textDark"
-                            tools:text="10.77690, 106.70090" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/code"
+                        style="@style/Sfa.Text.Small"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/white"
+                        tools:text="KH0004" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
-            <!-- Công nợ: "Còn được mua" tô đỏ vì đây là con số quyết định có
-                 chốt được đơn hay không. -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Sfa.Toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:navigationIconTint="@color/white"
+                app:title="@string/customer_tab_info"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
+        <!--
+          Ba tab là ba chip rời nhau, theo Ext.TabLayout.Focus.Primary của bản
+          gốc. Không dùng TabLayout: hàng tab này nằm trên nền đỏ, mỗi chip cần
+          nền riêng và một khoảng hở giữa các chip — TabLayout không có thuộc
+          tính nào cho khoảng hở, còn nền chip thì nó tự vẽ lệch khỏi chữ. Ba nút
+          checkable xếp theo weight cho ra đúng hình mong muốn và dễ đọc hơn.
 
-                    <TextView
-                        style="@style/Sfa.Text.Body"
-                        android:textStyle="bold"
-                        android:text="@string/customer_credit" />
+          Chip "Công việc" bị ẩn khi không được thao tác, nên hai chip đầu mang
+          lề phải: bỏ chip đầu đi thì hàng còn lại vẫn cách nhau đúng như cũ.
+        -->
+        <LinearLayout
+            android:id="@+id/tabRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_md"
+            android:paddingVertical="@dimen/space_md">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_credit_limit" />
-                        <TextView
-                            android:id="@+id/creditLimit"
-                            style="@style/Sfa.Text.Small"
-                            android:textColor="@color/textDark"
-                            tools:text="50.000.000" />
-                    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabWork"
+                style="@style/Sfa.TabChip"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:text="@string/customer_tab_work" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/Sfa.Text.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_debt" />
-                        <TextView
-                            android:id="@+id/debtAmount"
-                            style="@style/Sfa.Text.Small"
-                            android:textColor="@color/textDark"
-                            tools:text="1.200.000" />
-                    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabInfo"
+                style="@style/Sfa.TabChip"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:text="@string/customer_tab_info" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="@dimen/space_sm"
-                        android:background="@color/lineGray" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView
-                            style="@style/Sfa.Text.Body"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/customer_available" />
-                        <TextView
-                            android:id="@+id/availableCredit"
-                            style="@style/Sfa.Text.Body"
-                            android:textStyle="bold"
-                            android:textColor="@color/brandRed"
-                            tools:text="48.800.000" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Các bước viếng thăm -->
-            <com.google.android.material.card.MaterialCardView
-                style="@style/Sfa.Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_lg">
-
-                    <TextView
-                        style="@style/Sfa.Text.Body"
-                        android:textStyle="bold"
-                        android:text="@string/customer_actions" />
-
-                    <TextView
-                        android:id="@+id/stepHint"
-                        style="@style/Sfa.Text.Tiny"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:padding="@dimen/space_sm"
-                        android:background="@drawable/bg_chip_red"
-                        android:textColor="@color/brandRed"
-                        android:text="@string/step_need_checkin" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/checkInButton"
-                        style="@style/Sfa.Button"
-                        android:layout_marginTop="@dimen/space_md"
-                        android:text="@string/action_check_in" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/stockButton"
-                        style="@style/Sfa.Button.Outlined"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:text="@string/action_stock_count" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/surveyButton"
-                        style="@style/Sfa.Button.Outlined"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:text="@string/action_survey" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/orderButton"
-                        style="@style/Sfa.Button.Outlined"
-                        android:layout_marginTop="@dimen/space_sm"
-                        android:text="@string/action_take_order" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabProgram"
+                style="@style/Sfa.TabChip"
+                android:text="@string/customer_tab_program" />
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/tabContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

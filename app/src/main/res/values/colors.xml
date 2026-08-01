@@ -33,6 +33,10 @@
     -->
     <color name="lineSoft">#E3E3E8</color>
 
+    <!-- Trắng mờ, dùng cho viền và hiệu ứng chạm của các nút đặt trên nền đỏ. -->
+    <color name="whiteLine">#66FFFFFF</color>
+    <color name="whiteRipple">#33FFFFFF</color>
+
     <!-- Nửa trên màn Login: gần như trắng, phớt hồng rất nhạt. -->
     <color name="loginTop">#FFFFFF</color>
     <color name="loginTopTint">#FDF1F2</color>
