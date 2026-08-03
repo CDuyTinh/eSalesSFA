@@ -8,13 +8,12 @@ import com.tinhcd.esalessfa.domain.promotion.OrderTotals
 import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
 import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
 import com.tinhcd.esalessfa.domain.promotion.model.PromotionResult
-import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.ProductRepository
-import com.tinhcd.esalessfa.domain.repository.PromotionRepository
 import com.tinhcd.esalessfa.domain.usecase.BuildOrderLineResult
 import com.tinhcd.esalessfa.domain.usecase.BuildOrderLineUseCase
 import com.tinhcd.esalessfa.domain.usecase.CalculateOrderUseCase
 import com.tinhcd.esalessfa.domain.usecase.ConfirmOrderUseCase
+import com.tinhcd.esalessfa.domain.usecase.DescribeFreeItemsUseCase
+import com.tinhcd.esalessfa.domain.usecase.LoadOrderContextUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,9 +56,8 @@ sealed interface OrderEvent {
 
 @HiltViewModel
 class OrderEditViewModel @Inject constructor(
-    private val customerRepository: CustomerRepository,
-    private val productRepository: ProductRepository,
-    private val promotionRepository: PromotionRepository,
+    private val loadOrderContext: LoadOrderContextUseCase,
+    private val describeFreeItems: DescribeFreeItemsUseCase,
     private val buildOrderLine: BuildOrderLineUseCase,
     private val calculateOrder: CalculateOrderUseCase,
     private val confirmOrder: ConfirmOrderUseCase,
@@ -81,8 +79,9 @@ class OrderEditViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiState.update { it.copy(customer = customerRepository.getById(customerId)) }
-            programs = promotionRepository.activePrograms()
+            val context = loadOrderContext(customerId)
+            _uiState.update { it.copy(customer = context.customer) }
+            programs = context.programs
             recalculate()
         }
     }
@@ -202,9 +201,9 @@ class OrderEditViewModel @Inject constructor(
         cart += decorated
 
         viewModelScope.launch {
-            val freeUi = result.freeItems.map { free ->
+            val freeUi = describeFreeItems(result.freeItems).map { free ->
                 FreeItemUi(
-                    productName = productRepository.getById(free.productId)?.name ?: free.productId,
+                    productName = free.productName,
                     qty = free.qty,
                     programCode = free.programCode,
                 )

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tinhcd.esalessfa.domain.model.ProductUom
-import com.tinhcd.esalessfa.domain.repository.ProductRepository
+import com.tinhcd.esalessfa.domain.usecase.LoadQtyOptionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,13 +23,12 @@ data class InputQtyUiState(
  * Trạng thái của hộp thoại nhập số lượng.
  *
  * Giá đổi theo đơn vị (Thùng khác Lẻ) nên phải tra lại mỗi khi user đổi chip.
- * Việc tra giá và chọn đơn vị mặc định trước đây nằm ngay trong DialogFragment,
- * tức là hộp thoại tự cầm ProductRepository — cùng lỗi với các Fragment tự đọc
- * dữ liệu, chỉ nhỏ hơn.
+ * Việc chọn đơn vị mặc định và tra giá nằm ở [LoadQtyOptionsUseCase] — đó là
+ * quy tắc nghiệp vụ, để trong ViewModel thì chỉ test được bằng cách dựng Android.
  */
 @HiltViewModel
 class InputQtyViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
+    private val loadQtyOptions: LoadQtyOptionsUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,27 +41,29 @@ class InputQtyViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val uoms = productRepository.getById(productId)?.uoms.orEmpty()
-
-            // Ưu tiên đơn vị đang sửa, rồi tới đơn vị bán mặc định của sản phẩm.
-            val initial = presetUom
-                ?: uoms.firstOrNull { it.isDefaultSale }?.code
-                ?: uoms.firstOrNull()?.code
-                ?: ""
-
-            _uiState.update { it.copy(uoms = uoms, selectedUom = initial) }
-            if (initial.isNotEmpty()) loadPrice(initial)
+            val options = loadQtyOptions(productId, priceGroupId, presetUom)
+            _uiState.update {
+                it.copy(
+                    uoms = options.uoms,
+                    selectedUom = options.selectedUom,
+                    unitPrice = options.unitPrice,
+                )
+            }
         }
     }
 
+    /**
+     * Đổi chip đơn vị hiện ngay, giá điền vào sau.
+     *
+     * Đợi tra xong giá rồi mới đổi chip thì người dùng bấm mà chip đứng im một
+     * nhịp, tưởng máy không nhận.
+     */
     fun onUomSelected(code: String) {
         _uiState.update { it.copy(selectedUom = code) }
-        viewModelScope.launch { loadPrice(code) }
-    }
-
-    private suspend fun loadPrice(uom: String) {
-        val price = productRepository.getPrice(priceGroupId, productId, uom) ?: 0L
-        _uiState.update { it.copy(unitPrice = price) }
+        viewModelScope.launch {
+            val options = loadQtyOptions(productId, priceGroupId, code)
+            _uiState.update { it.copy(unitPrice = options.unitPrice) }
+        }
     }
 
     companion object {

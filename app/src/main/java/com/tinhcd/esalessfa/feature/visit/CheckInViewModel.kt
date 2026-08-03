@@ -9,6 +9,7 @@ import com.tinhcd.esalessfa.domain.model.Customer
 import com.tinhcd.esalessfa.domain.repository.OpenVisit
 import com.tinhcd.esalessfa.domain.repository.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
+import com.tinhcd.esalessfa.domain.usecase.AddCheckInPhotoUseCase
 import com.tinhcd.esalessfa.domain.usecase.CheckInOutcome
 import com.tinhcd.esalessfa.domain.usecase.CheckInUseCase
 import com.tinhcd.esalessfa.domain.usecase.CheckOutResult
@@ -70,6 +71,7 @@ class CheckInViewModel @Inject constructor(
     private val visitRepository: VisitRepository,
     private val locationSource: LocationSource,
     private val loadCheckInContext: LoadCheckInContextUseCase,
+    private val addCheckInPhoto: AddCheckInPhotoUseCase,
     private val validateCheckIn: ValidateCheckInUseCase,
     private val checkInUseCase: CheckInUseCase,
     private val checkOutUseCase: CheckOutUseCase,
@@ -166,15 +168,13 @@ class CheckInViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isProcessingPhoto = true) }
             runCatching {
-                visitRepository.prepareCheckInPhoto(
+                addCheckInPhoto(
                     rawPath = rawPath,
+                    previous = state.photo,
                     location = state.sample?.point,
                     customerName = state.customer?.name.orEmpty(),
                 )
             }.onSuccess { photo ->
-                // Ảnh cũ chỉ bị bỏ SAU khi có ảnh mới: xử lý hỏng giữa chừng thì
-                // người dùng vẫn còn tấm đã chụp, không mất trắng.
-                state.photo?.let { visitRepository.discardCheckInPhoto(it) }
                 _uiState.update { it.copy(photo = photo, isProcessingPhoto = false) }
             }.onFailure { e ->
                 _uiState.update { it.copy(isProcessingPhoto = false) }
