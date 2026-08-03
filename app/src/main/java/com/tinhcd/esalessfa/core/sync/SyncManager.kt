@@ -11,8 +11,10 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
+import com.tinhcd.esalessfa.domain.sync.SyncPhase
 import com.tinhcd.esalessfa.domain.sync.SyncRun
 import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
+import com.tinhcd.esalessfa.domain.sync.SyncTables
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -124,20 +126,25 @@ class SyncManager @Inject constructor(
     private fun WorkInfo?.toSyncRun(): SyncRun {
         if (this == null) return SyncRun()
 
-        val (page, rows, table) = SyncDownloadWorker.progressOf(progress)
+        val snapshot = SyncDownloadWorker.progressOf(progress)
 
         return when (state) {
             WorkInfo.State.RUNNING -> SyncRun(
                 status = SyncRunStatus.RUNNING,
-                page = page,
-                totalRows = rows,
-                currentTable = table,
+                page = snapshot.page,
+                totalRows = snapshot.totalRows,
+                currentTable = snapshot.currentTable,
+                doneTables = snapshot.doneTables,
             )
 
             WorkInfo.State.SUCCEEDED -> SyncRun(
                 status = SyncRunStatus.SUCCEEDED,
-                page = outputData.getInt(SyncDownloadWorker.KEY_PAGE, page),
-                totalRows = outputData.getInt(SyncDownloadWorker.KEY_TOTAL_ROWS, rows),
+                page = outputData.getInt(SyncDownloadWorker.KEY_PAGE, snapshot.page),
+                totalRows = outputData.getInt(
+                    SyncDownloadWorker.KEY_TOTAL_ROWS,
+                    snapshot.totalRows,
+                ),
+                doneTables = SyncTables.ALL.toSet(),
             )
 
             WorkInfo.State.FAILED -> SyncRun(
@@ -182,19 +189,26 @@ class SyncManager @Inject constructor(
                 status = SyncRunStatus.SUCCEEDED,
                 page = download?.outputData?.getInt(SyncDownloadWorker.KEY_PAGE, 0) ?: 0,
                 totalRows = download?.outputData?.getInt(SyncDownloadWorker.KEY_TOTAL_ROWS, 0) ?: 0,
+                doneTables = SyncTables.ALL.toSet(),
             )
         }
 
         // Số trang/số dòng chỉ có ý nghĩa ở bước tải xuống; bước gửi lên chạy
         // nhanh nên để trống là đủ.
-        val (page, rows, table) = SyncDownloadWorker.progressOf(
-            download?.progress ?: Data.EMPTY
-        )
+        val snapshot = SyncDownloadWorker.progressOf(download?.progress ?: Data.EMPTY)
+
+        // Việc tải xuống còn BLOCKED nghĩa là việc gửi lên chưa xong — màn hình
+        // nói rõ đang ở bước nào thay vì để người dùng nhìn thanh 0% đứng yên.
+        val phase =
+            if (download?.state == WorkInfo.State.RUNNING) SyncPhase.DOWNLOAD else SyncPhase.UPLOAD
+
         return SyncRun(
             status = SyncRunStatus.RUNNING,
-            page = page,
-            totalRows = rows,
-            currentTable = table,
+            phase = phase,
+            page = snapshot.page,
+            totalRows = snapshot.totalRows,
+            currentTable = snapshot.currentTable,
+            doneTables = snapshot.doneTables,
         )
     }
 

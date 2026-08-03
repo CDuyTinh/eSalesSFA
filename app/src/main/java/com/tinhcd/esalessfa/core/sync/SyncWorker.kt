@@ -36,6 +36,7 @@ class SyncDownloadWorker @AssistedInject constructor(
                         KEY_PAGE to progress.page,
                         KEY_TOTAL_ROWS to progress.totalRows,
                         KEY_TABLE to progress.currentTable,
+                        KEY_DONE_TABLES to progress.doneTables.toTypedArray(),
                     )
                 )
 
@@ -66,13 +67,23 @@ class SyncDownloadWorker @AssistedInject constructor(
         const val KEY_PAGE = "page"
         const val KEY_TOTAL_ROWS = "total_rows"
         const val KEY_TABLE = "table"
+        const val KEY_DONE_TABLES = "done_tables"
         const val KEY_DURATION = "duration_ms"
         const val KEY_ERROR = "error"
 
-        fun progressOf(data: Data): Triple<Int, Int, String?> = Triple(
-            data.getInt(KEY_PAGE, 0),
-            data.getInt(KEY_TOTAL_ROWS, 0),
-            data.getString(KEY_TABLE),
+        /** Ảnh chụp tiến trình đọc ra từ Data của WorkManager. */
+        data class DownloadProgress(
+            val page: Int,
+            val totalRows: Int,
+            val currentTable: String?,
+            val doneTables: Set<String>,
+        )
+
+        fun progressOf(data: Data) = DownloadProgress(
+            page = data.getInt(KEY_PAGE, 0),
+            totalRows = data.getInt(KEY_TOTAL_ROWS, 0),
+            currentTable = data.getString(KEY_TABLE),
+            doneTables = data.getStringArray(KEY_DONE_TABLES)?.toSet().orEmpty(),
         )
     }
 }

@@ -1,55 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Màn đồng bộ.
+
+  Trước đây chỉ có một vòng xoay vô định: nhân viên đứng chờ mà không biết còn
+  bao lâu, và không phân biệt được "đang chạy" với "treo". Nay hiện phần trăm,
+  số phần đã xong trên tổng số phần, và danh sách phần việc tick dần — nhìn là
+  biết đang ở đâu và còn gì phía trước.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:paddingHorizontal="32dp">
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        app:indicatorSize="64dp"
-        app:trackThickness="6dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+    android:background="@drawable/img">
 
     <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/sync_preparing"
-        android:textAppearance="?attr/textAppearanceTitleMedium" />
+        android:id="@+id/title"
+        style="@style/Sfa.Text.Title"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/space_xl"
+        android:layout_marginHorizontal="@dimen/space_lg"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/sync_title" />
 
     <TextView
-        android:id="@+id/detailText"
+        android:id="@+id/phaseText"
+        style="@style/Sfa.Text.Small"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/space_xs"
+        android:layout_marginHorizontal="@dimen/space_lg"
+        android:gravity="center"
+        android:textColor="@color/white"
+        tools:text="Bước 2/2 · Tải dữ liệu về máy" />
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Sfa.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColor="?android:attr/textColorSecondary"
-        tools:text="Trang 2 · 2013 dòng" />
+        android:layout_marginTop="@dimen/space_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/space_lg">
+
+            <!-- Phần trăm là con số lớn nhất màn hình: đó là thứ người đứng chờ
+                 liếc một cái để biết còn bao lâu. -->
+            <TextView
+                android:id="@+id/percentText"
+                style="@style/Sfa.Text.Number"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/text_number_hero"
+                tools:text="78%" />
+
+            <TextView
+                android:id="@+id/partsText"
+                style="@style/Sfa.Text.Small"
+                android:layout_gravity="center_horizontal"
+                tools:text="18/23 phần · 12.480 dòng" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                app:indicatorColor="@color/brandRed"
+                app:trackColor="@color/lineSoft"
+                app:trackCornerRadius="3dp"
+                app:trackThickness="6dp"
+                tools:progress="78" />
+
+            <View
+                style="@style/Sfa.Separator"
+                android:layout_marginTop="@dimen/space_lg" />
+
+            <!-- Danh sách phần việc do code nạp vào: số nhóm khai ở tầng domain,
+                 thêm bảng mới không phải sửa layout. -->
+            <LinearLayout
+                android:id="@+id/stepContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/errorText"
+        style="@style/Sfa.Text.Small"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColor="?attr/colorError"
+        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginHorizontal="@dimen/space_lg"
+        android:padding="@dimen/space_md"
+        android:background="@drawable/bg_chip_red"
+        android:textColor="@color/brandRed"
         android:visibility="gone"
-        tools:text="Máy chủ trả về lỗi 500" />
+        tools:text="Máy chủ trả về lỗi 500"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/retryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        style="@style/Sfa.Button"
+        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginHorizontal="@dimen/space_lg"
         android:text="@string/sync_retry"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible" />
 </LinearLayout>

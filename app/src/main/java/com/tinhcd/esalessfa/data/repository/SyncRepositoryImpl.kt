@@ -102,6 +102,7 @@ class SyncRepositoryImpl @Inject constructor(
             var page = 0
             var totalRows = 0
             var hasMore = true
+            val doneTables = mutableSetOf<String>()
 
             while (hasMore) {
                 page++
@@ -150,12 +151,23 @@ class SyncRepositoryImpl @Inject constructor(
                 totalRows += pageRows
                 hasMore = body.hasMore
 
+                // Một bảng coi như xong khi server không còn gì để trả cho nó:
+                // hoặc nó vắng mặt trong trang này, hoặc có mặt nhưng ít hơn một
+                // trang đầy. Đây đúng là điều kiện server dùng để đặt has_more,
+                // chỉ tính ngược lại cho từng bảng.
+                doneTables += SyncTables.ALL.filter { table ->
+                    val changeSet = body.tables[table]
+                    changeSet == null ||
+                        changeSet.rows.size + changeSet.deletedIds.size < PAGE_SIZE
+                }
+
                 emit(
                     SyncProgress.Downloading(
                         page = page,
                         rowsThisPage = pageRows,
                         totalRows = totalRows,
                         currentTable = body.tables.keys.lastOrNull(),
+                        doneTables = doneTables.toSet(),
                     )
                 )
 

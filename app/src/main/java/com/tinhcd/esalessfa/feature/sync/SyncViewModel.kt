@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
+import com.tinhcd.esalessfa.domain.sync.SyncGroup
+import com.tinhcd.esalessfa.domain.sync.SyncPhase
 import com.tinhcd.esalessfa.domain.sync.SyncRun
 import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
+import com.tinhcd.esalessfa.domain.sync.SyncTables
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +40,11 @@ enum class SyncMode {
 
 data class SyncUiState(
     val isRunning: Boolean = false,
+    val phase: SyncPhase = SyncPhase.DOWNLOAD,
+    val percent: Int = 0,
+    val partsDone: Int = 0,
+    val partsTotal: Int = SyncTables.ALL.size,
+    val doneTables: Set<String> = emptySet(),
     val page: Int = 0,
     val totalRows: Int = 0,
     val currentTable: String? = null,
@@ -119,6 +127,10 @@ class SyncViewModel @Inject constructor(
 
         SyncRunStatus.RUNNING -> SyncUiState(
             isRunning = true,
+            phase = phase,
+            percent = percent,
+            partsDone = doneTables.size,
+            doneTables = doneTables,
             page = page,
             totalRows = totalRows,
             currentTable = currentTable,
@@ -126,6 +138,9 @@ class SyncViewModel @Inject constructor(
 
         SyncRunStatus.SUCCEEDED -> SyncUiState(
             isCompleted = true,
+            percent = 100,
+            partsDone = SyncTables.ALL.size,
+            doneTables = SyncTables.ALL.toSet(),
             page = page,
             totalRows = totalRows,
         )

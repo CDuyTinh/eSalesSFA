@@ -36,6 +36,8 @@
     <dimen name="photo_header_radius">20dp</dimen>
     <dimen name="tab_chip_height">38dp</dimen>
     <dimen name="checkin_photo_height">180dp</dimen>
+    <dimen name="sync_step_mark">20dp</dimen>
+    <dimen name="option_row_height">52dp</dimen>
     <dimen name="task_icon_size">24dp</dimen>
     <dimen name="task_icon_box">52dp</dimen>
     <!-- Bo góc nút chọn kỳ: vuông vắn hơn dáng viên thuốc mặc định của Material 3. -->

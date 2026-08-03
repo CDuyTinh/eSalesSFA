@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Một phần việc trong danh sách đồng bộ: dấu trạng thái bên trái, tên phần ở
+  giữa, và chỗ cho chữ phụ bên phải khi phần đó đang chạy.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/space_sm">
+
+    <TextView
+        android:id="@+id/mark"
+        style="@style/Sfa.Text.Body"
+        android:layout_width="@dimen/sync_step_mark"
+        android:gravity="center"
+        tools:text="✓" />
+
+    <TextView
+        android:id="@+id/label"
+        style="@style/Sfa.Text.Small"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/space_sm"
+        tools:text="Khách hàng &amp; tuyến" />
+
+    <TextView
+        android:id="@+id/state"
+        style="@style/Sfa.Text.Tiny"
+        tools:text="Đang tải…" />
+</LinearLayout>

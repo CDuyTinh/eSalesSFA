@@ -37,14 +37,34 @@
     <string name="login_version_build">Phiên bản ngày %1$s</string>
     <string name="login_version_product">Phiên bản eSales %1$s</string>
 
+    <!-- Dùng chung cho mọi chỗ hiện phần trăm. -->
+    <string name="percent_value">%1$d%%</string>
+
     <!-- Sync -->
-    <string name="sync_preparing">Đang chuẩn bị…</string>
-    <string name="sync_running">Đang tải dữ liệu</string>
-    <string name="sync_done">Đã đồng bộ xong</string>
-    <string name="sync_failed">Đồng bộ thất bại</string>
     <string name="sync_retry">Thử lại</string>
-    <string name="sync_progress">Trang %1$d · %2$d dòng</string>
-    <string name="sync_summary">%1$d dòng · %2$d lượt tải</string>
+
+    <!-- Màn đồng bộ: tiến trình theo phần việc -->
+    <string name="sync_title">Đồng bộ dữ liệu</string>
+    <string name="sync_parts">%1$d/%2$d phần · %3$s dòng</string>
+    <string name="sync_parts_plain">%1$d/%2$d phần</string>
+    <string name="sync_phase_upload">Bước 1/2 · Gửi dữ liệu lên máy chủ</string>
+    <string name="sync_phase_download">Bước 2/2 · Tải dữ liệu về máy</string>
+    <string name="sync_phase_download_only">Đang tải dữ liệu về máy</string>
+    <string name="sync_phase_done">Đã tải xong toàn bộ dữ liệu</string>
+    <string name="sync_phase_failed">Dừng giữa chừng</string>
+
+    <!-- Chỉ hai trạng thái: server tải song song nên không có nhóm nào "chờ". -->
+    <string name="sync_step_running">Đang tải…</string>
+    <string name="sync_step_done">Xong</string>
+    <string name="sync_mark_running" translatable="false">◑</string>
+    <string name="sync_mark_done" translatable="false">✓</string>
+
+    <string name="sync_group_catalog">Cấu hình &amp; danh mục</string>
+    <string name="sync_group_customer">Khách hàng &amp; tuyến</string>
+    <string name="sync_group_product">Sản phẩm</string>
+    <string name="sync_group_pricing">Giá &amp; khuyến mãi</string>
+    <string name="sync_group_survey">Khảo sát trưng bày</string>
+    <string name="sync_group_order_history">Lịch sử đơn hàng</string>
 
     <!-- Bốn tab ở đáy màn Home -->
     <string name="tab_dashboard">Tổng quan</string>
