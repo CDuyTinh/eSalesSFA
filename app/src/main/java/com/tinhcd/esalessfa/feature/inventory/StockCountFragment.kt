@@ -57,6 +57,12 @@ class StockCountFragment : Fragment(R.layout.fragment_stock_count) {
                             state.countedCount,
                             state.totalCount,
                         )
+                        // Chưa nạp xong danh sách thì tổng bằng 0; chia luôn sẽ
+                        // ném ArithmeticException ngay lần vẽ đầu tiên.
+                        val percent = if (state.totalCount == 0) 0
+                        else state.countedCount * 100 / state.totalCount
+                        binding.progressPercent.text = getString(R.string.percent_value, percent)
+                        binding.progressBar.setProgressCompat(percent, true)
                         binding.suggestSummary.text = if (state.suggestTotal > 0) {
                             getString(
                                 R.string.stock_suggest_summary,

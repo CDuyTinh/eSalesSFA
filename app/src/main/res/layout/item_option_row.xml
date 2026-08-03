@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một dòng lựa chọn trong bottom sheet. Cao 52dp để ngón tay bấm không trượt
+     sang dòng bên cạnh. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/optionLabel"
+    style="@style/Sfa.Text.Body"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/option_row_height"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="@dimen/space_lg"
+    android:textColor="@color/textDark"
+    android:maxLines="2"
+    android:ellipsize="end"
+    tools:text="Khảo sát trưng bày Perfect Store" />

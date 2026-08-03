@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Khung của hộp chọn một trong nhiều: tiêu đề rồi tới các dòng lựa chọn do
+     code nạp vào. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_lg"
+    android:paddingBottom="@dimen/space_md">
+
+    <TextView
+        android:id="@+id/sheetTitle"
+        style="@style/Sfa.Text.Title"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/space_sm"
+        tools:text="Chọn loại khảo sát" />
+
+    <LinearLayout
+        android:id="@+id/optionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</LinearLayout>

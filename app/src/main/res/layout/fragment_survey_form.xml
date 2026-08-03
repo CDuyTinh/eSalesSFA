@@ -12,33 +12,60 @@
         style="@style/Sfa.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:navigationIcon="@drawable/ic_arrow_back"
         app:title="@string/survey_title" />
 
-    <LinearLayout
+    <!-- Thẻ điểm: trước đây là một dải trắng vuông chạy hết bề ngang, không ăn
+         nhập với các thẻ bo góc ở phần còn lại của app, và điểm số chỉ là một
+         dòng chữ nhỏ trong khi đó mới là thứ nhân viên theo dõi suốt lúc làm. -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Sfa.Card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@color/white"
-        android:paddingHorizontal="@dimen/space_lg"
-        android:paddingVertical="@dimen/space_sm">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/scoreText"
-            style="@style/Sfa.Text.Body"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            tools:text="Điểm: 45/100 (45%)" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/space_lg">
 
-        <TextView
-            android:id="@+id/passBadge"
-            style="@style/Sfa.Badge"
-            android:background="@drawable/bg_badge_green"
-            android:text="@string/survey_passed"
-            android:visibility="gone" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/scoreText"
+                    style="@style/Sfa.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textColor="@color/brandRed"
+                    tools:text="Điểm: 45/100 (45%)" />
+
+                <TextView
+                    android:id="@+id/passBadge"
+                    style="@style/Sfa.Badge"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:background="@drawable/bg_badge_green"
+                    android:text="@string/survey_passed"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/scoreBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                app:indicatorColor="@color/brandRed"
+                app:trackColor="@color/lineSoft"
+                app:trackCornerRadius="3dp"
+                app:trackThickness="6dp"
+                tools:progress="45" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/questionList"

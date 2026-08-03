@@ -69,6 +69,10 @@ class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
                             state.score.maxTotal.roundToInt(),
                             state.score.percent.roundToInt(),
                         )
+                        binding.scoreBar.setProgressCompat(
+                            state.score.percent.roundToInt().coerceIn(0, 100),
+                            true,
+                        )
                         binding.passBadge.visibility =
                             if (state.score.isPassed) View.VISIBLE else View.GONE
                         binding.submitButton.isEnabled = !state.isSaving

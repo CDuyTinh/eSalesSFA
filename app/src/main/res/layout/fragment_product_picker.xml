@@ -14,26 +14,54 @@
         app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
         app:title="@string/order_add_product" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+    <!--
+      Ô tìm kiếm: khối trắng đặc, giống hệt màn danh sách khách hàng.
+
+      Trước đây dùng TextInputLayout OutlinedBox: nền nó trong suốt nên ô nằm
+      lọt thỏm trên dải đỏ, chỉ còn một đường viền mảnh gần như không thấy và
+      chữ gõ vào cũng chìm theo.
+    -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:hint="@string/product_search_hint"
-        app:startIconDrawable="@android:drawable/ic_menu_search">
+        android:layout_marginHorizontal="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
+        app:cardCornerRadius="@dimen/search_radius"
+        app:cardElevation="0dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/searchInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_md">
+
+            <TextView
+                style="@style/Sfa.Text.Body"
+                android:textColor="@color/textGray"
+                android:text="@string/glyph_search" />
+
+            <EditText
+                android:id="@+id/searchInput"
+                style="@style/Sfa.Text.Small"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/search_height"
+                android:background="@null"
+                android:hint="@string/product_search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="@dimen/space_sm"
+                android:paddingEnd="0dp"
+                android:textColorHint="@color/textGray" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="@dimen/space_sm" />
 </LinearLayout>

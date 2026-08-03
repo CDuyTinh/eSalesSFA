@@ -13,12 +13,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentCustomerWorkTabBinding
 import com.tinhcd.esalessfa.databinding.ItemCustomerTaskBinding
 import com.tinhcd.esalessfa.domain.repository.VisitGate
+import com.tinhcd.esalessfa.feature.common.showOptionSheet
 import com.tinhcd.esalessfa.feature.inventory.StockCountViewModel
 import com.tinhcd.esalessfa.feature.order.OrderEditViewModel
 import com.tinhcd.esalessfa.feature.survey.SurveyFormViewModel
@@ -134,12 +134,10 @@ class CustomerWorkTabFragment : Fragment(R.layout.fragment_customer_work_tab) {
         when (types.size) {
             0 -> Snackbar.make(view, R.string.survey_no_type, Snackbar.LENGTH_SHORT).show()
             1 -> openSurvey(id, types.first().id)
-            else -> MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.survey_pick_type)
-                .setItems(types.map { it.name }.toTypedArray()) { _, index ->
-                    openSurvey(id, types[index].id)
-                }
-                .show()
+            else -> showOptionSheet(
+                title = R.string.survey_pick_type,
+                options = types.map { it.name },
+            ) { index -> openSurvey(id, types[index].id) }
         }
     }
 
