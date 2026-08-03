@@ -63,6 +63,12 @@ interface CustomerQueryDao {
      *
      * Lấy lượt mới nhất là đúng nghiệp vụ: đang ghé lại lần hai thì thẻ phải báo
      * "đang ghé", không phải "đã ghé xong" của lần trước.
+     *
+     * Thứ tự: đang ghé → chưa ghé → đã ghé xong, trong mỗi nhóm giữ nguyên thứ
+     * tự tuyến. Cửa hàng đang mở dở nằm trên cùng vì đó là việc phải làm nốt;
+     * cửa hàng đã xong đẩy xuống đáy vì không còn phải động tới. Số "thứ tự
+     * viếng thăm" in trên thẻ và trên bản đồ lấy từ d.sortOrder nên không đổi
+     * theo cách sắp xếp này.
      */
     @Query(
         """
@@ -80,7 +86,13 @@ interface CustomerQueryDao {
         WHERE r.salespersonId = :salespersonId
           AND r.dayOfWeek = :dayOfWeek
           AND (:query = '' OR c.nameSearch LIKE '%' || :query || '%' OR c.code LIKE '%' || :query || '%')
-        ORDER BY d.sortOrder
+        ORDER BY
+          CASE
+              WHEN v.checkOutAt IS NOT NULL THEN 2
+              WHEN v.checkInAt  IS NOT NULL THEN 0
+              ELSE 1
+          END,
+          d.sortOrder
         """
     )
     fun observeRoute(
