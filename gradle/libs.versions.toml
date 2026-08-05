@@ -47,6 +47,8 @@ espressoCore = "3.7.0"
 mockk = "1.14.11"
 turbine = "1.2.1"
 truth = "1.4.4"
+legacySupportV4 = "1.0.0"
+lifecycleLivedataKtx = "2.11.0"
 
 [libraries]
 # AndroidX core / UI
@@ -120,6 +122,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 
 [bundles]
 androidx-ui = ["androidx-appcompat", "material", "androidx-activity-ktx", "androidx-fragment-ktx", "androidx-constraintlayout", "androidx-recyclerview", "androidx-swiperefreshlayout"]

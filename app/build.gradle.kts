@@ -74,6 +74,8 @@ ksp {
 dependencies {
     // ── UI ────────────────────────────────────────────────────────────────
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.bundles.androidx.ui)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
