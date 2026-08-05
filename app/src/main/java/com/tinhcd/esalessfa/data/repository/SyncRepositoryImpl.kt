@@ -18,6 +18,9 @@ import com.tinhcd.esalessfa.core.network.dto.AppConfigDto
 import com.tinhcd.esalessfa.core.network.dto.BranchDto
 import com.tinhcd.esalessfa.core.network.dto.ChannelDto
 import com.tinhcd.esalessfa.core.network.dto.CustomerDto
+import com.tinhcd.esalessfa.core.network.dto.OrderDetailDownloadDto
+import com.tinhcd.esalessfa.core.network.dto.OrderDownloadDto
+import com.tinhcd.esalessfa.core.network.dto.OrderUploadDto
 import com.tinhcd.esalessfa.core.network.dto.PriceGroupDto
 import com.tinhcd.esalessfa.core.network.dto.PriceListDto
 import com.tinhcd.esalessfa.core.network.dto.ProductCategoryDto
@@ -29,25 +32,25 @@ import com.tinhcd.esalessfa.core.network.dto.PromotionProgramDto
 import com.tinhcd.esalessfa.core.network.dto.ReasonCodeDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
-import com.tinhcd.esalessfa.core.network.dto.OrderDetailDownloadDto
-import com.tinhcd.esalessfa.core.network.dto.OrderDownloadDto
 import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
+import com.tinhcd.esalessfa.core.network.dto.StockCountUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionGroupDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyQuestionOptionDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyTypeDto
-import com.tinhcd.esalessfa.core.network.dto.OrderUploadDto
-import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
-import com.tinhcd.esalessfa.core.network.dto.StockCountUploadDto
 import com.tinhcd.esalessfa.core.network.dto.SurveyUploadDto
+import com.tinhcd.esalessfa.core.network.dto.SyncDownloadRequest
 import com.tinhcd.esalessfa.core.network.dto.SyncUploadRequest
 import com.tinhcd.esalessfa.core.network.dto.TableChangeSet
 import com.tinhcd.esalessfa.core.network.dto.UomDto
 import com.tinhcd.esalessfa.data.mapper.toEntity
 import com.tinhcd.esalessfa.data.mapper.toUploadBody
+import com.tinhcd.esalessfa.domain.model.sync.SyncProgress
+import com.tinhcd.esalessfa.domain.model.sync.SyncTables
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
-import com.tinhcd.esalessfa.domain.sync.SyncProgress
-import com.tinhcd.esalessfa.domain.sync.SyncTables
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
@@ -59,9 +62,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class SyncRepositoryImpl @Inject constructor(

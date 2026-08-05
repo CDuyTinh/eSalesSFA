@@ -1,11 +1,11 @@
 package com.tinhcd.esalessfa.domain.usecase
 
+import com.tinhcd.esalessfa.domain.model.survey.SurveyAnswer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyIssue
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
+import com.tinhcd.esalessfa.domain.model.survey.SurveyScorer
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
-import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
-import com.tinhcd.esalessfa.domain.survey.SurveyIssue
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
-import com.tinhcd.esalessfa.domain.survey.SurveyScorer
 import javax.inject.Inject
 
 sealed interface SubmitSurveyResult {

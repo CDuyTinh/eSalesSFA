@@ -74,7 +74,7 @@
 
     <fragment
         android:id="@+id/customerListFragment"
-        android:name="com.tinhcd.esalessfa.feature.customer.CustomerListFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.list.CustomerListFragment"
         android:label="Khách hàng">
         <argument
             android:name="mode"
@@ -84,12 +84,12 @@
 
     <fragment
         android:id="@+id/customerMapFragment"
-        android:name="com.tinhcd.esalessfa.feature.customer.CustomerMapFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.map.CustomerMapFragment"
         android:label="Bản đồ tuyến" />
 
     <fragment
         android:id="@+id/customerDetailFragment"
-        android:name="com.tinhcd.esalessfa.feature.customer.CustomerDetailFragment"
+        android:name="com.tinhcd.esalessfa.feature.customer.detail.CustomerDetailFragment"
         android:label="Chi tiết khách hàng">
         <argument
             android:name="customerId"
@@ -110,7 +110,7 @@
 
     <fragment
         android:id="@+id/orderEditFragment"
-        android:name="com.tinhcd.esalessfa.feature.order.OrderEditFragment"
+        android:name="com.tinhcd.esalessfa.feature.order.edit.OrderEditFragment"
         android:label="Đặt hàng">
         <argument
             android:name="customerId"
@@ -122,7 +122,7 @@
 
     <fragment
         android:id="@+id/productPickerFragment"
-        android:name="com.tinhcd.esalessfa.feature.order.ProductPickerFragment"
+        android:name="com.tinhcd.esalessfa.feature.order.picker.ProductPickerFragment"
         android:label="Chọn sản phẩm" />
 
     <fragment
@@ -136,7 +136,7 @@
 
     <fragment
         android:id="@+id/dashboardFragment"
-        android:name="com.tinhcd.esalessfa.feature.report.DashboardFragment"
+        android:name="com.tinhcd.esalessfa.feature.dashboard.DashboardFragment"
         android:label="Báo cáo">
         <action
             android:id="@+id/action_dashboard_to_orderReport"
@@ -154,7 +154,7 @@
          được. -->
     <fragment
         android:id="@+id/orderDetailFragment"
-        android:name="com.tinhcd.esalessfa.feature.report.OrderDetailFragment"
+        android:name="com.tinhcd.esalessfa.feature.order.detail.OrderDetailFragment"
         android:label="Chi tiết đơn hàng">
         <argument
             android:name="orderId"
@@ -174,7 +174,7 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.tinhcd.esalessfa.feature.survey.CameraFragment"
+        android:name="com.tinhcd.esalessfa.feature.camera.CameraFragment"
         android:label="Chụp ảnh" />
 
     <fragment

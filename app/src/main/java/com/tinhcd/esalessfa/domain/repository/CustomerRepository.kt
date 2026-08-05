@@ -4,9 +4,8 @@ package com.tinhcd.esalessfa.domain.repository
 // Android SDK (phần phụ thuộc Android là paging-runtime). Đây là ngoại lệ duy
 // nhất trong package domain, và nó vẫn compile/test được trên JVM.
 import androidx.paging.PagingData
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.model.RouteCustomer
-import com.tinhcd.esalessfa.domain.model.Salesperson
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.customer.RouteCustomer
 import kotlinx.coroutines.flow.Flow
 
 interface CustomerRepository {
@@ -25,14 +24,4 @@ interface CustomerRepository {
     suspend fun getById(id: String): Customer?
 
     fun observeCustomerCount(): Flow<Int>
-}
-
-interface CatalogRepository {
-    fun observeProductCount(): Flow<Int>
-    fun observeActivePromotionCount(): Flow<Int>
-}
-
-/** Hồ sơ nhân viên đang đăng nhập, lấy từ Room sau khi sync. */
-interface SalespersonRepository {
-    fun observeCurrent(): Flow<Salesperson?>
 }

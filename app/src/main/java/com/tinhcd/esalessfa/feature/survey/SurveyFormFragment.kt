@@ -2,7 +2,6 @@ package com.tinhcd.esalessfa.feature.survey
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -12,13 +11,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentSurveyFormBinding
-import com.tinhcd.esalessfa.domain.survey.SurveyIssue
+import com.tinhcd.esalessfa.domain.model.survey.SurveyIssue
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
+import com.tinhcd.esalessfa.feature.camera.CameraFragment
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
@@ -131,7 +132,7 @@ class SurveyFormFragment : Fragment(R.layout.fragment_survey_form) {
             }
     }
 
-    private fun List<com.tinhcd.esalessfa.domain.survey.SurveyQuestion>.toFormRows(
+    private fun List<SurveyQuestion>.toFormRows(
         state: SurveyFormUiState,
         issues: Map<String, SurveyIssue>,
     ): List<FormRow> = buildList {

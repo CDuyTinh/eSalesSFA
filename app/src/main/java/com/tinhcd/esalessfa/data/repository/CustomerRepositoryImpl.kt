@@ -9,26 +9,26 @@ import com.tinhcd.esalessfa.core.database.dao.CustomerDao
 import com.tinhcd.esalessfa.core.database.dao.CustomerQueryDao
 import com.tinhcd.esalessfa.core.database.dao.RouteCustomerRow
 import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
-import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.data.mapper.toDomain
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.model.RouteCustomer
-import com.tinhcd.esalessfa.domain.model.Salesperson
-import com.tinhcd.esalessfa.domain.model.VisitState
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.customer.RouteCustomer
+import com.tinhcd.esalessfa.domain.model.customer.Salesperson
+import com.tinhcd.esalessfa.domain.model.customer.VisitState
 import com.tinhcd.esalessfa.domain.repository.CatalogRepository
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
+import com.tinhcd.esalessfa.domain.repository.SessionStore
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class CustomerRepositoryImpl @Inject constructor(

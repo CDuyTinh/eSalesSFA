@@ -1,8 +1,8 @@
 package com.tinhcd.esalessfa.data.mapper
 
 import com.tinhcd.esalessfa.core.database.entity.master.CustomerEntity
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.model.Customer
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
 
 /**
  * Entity (Room) -> Domain model.

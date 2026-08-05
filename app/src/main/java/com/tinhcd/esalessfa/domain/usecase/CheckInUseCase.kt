@@ -1,11 +1,12 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.visit.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.visit.CheckInResult
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidation
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.distanceMetersOrNull
 import com.tinhcd.esalessfa.domain.repository.PhotoUploader
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
-import com.tinhcd.esalessfa.domain.visit.CheckInValidation
-import com.tinhcd.esalessfa.domain.visit.LocationSample
-import com.tinhcd.esalessfa.domain.visit.distanceMetersOrNull
 import javax.inject.Inject
 
 sealed interface CheckInOutcome {
@@ -69,7 +70,7 @@ class CheckInUseCase @Inject constructor(
         )
 
         return when (result) {
-            is VisitRepository.CheckInResult.Success -> {
+            is CheckInResult.Success -> {
                 // Đẩy ảnh đi ngay chứ không đợi tới lượt sync giao dịch: ảnh nằm
                 // trong cache máy, để lâu là mất, mà nhân viên còn ở trong cửa
                 // hàng thì sóng thường tốt hơn lúc đang di chuyển.
@@ -77,7 +78,7 @@ class CheckInUseCase @Inject constructor(
                 CheckInOutcome.Success(result.visitId)
             }
 
-            is VisitRepository.CheckInResult.AlreadyOpen -> CheckInOutcome.AlreadyOpen(
+            is CheckInResult.AlreadyOpen -> CheckInOutcome.AlreadyOpen(
                 customerName = result.visit.customerName,
                 isSameCustomer = result.isSameCustomer,
             )

@@ -1,10 +1,10 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.repository.VisitGate
+import com.tinhcd.esalessfa.domain.model.visit.VisitGate
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 /**
  * Cổng nghiệp vụ tại một cửa hàng, theo dõi liên tục.

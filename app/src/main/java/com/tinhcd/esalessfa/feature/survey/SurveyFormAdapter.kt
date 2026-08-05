@@ -17,11 +17,11 @@ import com.tinhcd.esalessfa.databinding.ItemSurveyGroupBinding
 import com.tinhcd.esalessfa.databinding.ItemSurveyInputBinding
 import com.tinhcd.esalessfa.databinding.ItemSurveyPhotoBinding
 import com.tinhcd.esalessfa.databinding.ItemSurveyThumbBinding
-import com.tinhcd.esalessfa.domain.repository.SurveyPhoto
-import com.tinhcd.esalessfa.domain.survey.AnswerType
-import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
-import com.tinhcd.esalessfa.domain.survey.SurveyIssue
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
+import com.tinhcd.esalessfa.domain.model.survey.AnswerType
+import com.tinhcd.esalessfa.domain.model.survey.SurveyAnswer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyIssue
+import com.tinhcd.esalessfa.domain.model.survey.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
 import java.io.File
 
 /** Một dòng trong form: tiêu đề nhóm hoặc một câu hỏi. */

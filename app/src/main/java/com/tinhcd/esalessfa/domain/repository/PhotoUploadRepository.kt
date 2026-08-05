@@ -1,13 +1,6 @@
 package com.tinhcd.esalessfa.domain.repository
 
-/**
- * Kết quả một lượt đẩy ảnh, đủ để worker quyết định thử lại hay thôi.
- */
-data class PhotoUploadOutcome(
-    val uploaded: Int,
-    /** Còn ảnh lỗi có thể thử lại (mất mạng, server 5xx). */
-    val hasRetryableFailure: Boolean,
-)
+import com.tinhcd.esalessfa.domain.model.photo.PhotoUploadOutcome
 
 /**
  * Hàng đợi ảnh minh chứng chờ lên Storage.

@@ -1,11 +1,11 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.promotion.OrderCalculator
-import com.tinhcd.esalessfa.domain.promotion.OrderTotals
-import com.tinhcd.esalessfa.domain.promotion.PromotionEngine
-import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionResult
+import com.tinhcd.esalessfa.domain.model.order.OrderCalculator
+import com.tinhcd.esalessfa.domain.model.order.OrderLine
+import com.tinhcd.esalessfa.domain.model.order.OrderTotals
+import com.tinhcd.esalessfa.domain.model.order.PromotionResult
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionEngine
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionProgram
 import javax.inject.Inject
 
 /** Khuyến mãi đã áp và tiền của một giỏ hàng, tính trong cùng một lượt. */

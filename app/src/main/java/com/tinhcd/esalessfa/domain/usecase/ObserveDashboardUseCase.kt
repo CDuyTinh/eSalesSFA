@@ -1,13 +1,13 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.repository.MonthStats
+import com.tinhcd.esalessfa.domain.model.report.MonthStats
+import com.tinhcd.esalessfa.domain.model.report.TodayStats
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
-import com.tinhcd.esalessfa.domain.repository.TodayStats
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 /** Một ô trong thẻ "Tổng kết ngày": số đạt được so với chỉ tiêu. */
 data class DayMetric(

@@ -1,29 +1,15 @@
 package com.tinhcd.esalessfa.data.mapper
 
-import com.tinhcd.esalessfa.core.database.entity.master.ProductEntity
-import com.tinhcd.esalessfa.core.database.entity.master.ProductUomEntity
 import com.tinhcd.esalessfa.core.database.entity.master.PromotionBreakEntity
 import com.tinhcd.esalessfa.core.database.entity.master.PromotionItemEntity
 import com.tinhcd.esalessfa.core.database.entity.master.PromotionProgramEntity
-import com.tinhcd.esalessfa.domain.model.Product
-import com.tinhcd.esalessfa.domain.model.ProductUom
-import com.tinhcd.esalessfa.domain.promotion.model.ApplyLevel
-import com.tinhcd.esalessfa.domain.promotion.model.DiscountKind
-import com.tinhcd.esalessfa.domain.promotion.model.ItemRole
-import com.tinhcd.esalessfa.domain.promotion.model.PromoType
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionBreak
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionItem
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
-
-fun ProductEntity.toDomain(uoms: List<ProductUomEntity>) = Product(
-    id = id,
-    code = code,
-    name = name,
-    baseUom = baseUom,
-    vatRate = vatRate,
-    imageUrl = imageUrl,
-    uoms = uoms.map { ProductUom(it.uomCode, it.conversionRate, it.isDefaultSale) },
-)
+import com.tinhcd.esalessfa.domain.model.promotion.ApplyLevel
+import com.tinhcd.esalessfa.domain.model.promotion.DiscountKind
+import com.tinhcd.esalessfa.domain.model.promotion.ItemRole
+import com.tinhcd.esalessfa.domain.model.promotion.PromoType
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionBreak
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionItem
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionProgram
 
 /**
  * Entity -> domain model của engine.

@@ -10,18 +10,18 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
+import com.tinhcd.esalessfa.domain.model.sync.SyncPhase
+import com.tinhcd.esalessfa.domain.model.sync.SyncRun
+import com.tinhcd.esalessfa.domain.model.sync.SyncRunStatus
+import com.tinhcd.esalessfa.domain.model.sync.SyncTables
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
-import com.tinhcd.esalessfa.domain.sync.SyncPhase
-import com.tinhcd.esalessfa.domain.sync.SyncRun
-import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
-import com.tinhcd.esalessfa.domain.sync.SyncTables
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /** Id của hai việc trong một lượt đồng bộ đầy đủ, dùng để theo dõi riêng lượt đó. */
 private data class FullSyncHandle(val uploadId: UUID, val downloadId: UUID)

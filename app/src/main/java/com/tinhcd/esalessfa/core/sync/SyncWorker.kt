@@ -6,8 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.tinhcd.esalessfa.domain.model.sync.SyncProgress
 import com.tinhcd.esalessfa.domain.repository.SyncRepository
-import com.tinhcd.esalessfa.domain.sync.SyncProgress
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.collect

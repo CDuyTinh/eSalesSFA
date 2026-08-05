@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentReportCustomerTabBinding
 import com.tinhcd.esalessfa.databinding.ItemReportCustomerBinding
-import com.tinhcd.esalessfa.domain.repository.CustomerReportItem
+import com.tinhcd.esalessfa.domain.model.report.CustomerReportItem
+import com.tinhcd.esalessfa.feature.common.moneyFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

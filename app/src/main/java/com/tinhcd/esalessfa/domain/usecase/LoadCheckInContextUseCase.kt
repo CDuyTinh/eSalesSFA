@@ -1,10 +1,10 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.Customer
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
 import javax.inject.Inject
 
 /** Mọi thứ màn check-in cần trước khi bắt đầu đo vị trí. */

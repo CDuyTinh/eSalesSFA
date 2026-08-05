@@ -1,25 +1,25 @@
 package com.tinhcd.esalessfa.data.repository
 
 import com.tinhcd.esalessfa.core.database.dao.ReportDao
-import com.tinhcd.esalessfa.domain.repository.CustomerReportItem
-import com.tinhcd.esalessfa.domain.repository.DailyRevenue
-import com.tinhcd.esalessfa.domain.repository.DashboardKpi
-import com.tinhcd.esalessfa.domain.repository.MonthStats
-import com.tinhcd.esalessfa.domain.repository.OrderDetail
-import com.tinhcd.esalessfa.domain.repository.OrderDetailLine
-import com.tinhcd.esalessfa.domain.repository.ProductReportItem
-import com.tinhcd.esalessfa.domain.repository.OrderSummary
-import com.tinhcd.esalessfa.domain.repository.RankedItem
+import com.tinhcd.esalessfa.domain.model.report.CustomerReportItem
+import com.tinhcd.esalessfa.domain.model.report.DailyRevenue
+import com.tinhcd.esalessfa.domain.model.report.DashboardKpi
+import com.tinhcd.esalessfa.domain.model.report.MonthStats
+import com.tinhcd.esalessfa.domain.model.report.OrderDetail
+import com.tinhcd.esalessfa.domain.model.report.OrderDetailLine
+import com.tinhcd.esalessfa.domain.model.report.OrderSummary
+import com.tinhcd.esalessfa.domain.model.report.ProductReportItem
+import com.tinhcd.esalessfa.domain.model.report.RankedItem
+import com.tinhcd.esalessfa.domain.model.report.TodayStats
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
-import com.tinhcd.esalessfa.domain.repository.TodayStats
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class ReportRepositoryImpl @Inject constructor(

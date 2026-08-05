@@ -2,11 +2,11 @@ package com.tinhcd.esalessfa.domain.usecase
 
 import androidx.paging.PagingData
 import com.google.common.truth.Truth.assertThat
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.model.RouteCustomer
-import com.tinhcd.esalessfa.domain.model.Salesperson
-import com.tinhcd.esalessfa.domain.model.VisitState
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.customer.RouteCustomer
+import com.tinhcd.esalessfa.domain.model.customer.Salesperson
+import com.tinhcd.esalessfa.domain.model.customer.VisitState
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
 import kotlinx.coroutines.flow.Flow

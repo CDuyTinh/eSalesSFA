@@ -15,13 +15,13 @@ import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentSyncBinding
 import com.tinhcd.esalessfa.databinding.ItemSyncStepBinding
-import com.tinhcd.esalessfa.domain.sync.SyncGroup
-import com.tinhcd.esalessfa.domain.sync.SyncPhase
+import com.tinhcd.esalessfa.domain.model.sync.SyncGroup
+import com.tinhcd.esalessfa.domain.model.sync.SyncPhase
 import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SyncFragment : Fragment(R.layout.fragment_sync) {

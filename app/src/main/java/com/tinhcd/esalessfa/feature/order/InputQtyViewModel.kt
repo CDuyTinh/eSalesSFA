@@ -3,15 +3,15 @@ package com.tinhcd.esalessfa.feature.order
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.domain.model.ProductUom
+import com.tinhcd.esalessfa.domain.model.product.ProductUom
 import com.tinhcd.esalessfa.domain.usecase.LoadQtyOptionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class InputQtyUiState(
     val uoms: List<ProductUom> = emptyList(),

@@ -3,11 +3,15 @@ package com.tinhcd.esalessfa.feature.visit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidation
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.OpenVisit
+import com.tinhcd.esalessfa.domain.model.visit.ReasonCode
+import com.tinhcd.esalessfa.domain.model.visit.distanceMetersOrNull
 import com.tinhcd.esalessfa.domain.repository.LocationSource
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.OpenVisit
-import com.tinhcd.esalessfa.domain.repository.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import com.tinhcd.esalessfa.domain.usecase.AddCheckInPhotoUseCase
 import com.tinhcd.esalessfa.domain.usecase.CheckInOutcome
@@ -16,21 +20,16 @@ import com.tinhcd.esalessfa.domain.usecase.CheckOutResult
 import com.tinhcd.esalessfa.domain.usecase.CheckOutUseCase
 import com.tinhcd.esalessfa.domain.usecase.LoadCheckInContextUseCase
 import com.tinhcd.esalessfa.domain.usecase.ValidateCheckInUseCase
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
-import com.tinhcd.esalessfa.domain.visit.CheckInValidation
-import com.tinhcd.esalessfa.domain.visit.LocationSample
-import com.tinhcd.esalessfa.domain.visit.distanceMetersOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class CheckInUiState(
     val customer: Customer? = null,

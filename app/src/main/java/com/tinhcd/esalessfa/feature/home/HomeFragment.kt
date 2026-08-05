@@ -5,13 +5,14 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.feature.common.asTab
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
-import com.tinhcd.esalessfa.feature.customer.CustomerListFragment
-import com.tinhcd.esalessfa.feature.customer.CustomerListMode
-import com.tinhcd.esalessfa.feature.customer.CustomerListViewModel
-import com.tinhcd.esalessfa.feature.report.DashboardFragment
+import com.tinhcd.esalessfa.feature.common.asTab
+import com.tinhcd.esalessfa.feature.customer.list.CustomerListFragment
+import com.tinhcd.esalessfa.feature.customer.list.CustomerListMode
+import com.tinhcd.esalessfa.feature.customer.list.CustomerListViewModel
+import com.tinhcd.esalessfa.feature.dashboard.DashboardFragment
 import com.tinhcd.esalessfa.feature.report.OrderReportFragment
+import com.tinhcd.esalessfa.feature.work.WorkFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 /**

@@ -3,11 +3,12 @@ package com.tinhcd.esalessfa.feature.inventory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.StockCountLine
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.stock.StockCountLine
 import com.tinhcd.esalessfa.domain.usecase.LoadStockCountUseCase
 import com.tinhcd.esalessfa.domain.usecase.SaveStockCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class StockCountUiState(
     val customer: Customer? = null,

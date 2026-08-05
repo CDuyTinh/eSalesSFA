@@ -1,7 +1,7 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.report.OrderCsv
-import com.tinhcd.esalessfa.domain.repository.OrderSummary
+import com.tinhcd.esalessfa.domain.model.report.OrderCsv
+import com.tinhcd.esalessfa.domain.model.report.OrderSummary
 import com.tinhcd.esalessfa.domain.repository.ReportFileStore
 import javax.inject.Inject
 

@@ -1,19 +1,12 @@
 package com.tinhcd.esalessfa.domain.repository
 
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
-import kotlinx.coroutines.flow.Flow
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.survey.SurveyAnswer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
+import com.tinhcd.esalessfa.domain.model.survey.SurveyTypeInfo
 import java.io.File
-
-data class SurveyTypeInfo(val id: String, val code: String, val name: String, val passScore: Double)
-
-data class SurveyPhoto(
-    val id: String,
-    val questionId: String?,
-    val localPath: String,
-    val isUploaded: Boolean,
-)
+import kotlinx.coroutines.flow.Flow
 
 interface SurveyRepository {
 

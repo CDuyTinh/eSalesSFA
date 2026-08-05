@@ -2,13 +2,15 @@ package com.tinhcd.esalessfa.feature.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.domain.repository.CustomerReportItem
-import com.tinhcd.esalessfa.domain.repository.OrderSummary
-import com.tinhcd.esalessfa.domain.repository.ProductReportItem
+import com.tinhcd.esalessfa.domain.model.report.CustomerReportItem
+import com.tinhcd.esalessfa.domain.model.report.OrderSummary
+import com.tinhcd.esalessfa.domain.model.report.ProductReportItem
+import com.tinhcd.esalessfa.domain.model.util.SearchText
 import com.tinhcd.esalessfa.domain.repository.ReportRepository
 import com.tinhcd.esalessfa.domain.usecase.ExportOrderReportUseCase
-import com.tinhcd.esalessfa.domain.util.SearchText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +22,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import javax.inject.Inject
-
-data class DateRange(val from: String, val to: String)
 
 /**
  * Hai con số tóm tắt trên đầu mỗi tab.

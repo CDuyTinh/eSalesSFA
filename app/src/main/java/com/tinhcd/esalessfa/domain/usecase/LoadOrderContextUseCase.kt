@@ -1,8 +1,8 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.promotion.model.FreeItem
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.order.FreeItem
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionProgram
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import com.tinhcd.esalessfa.domain.repository.PromotionRepository

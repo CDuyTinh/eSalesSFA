@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
+import com.tinhcd.esalessfa.domain.model.order.OrderLine
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import javax.inject.Inject
 

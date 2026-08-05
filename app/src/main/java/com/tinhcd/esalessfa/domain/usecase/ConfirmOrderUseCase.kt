@@ -1,7 +1,7 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionResult
+import com.tinhcd.esalessfa.domain.model.order.OrderLine
+import com.tinhcd.esalessfa.domain.model.order.PromotionResult
 import com.tinhcd.esalessfa.domain.repository.OrderRepository
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
 import javax.inject.Inject

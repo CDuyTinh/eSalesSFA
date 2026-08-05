@@ -1,12 +1,12 @@
 package com.tinhcd.esalessfa.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import com.tinhcd.esalessfa.domain.repository.MonthStats
-import com.tinhcd.esalessfa.domain.repository.TodayStats
+import com.tinhcd.esalessfa.domain.model.report.MonthStats
+import com.tinhcd.esalessfa.domain.model.report.TodayStats
+import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import java.time.LocalDate
 
 class ObserveDashboardUseCaseTest {
 

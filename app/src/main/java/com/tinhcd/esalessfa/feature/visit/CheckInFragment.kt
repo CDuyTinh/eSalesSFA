@@ -20,17 +20,17 @@ import coil3.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tinhcd.esalessfa.R
-import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import com.tinhcd.esalessfa.databinding.FragmentCheckInBinding
-import com.tinhcd.esalessfa.domain.visit.CheckInValidation
-import com.tinhcd.esalessfa.feature.survey.CameraFragment
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidation
+import com.tinhcd.esalessfa.feature.camera.CameraFragment
+import com.tinhcd.esalessfa.feature.common.padTopForStatusBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CheckInFragment : Fragment(R.layout.fragment_check_in) {

@@ -1,9 +1,9 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.Customer
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
 import javax.inject.Inject
 
 /** Bài khảo sát vừa mở: bản nháp đã tạo, bộ câu hỏi và ngưỡng đạt. */

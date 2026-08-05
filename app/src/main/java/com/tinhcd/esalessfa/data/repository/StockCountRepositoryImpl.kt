@@ -6,7 +6,7 @@ import com.tinhcd.esalessfa.core.database.dao.StockCountDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
 import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.StockCountEntity
-import com.tinhcd.esalessfa.domain.repository.StockCountLine
+import com.tinhcd.esalessfa.domain.model.stock.StockCountLine
 import com.tinhcd.esalessfa.domain.repository.StockCountRepository
 import java.text.SimpleDateFormat
 import java.util.Date

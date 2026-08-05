@@ -11,17 +11,17 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
 import com.tinhcd.esalessfa.domain.repository.LocationSource
-import com.tinhcd.esalessfa.domain.visit.LocationSample
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.scan
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Hiện thực [LocationSource]: bọc FusedLocationProviderClient thành Flow.

@@ -56,34 +56,52 @@ phải sửa một dòng nào.
 
 Project là **single-module**; phân tầng giữ bằng package bên trong `:app`.
 
+Quy ước: **`domain` chỉ có 4 package chính** — `common`, `model`, `repository`, `usecase`.
+Trong `model`, mỗi chức năng một folder chứa cả model lẫn object xử lý của chức năng đó.
+Ở `feature`, **mỗi màn hình một package** — màn hình khác nhau không nằm chung một folder.
+
 ```
 com.tinhcd.esalessfa
 ├── domain/             ⭐ Business logic thuần — không import android.*
-│   ├── model/              Entity nghiệp vụ
-│   ├── repository/         Interface (implement ở data/)
-│   ├── usecase/
-│   ├── promotion/          Engine khuyến mãi — Strategy + Chain of Responsibility
-│   └── geo/                Haversine, validate bán kính check-in
+│   ├── model/              Mỗi chức năng một folder: model + object của nó
+│   │   ├── customer/       Customer, RouteCustomer, Salesperson
+│   │   ├── product/        Product, ProductUom
+│   │   ├── order/          Order, OrderTotals · OrderCalculator, MoneyMath
+│   │   ├── promotion/      Promotion · PromotionEngine + các rule
+│   │   │                   (Strategy + Chain of Responsibility)
+│   │   ├── survey/         Survey · SurveyScorer
+│   │   ├── visit/          Visit, VisitGate · CheckInValidator
+│   │   ├── geo/            GeoPoint · GeoUtils (Haversine, bán kính check-in)
+│   │   ├── report/         Report · OrderCsv
+│   │   ├── sync/  stock/  photo/
+│   │   └── util/           SearchText (bỏ dấu tiếng Việt)
+│   ├── repository/         Interface (implement ở data/), mỗi interface một file
+│   ├── usecase/            Use case + kiểu kết quả của riêng nó
+│   └── common/             AppResult
 ├── data/
 │   ├── repository/         RepositoryImpl
-│   ├── mapper/             DTO ↔ Entity ↔ Domain model
-│   └── datasource/
+│   ├── mapper/             DTO ↔ Entity ↔ Domain model, tách theo chức năng
+│   └── di/
 ├── core/
-│   ├── common/             AppResult, DispatcherProvider, extensions
+│   ├── common/             DispatcherProvider, extensions
 │   ├── database/           Room DB, DAO, Entity, Migration
 │   ├── network/            Supabase Auth/Storage, Retrofit → Edge Functions
 │   ├── datastore/          DataStore, SessionManager
-│   ├── ui/                 BaseFragment, custom view, binding adapter
+│   ├── location/ media/ file/
 │   └── sync/               SyncManager, WorkManager worker, outbox
-└── feature/
-    ├── auth/               Đăng nhập / phiên làm việc
-    ├── home/               Dashboard + tuyến hôm nay
-    ├── customer/           Danh sách, chi tiết, sales step, bản đồ
-    ├── visit/              Check-in/out, GPS service
-    ├── order/              Take order + UI khuyến mãi
+└── feature/                Mỗi màn hình một package
+    ├── splash/  auth/  sync/
+    ├── home/               Khung 4 tab
+    ├── work/               Tab "Công việc"
+    ├── dashboard/          Tab "Tổng quan"
+    ├── customer/           list/ · detail/ · map/
+    ├── order/              edit/ · picker/ · detail/ (+ dialog nhập số lượng dùng chung)
+    ├── report/             Báo cáo bán hàng và các tab của nó
     ├── inventory/          Kiểm kê tồn cửa hàng
-    ├── survey/             Perfect Store, MSL/OOS, CameraX
-    └── report/
+    ├── survey/             Perfect Store, MSL/OOS
+    ├── visit/              Check-in/out
+    ├── camera/             Màn chụp ảnh dùng chung cho khảo sát và check-in
+    └── common/             Custom view, format số/ngày, tiện ích dùng chung
 ```
 
 > Unit test của `domain/` nằm ở `app/src/test` nên vẫn **chạy trên JVM**, không cần emulator.

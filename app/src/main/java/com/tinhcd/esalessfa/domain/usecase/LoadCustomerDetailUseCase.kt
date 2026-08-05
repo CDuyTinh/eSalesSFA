@@ -1,9 +1,9 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.Customer
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyTypeInfo
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
-import com.tinhcd.esalessfa.domain.repository.SurveyTypeInfo
 import javax.inject.Inject
 
 /** Hồ sơ cửa hàng kèm những loại khảo sát nhân viên được phép làm tại đây. */

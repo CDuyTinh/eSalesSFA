@@ -1,12 +1,12 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.RouteCustomer
+import com.tinhcd.esalessfa.domain.model.customer.RouteCustomer
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
 import com.tinhcd.esalessfa.domain.repository.SalespersonRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 /**
  * Tuyến hôm nay kèm người phụ trách.

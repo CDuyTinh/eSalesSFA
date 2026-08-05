@@ -1,10 +1,10 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
-import com.tinhcd.esalessfa.domain.visit.CheckInValidation
-import com.tinhcd.esalessfa.domain.visit.CheckInValidator
-import com.tinhcd.esalessfa.domain.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidation
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidator
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
 import javax.inject.Inject
 
 /**

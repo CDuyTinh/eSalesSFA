@@ -3,10 +3,10 @@ package com.tinhcd.esalessfa.feature.sync
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.tinhcd.esalessfa.domain.model.sync.SyncRun
+import com.tinhcd.esalessfa.domain.model.sync.SyncRunStatus
 import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
-import com.tinhcd.esalessfa.domain.sync.SyncRun
-import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

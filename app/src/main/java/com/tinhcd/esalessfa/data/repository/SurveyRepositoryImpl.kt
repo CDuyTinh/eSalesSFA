@@ -2,8 +2,8 @@ package com.tinhcd.esalessfa.data.repository
 
 import android.content.Context
 import com.tinhcd.esalessfa.core.database.SyncStatus
-import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
+import com.tinhcd.esalessfa.core.database.dao.SalespersonDao
 import com.tinhcd.esalessfa.core.database.dao.SurveyConfigDao
 import com.tinhcd.esalessfa.core.database.dao.SurveyResultDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
@@ -12,18 +12,16 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyAnswerEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.SurveyPhotoEntity
 import com.tinhcd.esalessfa.core.media.ImageProcessor
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.repository.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.survey.AnswerType
+import com.tinhcd.esalessfa.domain.model.survey.SurveyAnswer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyOption
+import com.tinhcd.esalessfa.domain.model.survey.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
+import com.tinhcd.esalessfa.domain.model.survey.SurveyScorer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyTypeInfo
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
-import com.tinhcd.esalessfa.domain.repository.SurveyTypeInfo
-import com.tinhcd.esalessfa.domain.survey.AnswerType
-import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
-import com.tinhcd.esalessfa.domain.survey.SurveyOption
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
-import com.tinhcd.esalessfa.domain.survey.SurveyScorer
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -31,6 +29,8 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class SurveyRepositoryImpl @Inject constructor(

@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.domain.repository
 
-import com.tinhcd.esalessfa.domain.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
 import kotlinx.coroutines.flow.Flow
 
 /**

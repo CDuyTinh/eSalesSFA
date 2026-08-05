@@ -1,7 +1,7 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.visit.CheckInPhoto
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
 import javax.inject.Inject
 

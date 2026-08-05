@@ -1,14 +1,15 @@
 package com.tinhcd.esalessfa.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.repository.ActiveVisit
-import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
-import com.tinhcd.esalessfa.domain.repository.OpenVisit
-import com.tinhcd.esalessfa.domain.repository.ReasonCode
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.visit.ActiveVisit
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.visit.CheckInResult
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.OpenVisit
+import com.tinhcd.esalessfa.domain.model.visit.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
-import com.tinhcd.esalessfa.domain.visit.LocationSample
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -130,7 +131,7 @@ private class RecordingVisitRepository : VisitRepository {
         note: String?,
         photo: CheckInPhoto?,
         batteryPct: Int?,
-    ): VisitRepository.CheckInResult = VisitRepository.CheckInResult.Success("visit-1")
+    ): CheckInResult = CheckInResult.Success("visit-1")
 
     override fun observeTodayVisitCount(): Flow<Int> = flowOf(0)
 }

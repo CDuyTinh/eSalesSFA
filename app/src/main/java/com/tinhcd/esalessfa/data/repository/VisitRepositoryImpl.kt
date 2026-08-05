@@ -11,19 +11,17 @@ import com.tinhcd.esalessfa.core.database.dao.VisitDao
 import com.tinhcd.esalessfa.core.database.entity.local.PendingUploadEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.VisitEntity
 import com.tinhcd.esalessfa.core.media.ImageProcessor
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import com.tinhcd.esalessfa.domain.repository.ActiveVisit
-import com.tinhcd.esalessfa.domain.repository.CheckInPhoto
-import com.tinhcd.esalessfa.domain.repository.OpenVisit
-import com.tinhcd.esalessfa.domain.repository.ReasonCode
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
+import com.tinhcd.esalessfa.domain.model.visit.ActiveVisit
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.CheckInPhoto
+import com.tinhcd.esalessfa.domain.model.visit.CheckInResult
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidator
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.OpenVisit
+import com.tinhcd.esalessfa.domain.model.visit.ReasonCode
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
-import com.tinhcd.esalessfa.domain.visit.CheckInValidator
-import com.tinhcd.esalessfa.domain.visit.LocationSample
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -31,6 +29,9 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 @Singleton
 class VisitRepositoryImpl @Inject constructor(
@@ -107,7 +108,7 @@ class VisitRepositoryImpl @Inject constructor(
         note: String?,
         photo: CheckInPhoto?,
         batteryPct: Int?,
-    ): VisitRepository.CheckInResult {
+    ): CheckInResult {
         val salesperson = requireNotNull(salespersonDao.getCurrent()) {
             "Chưa có hồ sơ nhân viên — cần đồng bộ trước khi check-in"
         }
@@ -121,7 +122,7 @@ class VisitRepositoryImpl @Inject constructor(
         // Chặn cả trường hợp CÙNG cửa hàng: ghé lại nơi đang mở sẽ tạo lượt thứ
         // hai và không lượt nào có giờ ra đúng.
         visitDao.getActiveVisit()?.let { row ->
-            return VisitRepository.CheckInResult.AlreadyOpen(
+            return CheckInResult.AlreadyOpen(
                 visit = ActiveVisit(row.visitId, row.customerId, row.customerName, row.checkInAt),
                 isSameCustomer = row.customerId == customerId,
             )
@@ -178,7 +179,7 @@ class VisitRepositoryImpl @Inject constructor(
             )
         }
 
-        return VisitRepository.CheckInResult.Success(id)
+        return CheckInResult.Success(id)
     }
 
     override suspend fun checkOut(

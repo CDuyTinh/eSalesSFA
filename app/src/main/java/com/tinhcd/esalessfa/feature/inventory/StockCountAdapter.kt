@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.ItemStockCountBinding
-import com.tinhcd.esalessfa.domain.repository.StockCountLine
+import com.tinhcd.esalessfa.domain.model.stock.StockCountLine
 import java.text.NumberFormat
 import java.util.Locale
 

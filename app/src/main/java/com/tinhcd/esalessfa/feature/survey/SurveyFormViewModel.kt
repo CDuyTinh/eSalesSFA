@@ -3,19 +3,21 @@ package com.tinhcd.esalessfa.feature.survey
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tinhcd.esalessfa.domain.model.Customer
-import com.tinhcd.esalessfa.domain.repository.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyAnswer
+import com.tinhcd.esalessfa.domain.model.survey.SurveyIssue
+import com.tinhcd.esalessfa.domain.model.survey.SurveyPhoto
+import com.tinhcd.esalessfa.domain.model.survey.SurveyQuestion
+import com.tinhcd.esalessfa.domain.model.survey.SurveyScore
+import com.tinhcd.esalessfa.domain.model.survey.SurveyScorer
 import com.tinhcd.esalessfa.domain.repository.SurveyRepository
-import com.tinhcd.esalessfa.domain.survey.SurveyAnswer
-import com.tinhcd.esalessfa.domain.survey.SurveyIssue
-import com.tinhcd.esalessfa.domain.survey.SurveyQuestion
-import com.tinhcd.esalessfa.domain.survey.SurveyScore
-import com.tinhcd.esalessfa.domain.survey.SurveyScorer
 import com.tinhcd.esalessfa.domain.usecase.AddSurveyPhotoUseCase
 import com.tinhcd.esalessfa.domain.usecase.StartSurveyUseCase
 import com.tinhcd.esalessfa.domain.usecase.SubmitSurveyResult
 import com.tinhcd.esalessfa.domain.usecase.SubmitSurveyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
-import javax.inject.Inject
 
 data class SurveyFormUiState(
     val customer: Customer? = null,

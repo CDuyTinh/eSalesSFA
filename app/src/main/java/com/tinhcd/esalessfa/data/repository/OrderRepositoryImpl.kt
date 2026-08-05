@@ -10,22 +10,23 @@ import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderPromotionEntity
 import com.tinhcd.esalessfa.data.mapper.toDomain
 import com.tinhcd.esalessfa.data.mapper.toDomainProgram
-import com.tinhcd.esalessfa.domain.model.Product
-import com.tinhcd.esalessfa.domain.promotion.OrderCalculator
-import com.tinhcd.esalessfa.domain.promotion.model.OrderLine
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionProgram
-import com.tinhcd.esalessfa.domain.promotion.model.PromotionResult
+import com.tinhcd.esalessfa.domain.model.order.MoneyMath
+import com.tinhcd.esalessfa.domain.model.order.OrderCalculator
+import com.tinhcd.esalessfa.domain.model.order.OrderLine
+import com.tinhcd.esalessfa.domain.model.order.PromotionResult
+import com.tinhcd.esalessfa.domain.model.product.Product
+import com.tinhcd.esalessfa.domain.model.promotion.PromotionProgram
 import com.tinhcd.esalessfa.domain.repository.OrderRepository
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import com.tinhcd.esalessfa.domain.repository.PromotionRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 private fun today(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
 
@@ -139,7 +140,7 @@ class OrderRepositoryImpl @Inject constructor(
         val details = lines.map { line ->
             val lineDiscount = result.discountForLine(line.lineNo)
             val net = (line.grossAmount - lineDiscount).coerceAtLeast(0)
-            val vat = com.tinhcd.esalessfa.domain.promotion.model.MoneyMath
+            val vat = MoneyMath
                 .percentOf(net, line.vatRate)
 
             OrderDetailEntity(

@@ -1,8 +1,8 @@
 package com.tinhcd.esalessfa.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import com.tinhcd.esalessfa.domain.model.Product
-import com.tinhcd.esalessfa.domain.model.ProductUom
+import com.tinhcd.esalessfa.domain.model.product.Product
+import com.tinhcd.esalessfa.domain.model.product.ProductUom
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

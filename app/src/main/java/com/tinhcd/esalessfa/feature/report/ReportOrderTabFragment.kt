@@ -18,7 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentReportOrderTabBinding
 import com.tinhcd.esalessfa.databinding.ItemOrderReportBinding
-import com.tinhcd.esalessfa.domain.repository.OrderSummary
+import com.tinhcd.esalessfa.domain.model.report.OrderSummary
+import com.tinhcd.esalessfa.feature.common.asDateLabel
+import com.tinhcd.esalessfa.feature.common.moneyFormat
+import com.tinhcd.esalessfa.feature.order.detail.OrderDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

@@ -34,7 +34,7 @@ import com.tinhcd.esalessfa.core.network.dto.SalesRouteDetailDto
 import com.tinhcd.esalessfa.core.network.dto.SalesRouteDto
 import com.tinhcd.esalessfa.core.network.dto.SalespersonDto
 import com.tinhcd.esalessfa.core.network.dto.UomDto
-import com.tinhcd.esalessfa.domain.util.SearchText
+import com.tinhcd.esalessfa.domain.model.util.SearchText
 
 /**
  * DTO (server) -> Entity (local).

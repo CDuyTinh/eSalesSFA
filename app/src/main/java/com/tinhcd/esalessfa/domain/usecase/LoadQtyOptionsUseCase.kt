@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.ProductUom
+import com.tinhcd.esalessfa.domain.model.product.ProductUom
 import com.tinhcd.esalessfa.domain.repository.ProductRepository
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ data class QtyOptions(
  * - Thứ tự ưu tiên đơn vị: đơn vị đang sửa dở, rồi tới đơn vị bán mặc định của
  *   sản phẩm. Chọn sai đơn vị là sai cả giá lẫn hệ số quy đổi, kéo theo khuyến
  *   mãi theo số lượng tính lệch. Phần "đơn vị mặc định là gì" hỏi thẳng
- *   [com.tinhcd.esalessfa.domain.model.Product.defaultUom] chứ không chép lại —
+ *   [com.tinhcd.esalessfa.domain.model.product.Product.defaultUom] chứ không chép lại —
  *   hai nơi định nghĩa một luật thì sớm muộn cũng lệch nhau.
  * - Giá tra theo ĐÚNG cặp (nhóm giá, đơn vị): Thùng và Lẻ là hai giá khác nhau.
  *

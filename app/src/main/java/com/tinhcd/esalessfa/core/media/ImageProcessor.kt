@@ -8,14 +8,14 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import androidx.exifinterface.media.ExifInterface
 import com.tinhcd.esalessfa.core.common.dispatcher.DispatcherProvider
-import com.tinhcd.esalessfa.domain.geo.GeoPoint
-import kotlinx.coroutines.withContext
+import com.tinhcd.esalessfa.domain.model.geo.GeoPoint
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.withContext
 
 data class ProcessedPhoto(val file: File, val sizeBytes: Int)
 

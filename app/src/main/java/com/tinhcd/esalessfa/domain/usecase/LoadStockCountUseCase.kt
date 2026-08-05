@@ -1,8 +1,8 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.model.Customer
+import com.tinhcd.esalessfa.domain.model.customer.Customer
+import com.tinhcd.esalessfa.domain.model.stock.StockCountLine
 import com.tinhcd.esalessfa.domain.repository.CustomerRepository
-import com.tinhcd.esalessfa.domain.repository.StockCountLine
 import com.tinhcd.esalessfa.domain.repository.StockCountRepository
 import javax.inject.Inject
 

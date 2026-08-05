@@ -1,10 +1,10 @@
 package com.tinhcd.esalessfa.domain.usecase
 
-import com.tinhcd.esalessfa.domain.repository.OpenVisit
+import com.tinhcd.esalessfa.domain.model.visit.CheckInConfig
+import com.tinhcd.esalessfa.domain.model.visit.CheckInValidator
+import com.tinhcd.esalessfa.domain.model.visit.LocationSample
+import com.tinhcd.esalessfa.domain.model.visit.OpenVisit
 import com.tinhcd.esalessfa.domain.repository.VisitRepository
-import com.tinhcd.esalessfa.domain.visit.CheckInConfig
-import com.tinhcd.esalessfa.domain.visit.CheckInValidator
-import com.tinhcd.esalessfa.domain.visit.LocationSample
 import javax.inject.Inject
 
 sealed interface CheckOutResult {

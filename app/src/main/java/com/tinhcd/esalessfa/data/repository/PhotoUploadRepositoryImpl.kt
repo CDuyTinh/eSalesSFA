@@ -4,12 +4,12 @@ import com.tinhcd.esalessfa.core.common.dispatcher.DispatcherProvider
 import com.tinhcd.esalessfa.core.database.dao.PendingUploadDao
 import com.tinhcd.esalessfa.core.database.dao.SurveyResultDao
 import com.tinhcd.esalessfa.core.database.dao.VisitDao
-import com.tinhcd.esalessfa.domain.repository.PhotoUploadOutcome
+import com.tinhcd.esalessfa.domain.model.photo.PhotoUploadOutcome
 import com.tinhcd.esalessfa.domain.repository.PhotoUploadRepository
 import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import kotlinx.coroutines.withContext
 
 /**
  * Đẩy ảnh minh chứng lên Supabase Storage.

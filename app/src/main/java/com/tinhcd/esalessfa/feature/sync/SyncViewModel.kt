@@ -3,14 +3,14 @@ package com.tinhcd.esalessfa.feature.sync
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tinhcd.esalessfa.domain.model.sync.SyncPhase
+import com.tinhcd.esalessfa.domain.model.sync.SyncRun
+import com.tinhcd.esalessfa.domain.model.sync.SyncRunStatus
+import com.tinhcd.esalessfa.domain.model.sync.SyncTables
 import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
-import com.tinhcd.esalessfa.domain.sync.SyncGroup
-import com.tinhcd.esalessfa.domain.sync.SyncPhase
-import com.tinhcd.esalessfa.domain.sync.SyncRun
-import com.tinhcd.esalessfa.domain.sync.SyncRunStatus
-import com.tinhcd.esalessfa.domain.sync.SyncTables
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Hai đường vào màn đồng bộ.

@@ -1,6 +1,6 @@
 package com.tinhcd.esalessfa.domain.repository
 
-import com.tinhcd.esalessfa.domain.sync.SyncRun
+import com.tinhcd.esalessfa.domain.model.sync.SyncRun
 import kotlinx.coroutines.flow.Flow
 
 /**
