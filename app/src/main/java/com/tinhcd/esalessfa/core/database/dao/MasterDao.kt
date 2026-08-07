@@ -1,5 +1,6 @@
 package com.tinhcd.esalessfa.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -23,9 +24,9 @@ import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionGroupEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SurveyQuestionOptionEntity
 import com.tinhcd.esalessfa.core.database.entity.master.SurveyTypeEntity
+import com.tinhcd.esalessfa.core.database.entity.master.UomEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderDetailEntity
 import com.tinhcd.esalessfa.core.database.entity.transaction.OrderEntity
-import com.tinhcd.esalessfa.core.database.entity.master.UomEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -138,8 +139,23 @@ interface CustomerDao {
 @Dao
 interface ProductDao {
 
-    @Query("SELECT * FROM products WHERE isActive = 1 ORDER BY name")
-    fun observeAll(): Flow<List<ProductEntity>>
+    /**
+     * Danh sách chọn sản phẩm, phân trang và lọc ngay trong SQL.
+     *
+     * `:query = '' OR ...` để dùng chung một câu cho cả lúc chưa gõ gì, giống
+     * [CustomerQueryDao.pagingAll]. Từ khoá phải được chuẩn hoá bằng SearchText
+     * trước khi truyền vào vì cột nameSearch cũng được ghi qua hàm đó.
+     */
+    @Query(
+        """
+        SELECT * FROM products
+        WHERE isActive = 1
+          AND (:query = '' OR nameSearch LIKE '%' || :query || '%'
+               OR code LIKE '%' || :query || '%')
+        ORDER BY name
+        """
+    )
+    fun pagingAll(query: String): PagingSource<Int, ProductEntity>
 
     @Query("SELECT * FROM products WHERE id = :id")
     suspend fun findById(id: String): ProductEntity?

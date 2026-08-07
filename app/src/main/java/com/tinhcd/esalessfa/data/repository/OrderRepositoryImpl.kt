@@ -1,5 +1,9 @@
 package com.tinhcd.esalessfa.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.tinhcd.esalessfa.core.database.SyncStatus
 import com.tinhcd.esalessfa.core.database.dao.OrderDao
 import com.tinhcd.esalessfa.core.database.dao.ProductDao
@@ -35,17 +39,22 @@ class ProductRepositoryImpl @Inject constructor(
     private val productDao: ProductDao,
 ) : ProductRepository {
 
-    override fun search(query: String): Flow<List<Product>> =
-        productDao.observeAll().map { products ->
-            products
-                .filter {
-                    query.isBlank() ||
-                        it.nameSearch?.contains(query, ignoreCase = true) == true ||
-                        it.code.contains(query, ignoreCase = true)
-                }
-                .take(SEARCH_LIMIT)
-                .map { it.toDomain(emptyList()) }
-        }
+    /**
+     * Lọc và cắt trang ngay trong SQL thay vì đọc cả bảng rồi lọc bằng Kotlin.
+     *
+     * Danh sách chỉ cần tên và mã để chọn nên map với uoms rỗng; đơn vị tính
+     * được [getById] lấy đủ khi mở popup nhập số lượng.
+     */
+    override fun pagedProducts(query: String): Flow<PagingData<Product>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                // Giữ sẵn một trang phía trước để cuộn không thấy khoảng trống.
+                prefetchDistance = PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = { productDao.pagingAll(query) },
+        ).flow.map { paging -> paging.map { it.toDomain(emptyList()) } }
 
     override suspend fun getById(id: String): Product? =
         productDao.findById(id)?.toDomain(productDao.getUoms(id))
@@ -57,8 +66,7 @@ class ProductRepositoryImpl @Inject constructor(
     ): Long? = productDao.getPrice(priceGroupId, productId, uomCode, today())?.price
 
     private companion object {
-        /** Danh sách chọn sản phẩm chỉ cần vài chục dòng đầu; user gõ tìm để thu hẹp. */
-        const val SEARCH_LIMIT = 100
+        const val PAGE_SIZE = 30
     }
 }
 

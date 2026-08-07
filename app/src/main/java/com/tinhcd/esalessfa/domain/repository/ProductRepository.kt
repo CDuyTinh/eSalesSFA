@@ -1,11 +1,21 @@
 package com.tinhcd.esalessfa.domain.repository
 
+// PagingData nằm trong artifact paging-common — Kotlin thuần, không kéo theo
+// Android SDK; xem ghi chú dài hơn ở CustomerRepository.
+import androidx.paging.PagingData
 import com.tinhcd.esalessfa.domain.model.product.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
 
-    fun search(query: String): Flow<List<Product>>
+    /**
+     * Sản phẩm để chọn vào đơn, phân trang và lọc theo [query].
+     *
+     * [query] là chuỗi đã bỏ dấu để khớp với cột nameSearch. Phải phân trang vì
+     * danh mục của DMS thật có hàng nghìn SKU: đọc cả bảng lên RAM rồi lọc sẽ
+     * giật ngay từ ký tự đầu user gõ.
+     */
+    fun pagedProducts(query: String): Flow<PagingData<Product>>
 
     suspend fun getById(id: String): Product?
 

@@ -1,5 +1,6 @@
 package com.tinhcd.esalessfa.domain.usecase
 
+import androidx.paging.PagingData
 import com.google.common.truth.Truth.assertThat
 import com.tinhcd.esalessfa.domain.model.product.Product
 import com.tinhcd.esalessfa.domain.model.product.ProductUom
@@ -89,7 +90,8 @@ private class FakeProductRepository(
     private val prices: Map<String, Long>,
 ) : ProductRepository {
 
-    override fun search(query: String): Flow<List<Product>> = flowOf(emptyList())
+    override fun pagedProducts(query: String): Flow<PagingData<Product>> =
+        flowOf(PagingData.empty())
 
     override suspend fun getById(id: String): Product? = product
 

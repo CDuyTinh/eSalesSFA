@@ -66,7 +66,7 @@ class ProductPickerFragment : Fragment(R.layout.fragment_product_picker) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.products.collect { adapter.submitList(it) }
+                viewModel.products.collect { adapter.submitData(it) }
             }
         }
     }
