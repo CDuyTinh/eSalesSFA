@@ -52,10 +52,11 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.finished.collect { finished ->
                     if (!finished) return@collect
-                    // Lượt đầu sau đăng nhập thì đi tiếp vào Home; lượt do người
-                    // dùng chủ động thì quay lại chỗ họ vừa đứng.
+                    // Lượt bắt buộc (sau đăng nhập, hoặc lần đầu trong ngày mới)
+                    // thì đi tiếp vào Home; lượt do người dùng chủ động thì quay
+                    // lại chỗ họ vừa đứng.
                     when (viewModel.mode) {
-                        SyncMode.FIRST_RUN ->
+                        SyncMode.FIRST_RUN, SyncMode.DAILY ->
                             findNavController().navigate(R.id.action_sync_to_home)
 
                         SyncMode.MANUAL -> findNavController().navigateUp()
@@ -134,7 +135,7 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
 
         // Lượt đầu sau đăng nhập không có bước gửi lên nào, gọi nó là "bước 2/2"
         // thì người dùng sẽ đi tìm bước 1 không tồn tại.
-        viewModel.mode == SyncMode.FIRST_RUN -> R.string.sync_phase_download_only
+        !viewModel.mode.isFullSync -> R.string.sync_phase_download_only
         else -> R.string.sync_phase_download
     }
 

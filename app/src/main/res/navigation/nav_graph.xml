@@ -46,7 +46,10 @@
         android:id="@+id/syncFragment"
         android:name="com.tinhcd.esalessfa.feature.sync.SyncFragment"
         android:label="Đồng bộ dữ liệu">
-        <!-- FIRST_RUN: vào từ Splash/Login, chỉ tải xuống rồi đi tiếp vào Home.
+        <!-- FIRST_RUN: vào từ Splash/Login khi chưa sync lần nào, chỉ tải xuống
+             rồi đi tiếp vào Home.
+             DAILY: vào từ Splash khi lượt sync gần nhất là của hôm trước, gửi lên
+             rồi tải xuống, xong thì vào Home.
              MANUAL: vào từ Home, gửi lên rồi tải xuống, xong thì quay lại. -->
         <argument
             android:name="mode"

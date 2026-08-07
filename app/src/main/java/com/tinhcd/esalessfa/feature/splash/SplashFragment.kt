@@ -3,6 +3,7 @@ package com.tinhcd.esalessfa.feature.splash
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentSplashBinding
 import com.tinhcd.esalessfa.domain.usecase.StartDestination
+import com.tinhcd.esalessfa.feature.sync.SyncMode
+import com.tinhcd.esalessfa.feature.sync.SyncViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -37,12 +40,28 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
             val destination = async { viewModel.destination.filterNotNull().first() }
             delay(MIN_VISIBLE_MS)
 
-            val action = when (destination.await()) {
-                StartDestination.LOGIN -> R.id.action_splash_to_login
-                StartDestination.SYNC -> R.id.action_splash_to_sync
-                StartDestination.HOME -> R.id.action_splash_to_home
+            when (val destination = destination.await()) {
+                StartDestination.LOGIN ->
+                    findNavController().navigate(R.id.action_splash_to_login)
+
+                StartDestination.HOME ->
+                    findNavController().navigate(R.id.action_splash_to_home)
+
+                // Hai đích cùng vào một màn hình, chỉ khác việc phải chạy: lần
+                // đầu thì outbox còn rỗng nên chỉ tải xuống, còn ngày mới thì
+                // phải gửi nốt đơn tồn của hôm trước trước khi tải.
+                StartDestination.FIRST_SYNC, StartDestination.DAILY_SYNC -> {
+                    val mode = if (destination == StartDestination.FIRST_SYNC) {
+                        SyncMode.FIRST_RUN
+                    } else {
+                        SyncMode.DAILY
+                    }
+                    findNavController().navigate(
+                        R.id.action_splash_to_sync,
+                        bundleOf(SyncViewModel.ARG_MODE to mode.name),
+                    )
+                }
             }
-            findNavController().navigate(action)
         }
     }
 

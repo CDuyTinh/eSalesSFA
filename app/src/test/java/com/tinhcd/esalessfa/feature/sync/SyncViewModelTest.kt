@@ -7,6 +7,7 @@ import com.tinhcd.esalessfa.domain.model.sync.SyncRun
 import com.tinhcd.esalessfa.domain.model.sync.SyncRunStatus
 import com.tinhcd.esalessfa.domain.repository.SessionStore
 import com.tinhcd.esalessfa.domain.repository.SyncScheduler
+import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -99,28 +100,41 @@ class SyncViewModelTest {
         assertThat(scheduler.fullSyncStarts).isEqualTo(2)
     }
 
-    /** Chỉ lượt đầu tiên mới được đánh dấu "đã sync lần đầu". */
+    /** Ngày mới phải gửi outbox tồn của hôm qua trước khi tải, không chỉ tải xuống. */
     @Test
-    fun `xong luot FIRST_RUN thi danh dau da sync lan dau`() = runTest {
+    fun `DAILY bam start thi chay chuoi day du`() = runTest {
+        val scheduler = FakeSyncScheduler()
+        val viewModel = viewModel(scheduler, SyncMode.DAILY)
+
+        viewModel.start()
+        viewModel.start()
+
+        assertThat(scheduler.fullSyncStarts).isEqualTo(1)
+        assertThat(scheduler.downloadStarts).isEqualTo(0)
+    }
+
+    @Test
+    fun `xong luot FIRST_RUN thi ghi mo ngay sync hom nay`() = runTest {
         val scheduler = FakeSyncScheduler()
         val session = FakeSessionStore()
         val viewModel = viewModel(scheduler, SyncMode.FIRST_RUN, session)
 
         viewModel.onSyncCompleted()
 
-        assertThat(session.firstSyncMarked).isTrue()
+        assertThat(session.lastSyncDate.value).isEqualTo(LocalDate.now())
         assertThat(viewModel.finished.value).isTrue()
     }
 
+    /** Đã tự bấm đồng bộ trong ngày thì mở lại app không bị chặn ở màn này nữa. */
     @Test
-    fun `xong luot MANUAL thi khong danh dau lai`() = runTest {
+    fun `xong luot MANUAL cung ghi mo ngay sync`() = runTest {
         val scheduler = FakeSyncScheduler()
         val session = FakeSessionStore()
         val viewModel = viewModel(scheduler, SyncMode.MANUAL, session)
 
         viewModel.onSyncCompleted()
 
-        assertThat(session.firstSyncMarked).isFalse()
+        assertThat(session.lastSyncDate.value).isEqualTo(LocalDate.now())
         assertThat(viewModel.finished.value).isTrue()
     }
 
@@ -159,17 +173,14 @@ private class FakeSyncScheduler : SyncScheduler {
 
 private class FakeSessionStore : SessionStore {
 
-    var firstSyncMarked = false
-        private set
-
     override val userId = MutableStateFlow<String?>(null)
 
-    override val hasCompletedFirstSync = MutableStateFlow(false)
+    override val lastSyncDate = MutableStateFlow<LocalDate?>(null)
 
     override suspend fun saveUserId(id: String) = Unit
 
-    override suspend fun markFirstSyncCompleted() {
-        firstSyncMarked = true
+    override suspend fun markSyncCompleted(date: LocalDate) {
+        lastSyncDate.value = date
     }
 
     override suspend fun clear() = Unit
