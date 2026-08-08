@@ -2,8 +2,14 @@ package com.tinhcd.esalessfa.feature.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.tinhcd.esalessfa.R
 import com.tinhcd.esalessfa.databinding.FragmentHomeBinding
 import com.tinhcd.esalessfa.feature.common.asTab
@@ -12,8 +18,11 @@ import com.tinhcd.esalessfa.feature.customer.list.CustomerListMode
 import com.tinhcd.esalessfa.feature.customer.list.CustomerListViewModel
 import com.tinhcd.esalessfa.feature.dashboard.DashboardFragment
 import com.tinhcd.esalessfa.feature.report.OrderReportFragment
+import com.tinhcd.esalessfa.feature.sync.SyncMode
+import com.tinhcd.esalessfa.feature.sync.SyncViewModel
 import com.tinhcd.esalessfa.feature.work.WorkFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 /**
  * Khung chứa bốn tab, theo HomeActivity của bản eSales gốc.
@@ -23,6 +32,8 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
+
+    private val viewModel: HomeViewModel by viewModels()
 
     private var binding: FragmentHomeBinding? = null
 
@@ -58,6 +69,35 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             // giá trị đó có thể không phát ra sự kiện nào và màn hình sẽ trắng.
             showTab(R.id.tab_dashboard)
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        // Dùng lại MANUAL: việc cần chạy và nơi quay về giống hệt
+                        // lượt người dùng tự bấm ở tab Công việc, chỉ khác ai kích
+                        // hoạt. Quay lại đúng tab họ đang đứng chứ không về Home
+                        // mới, nên không đi qua action_sync_to_home.
+                        HomeEvent.SyncNewDay -> findNavController().navigate(
+                            R.id.action_home_to_sync,
+                            bundleOf(SyncViewModel.ARG_MODE to SyncMode.MANUAL.name),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Kiểm tra ngày mới ở onResume chứ không ở onViewCreated.
+     *
+     * View của Home bị huỷ rồi dựng lại mỗi lần đi vào màn chi tiết và quay ra,
+     * nhưng mốc đáng quan tâm là lúc màn hình thật sự hiện trở lại sau khi app
+     * nằm nền qua đêm — đúng thời điểm onResume chạy.
+     */
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResumed()
     }
 
     /**

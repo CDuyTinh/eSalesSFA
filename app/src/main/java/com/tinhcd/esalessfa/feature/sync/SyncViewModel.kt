@@ -43,7 +43,12 @@ enum class SyncMode {
      */
     DAILY,
 
-    /** Người dùng bấm Đồng bộ ở Home: gửi lên rồi tải xuống, xong thì quay lại. */
+    /**
+     * Vào từ Home: gửi lên rồi tải xuống, xong thì quay lại chỗ vừa đứng.
+     *
+     * Dùng cho cả lượt người dùng bấm Đồng bộ lẫn lượt Home tự mở khi phát hiện
+     * app đã nằm mở qua nửa đêm — hai trường hợp chỉ khác ai kích hoạt.
+     */
     MANUAL;
 
     /** Có chạy chuỗi gửi-lên-rồi-tải-xuống không, hay chỉ tải xuống. */

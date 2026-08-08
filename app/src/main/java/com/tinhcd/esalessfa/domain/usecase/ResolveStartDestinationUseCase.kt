@@ -18,6 +18,9 @@ enum class StartDestination { LOGIN, FIRST_SYNC, DAILY_SYNC, HOME }
  * - Lượt sync gần nhất từ hôm trước thì tuyến bán hàng, tồn kho và giá của hôm
  *   nay chưa có trên máy. Nhân viên mở app buổi sáng mà đi theo tuyến hôm qua là
  *   sai nghiệp vụ, nên chặn lại ở màn đồng bộ chứ không thả vào Home.
+ *
+ * Home cũng hỏi lại đúng quy tắc này ở onResume, cho trường hợp app nằm mở
+ * xuyên qua nửa đêm và Splash không có dịp chạy.
  */
 class ResolveStartDestinationUseCase @Inject constructor(
     private val authRepository: AuthRepository,
